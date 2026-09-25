@@ -1,6 +1,6 @@
 # Building an automated stock and options trading bot: research and recommendations
 
-Date: 25 September 2026. Status: research complete, no code written yet, waiting on the scope questions in section 9.
+Date: 25 September 2026. Status: research complete, no code written yet. The scope questions in section 9 have been answered; the resulting decisions are in [implementation-plan.md](implementation-plan.md).
 
 This document answers three questions: how an automated trading app works and what it takes to build one, which brokerage APIs, open-source frameworks and data sources exist today and which to pick, and what needs deciding before implementation starts. It is written for a developer, assumes nothing about trading background, and states its assumptions where the answer depends on your situation.
 
@@ -446,7 +446,7 @@ A first version that gets you through phase 2 can be a single Python process of 
 
 ## 9. Questions I need you to answer before implementation
 
-Your answers change the design materially, so I have not started building yet. The assumptions I used for the recommendations above are in brackets.
+Answered on 25 September 2026: Germany, US stocks and options, about 50,000 EUR, no strategy yet and a Trade Republic account, intraday, framework recommendation requested, Python, about 100 USD per month, fully automatic except very large trades, an LLM role wanted. The decisions that follow from these answers are in [implementation-plan.md](implementation-plan.md). The original questions and the assumptions used in this report are kept below for reference.
 
 1. **Where do you live and where is the brokerage account?** Broker availability, tax rules and market data fees all depend on this. [Assumed: US resident trading US markets.]
 2. **Which markets and instruments first?** US stocks and ETFs only, then options? Or options from day one? Any interest in index options such as SPX (different tax treatment) or in futures? [Assumed: US stocks first, single-leg and defined-risk multi-leg equity options later.]
