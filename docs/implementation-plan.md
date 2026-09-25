@@ -138,6 +138,8 @@ Worked example for one trading day: one pre-market briefing (30k tokens in, 3k o
 
 ## 7. A realistic view of intraday trading before you start
 
+Update, 25 September 2026: the measured evidence on how bots and mechanical strategies perform is collected in [bot-performance-evidence.md](bot-performance-evidence.md). Its section 7.1 recommends changing phase 1 to start with slow strategies (monthly index option writing, trend following) and running intraday as a paper-only research track, or keeping intraday as an explicitly bounded experiment. That choice is pending your decision.
+
 Intraday is the hardest place to make a retail bot profitable, and the research report's evidence section is about exactly this population. Three practical consequences:
 
 - Costs decide. At IBKR a round trip in 100 shares costs at least 2 USD in commissions plus the spread; twenty round trips a day is about 900 USD a month before slippage. The first backtests must include commissions, half the spread on every fill, and a slippage assumption, and must still show a margin over those.
