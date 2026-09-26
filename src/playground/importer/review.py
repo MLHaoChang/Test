@@ -207,8 +207,12 @@ def _by(ws: Workspace, cause: Cause, txns: Iterable[Txn | None], prefer: Report 
 
 
 def _settle_possible_duplicates(ws: Workspace, cause: Cause, plan: Plan, now: str) -> None:
-    """Check every open `possible_duplicate` again until nothing changes (a merge can settle another)."""
+    """Check every open `possible_duplicate` again until nothing changes (a merge can settle another).
+
+    The ones that stay open then name their near transactions as they are now.
+    """
     while True:
+        still_open: list[tuple[Item, Txn, tuple[Txn, ...]]] = []
         for item in _evaluated(ws):
             if item.status != "open" or item.kind is not ReviewKind.POSSIBLE_DUPLICATE or item.origin != "pipeline":
                 continue
@@ -219,7 +223,7 @@ def _settle_possible_duplicates(ws: Workspace, cause: Cause, plan: Plan, now: st
                 break
             match = ws.rematch(txn)
             if match.possible_duplicate:
-                _refresh_duplicate(item, txn, match.near, plan)
+                still_open.append((item, txn, match.near))
                 continue
             nearby = [txn, *ws.near(txn.parts, exclude=txn.key)]
             if match.target is not None:
@@ -231,7 +235,9 @@ def _settle_possible_duplicates(ws: Workspace, cause: Cause, plan: Plan, now: st
             _close(item, {"how": "superseded", "by": by}, plan, now)
             break
         else:
-            return
+            break
+    for item, txn, near in still_open:
+        _refresh_duplicate(item, txn, near, plan)
 
 
 def _new_item(
