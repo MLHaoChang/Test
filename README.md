@@ -1,4 +1,8 @@
-# Test
+# Playground: Stock Trading Portfolio Analysis
+
+Import your Trade Republic portfolio, reconcile holdings, compute FIFO cost basis and daily value in EUR with correct FX conversion.
+
+## Documentation
 
 Research and planning for an automated stock and options trading bot.
 
@@ -8,3 +12,15 @@ Research and planning for an automated stock and options trading bot.
 - [Designing a trading-bot playground](docs/playground-design.md): requirements, buy-versus-build survey, architecture with three clocks, simulation realism defaults, experiment layer and validation protocol, safety, build plan and recommendation for a fake-money playground on real market data.
 - [Playground principal design specification](docs/playground-spec.md) (v0.3, portfolio-first): decision record from the scope interview, the reframe around your real portfolio (Trade Republic import, performance and attribution, scenarios, agents that draft proposals, market and ideas, preference profile), component design, APIs, data model, phased development plan with hour estimates, and the cost model.
 - [Dashboard wireframes](docs/wireframes/README.md): nineteen annotated screens of the web dashboard: Home, Portfolio, Why did it perform, Scenarios (overview with lessons, build, compare), Market, Ideas, Agents, Assistant, Help, and the advanced research lab, with the built-in explanation system.
+
+## Develop
+
+Set up the environment and run tests:
+
+```bash
+uv sync --locked
+./scripts/check.sh
+PG_TODAY=2024-12-31 uv run pg --version
+```
+
+This project uses Python 3.13, ruff for formatting and linting, mypy for type checking, pytest with socket disabled for testing, and the `pg` CLI entry point.

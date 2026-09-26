@@ -1,0 +1,80 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "playground"
+version = "0.1.0"
+description = "Stock trading portfolio analysis: import, reconcile, value with FIFO lots"
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+    "pydantic>=2.0",
+    "SQLAlchemy>=2.0",
+    "httpx>=0.25",
+    "pyarrow>=15.0",
+    "pdfplumber>=0.11",
+    "reportlab>=5.0",
+    "typer>=0.12",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "python-multipart>=0.0.6",
+    "tzdata>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.0",
+    "pytest-socket>=0.7",
+    "hypothesis>=6.0",
+    "pytest-playwright>=0.4",
+]
+
+[project.scripts]
+pg = "playground.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/playground"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--disable-socket --allow-unix-socket -q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "DTZ", "PT", "SIM"]
+extend-select = ["I"]
+ignore = ["E501"]
+per-file-ignores = {"tests/**" = ["S101", "S603", "S607"]}
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+disallow_untyped_defs = true
+check_untyped_defs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "playground.core.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "playground.ledger.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "playground.valuation.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "playground.importer.*"
+disallow_untyped_defs = true

@@ -1,0 +1,40 @@
+# Data directories
+data/
+.e2e/
+private/
+uploads/
+registry/
+lake/
+
+# Database files
+*.sqlite
+*.sqlite-*
+*.db
+*.duckdb
+*.parquet
+
+# Environment
+.env
+.env.*
+.venv/
+.venv-py311/
+
+# Web
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+
+# Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build
+dist/
+build/
+*.egg-info/

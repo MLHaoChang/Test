@@ -1,0 +1,3 @@
+# Fixture manifest - lists all committed test data files
+# Each entry documents what the file is and what layout or format it represents
+files: []
