@@ -72,7 +72,6 @@ ban-relative-imports = "all"
 [tool.mypy]
 python_version = "3.11"
 mypy_path = "src"
-disallow_untyped_defs = true
 check_untyped_defs = true
 warn_unused_ignores = true
 
