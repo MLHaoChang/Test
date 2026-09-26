@@ -17,7 +17,10 @@ Who raises what:
 A transaction is **held back** (stored, but kept out of lots, holdings and value) while an item
 that concerns it holds it: a `missing_field` or `possible_duplicate` of the pipeline, or a
 parser's item about the transaction it came with. Dismissing such an item leaves the transaction
-out; `resolve --use-parsed` (or `--merge` and `--keep-both` for a possible duplicate) releases it.
+out as it is; `resolve --use-parsed` (or `--merge` and `--keep-both` for a possible duplicate)
+releases it. A later file that removes the problem releases it even from a dismissed item: the
+missing field arrives, or a manual CSV row sets the amounts that did not add up
+(`Workspace.holds`).
 
 **Checked again.** `evaluate` runs on every stage, accept and resolution. An item whose
 condition no longer holds is resolved as superseded by the file whose data removed the problem:
@@ -118,7 +121,7 @@ def evaluate(ws: Workspace, cause: Cause, *, now: str, reparsed: Mapping[int, st
             ws.add_item(item)
             plan.new_items.append(item)
 
-    plan.held = {item.txn_key for item in _evaluated(ws) if item.holds and item.txn_key is not None}
+    plan.held = {item.txn_key for item in _evaluated(ws) if ws.holds(item) and item.txn_key is not None}
     plan.book = build_lots([ledger_txn(txn) for txn in ws.alive() if txn.key not in plan.held])
     _check_ledger_items(ws, cause, plan, now)
     return plan
@@ -487,7 +490,8 @@ def get_item(conn: Connection, portfolio_id: int, item_id: int) -> dict[str, Any
 
 
 def dismiss_item(conn: Connection, item_id: int, *, reason: str, clock: Clock) -> dict[str, Any]:
-    """Dismiss an open item with your reason. A transaction it holds back stays out of your holdings."""
+    """Dismiss an open item with your reason. A transaction it holds back stays out of your holdings
+    until a later file removes the problem (`Workspace.holds`)."""
     return _settle(conn, item_id, clock=clock, how="dismiss", reason=reason)
 
 
@@ -560,7 +564,7 @@ def _check_allowed(ws: Workspace, item: Item, how: str) -> None:
             f"Review item {item.id}: the transaction still lacks the {item.fields.get('missing', 'field')}, "
             "so it cannot be used as parsed. Import a document or a manual CSV row that gives it."
         )
-    if not item.holds or item.origin != "parser":
+    if not item.may_hold or item.origin != "parser":
         raise ReviewError(
             f"Review item {item.id} does not hold a transaction back, so --use-parsed does not apply. "
             "Dismiss it once you have checked it."

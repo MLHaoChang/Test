@@ -29,7 +29,7 @@ import sqlalchemy as sa
 from sqlalchemy import Connection
 
 from playground.importer.keys import NEAR_DATE_DAYS, PRECEDENCE, KeyParts, key_parts, parse_key
-from playground.importer.merge import MergedView, Report, merge
+from playground.importer.merge import MergedView, Report, merge, missing_fields
 from playground.importer.model import ParsedTransaction, ReviewKind, SourceKind
 from playground.importer.serialise import transaction_from_dict
 from playground.ledger.fifo import CostInput
@@ -177,13 +177,14 @@ class Item:
         return "parser"
 
     @property
-    def holds(self) -> bool:
-        """True when this item keeps its transaction out of lots, holdings and value.
+    def may_hold(self) -> bool:
+        """True when this item is of a kind that keeps its transaction out of lots, holdings and value.
 
         A pipeline `missing_field` or `possible_duplicate`, or a parser's item about the transaction
-        it came with (amounts that do not add up, a line it could not read), holds the
+        it came with (amounts that do not add up, a line it could not read), may hold the
         transaction back while the item is open, and also once you dismiss it: dismissing means
-        "leave it out". A resolution (`use-parsed`, `merge`, `keep-both`) or a later file releases it.
+        "leave it out as it is". Whether it holds it now is `Workspace.holds`. A resolution
+        (`use-parsed`, `merge`, `keep-both`) or a later file releases it.
         """
         if self.txn_key is None or self.status not in ("open", "dismissed"):
             return False
@@ -368,6 +369,24 @@ class Workspace:
 
     def items_of(self, txn: Txn) -> list[Item]:
         return [item for item in self.items.values() if item.txn_key == txn.key]
+
+    def holds(self, item: Item) -> bool:
+        """True when `item` holds its transaction back now (see `Item.may_hold`).
+
+        It holds while its problem remains. For two kinds a later file can remove the problem,
+        and then the item holds no more, even once you dismissed it: a pipeline `missing_field`
+        holds only while the transaction still lacks the field (plan 5.3.4), and a parser's
+        `amounts_do_not_add_up` only while the fields in use still come from that document, not
+        from a manual CSV row (plan 5.3.5).
+        """
+        if not item.may_hold or item.txn_key is None or item.txn_key not in self.txns:
+            return False
+        txn = self.final(item.txn_key)
+        if item.origin == "pipeline" and item.kind is ReviewKind.MISSING_FIELD:
+            return bool(missing_fields(txn.fields))
+        if item.origin == "parser" and item.kind is ReviewKind.AMOUNTS_DO_NOT_ADD_UP:
+            return txn.view.top.kind is not SourceKind.MANUAL_CSV
+        return True
 
     def active_import_for(self, file_hash: str) -> ImportInfo | None:
         """The import that holds this file's data: in a batch that is not discarded, not a duplicate."""

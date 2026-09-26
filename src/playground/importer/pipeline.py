@@ -636,7 +636,7 @@ def _after_state(txn: Txn, plan: Plan) -> str:
 
 
 def _hold_reasons(ws: Workspace, txn: Txn) -> list[str]:
-    return sorted({item.kind.value for item in ws.items_of(txn) if item.holds})
+    return sorted({item.kind.value for item in ws.items_of(txn) if ws.holds(item)})
 
 
 def _display_order(txn: Txn) -> tuple[str, str, int]:

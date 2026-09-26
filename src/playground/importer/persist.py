@@ -162,7 +162,7 @@ def apply_item_decision(conn: Connection, ws: Workspace, plan: Plan, *, now: str
         txn = ws.final(item.txn_key)
         if txn.id is None or txn.stored_state != "held":
             continue
-        if not any(other.holds for other in ws.items_of(txn)):
+        if not any(ws.holds(other) for other in ws.items_of(txn)):
             state = "accepted" if ws.batches.get(txn.batch_id) == "accepted" else "staged"
             repos.update_transaction(conn, txn.id, state=state)
             txn.stored_state = state

@@ -69,7 +69,7 @@ def dismiss_command(
     reason: str | None = typer.Option(None, "--reason", help="Why you dismiss it (required)."),
     json_output: bool = _JSON,
 ) -> None:
-    """Dismiss an item. A transaction it holds back stays out of your holdings."""
+    """Dismiss an item. A transaction it holds back stays out of your holdings until a later file removes the problem."""
     app_ctx: AppContext = ctx.obj
     if not reason:
         fail("Say why you dismiss the item with --reason.")

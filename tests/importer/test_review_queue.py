@@ -22,8 +22,10 @@ TEXT = FIXTURES / "tr" / "text"
 CSV_DIR = FIXTURES / "tr" / "csv"
 VWRL = "IE00BK5BQT80"
 ALV = "DE0008404005"
+SAP = "DE0007164600"
 # T13 of the golden portfolio on its own: a transfer in without a cost basis.
 TRANSFER_IN_ROW = "20.06.2024;;Depotübertrag eingehend;DE0008404005;Allianz SE;4;;;;;EUR;;csv-2024-0010"
+T2_ROW = "15.01.2024;10:05;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;csv-0002"
 
 
 def only(items):
@@ -150,6 +152,51 @@ def test_dismissing_an_item_that_holds_a_transaction_keeps_the_transaction_out(h
     assert dismissed.resolution == {"how": "dismissed", "reason": "I do not trust this document"}
     assert only(harness.transactions()).state == "held"
     assert harness.holdings() == {}
+
+
+def test_a_dismissed_missing_field_item_stops_holding_the_buy_once_a_file_gives_the_field(harness, docs) -> None:
+    harness.run(
+        docs.statement("kontoauszug.pdf", [docs.statement_row(date(2024, 1, 15), "Kauf", "-1401.00", isin=SAP)])
+    )
+    item = only(harness.items(kind="missing_field"))
+    harness.dismiss(item.id, reason="I will import the CSV export later")
+    assert only(harness.transactions()).state == "held"
+
+    # The CSV row gives the quantity: nothing is missing any more, so nothing holds the buy back.
+    summary = harness.stage(docs.csv("export.csv", [T2_ROW]))
+
+    assert summary.counts["held_back"] == 0
+    assert summary.data["held_back"] == []
+    assert only(summary.data["completed"])["isin"] == SAP
+    holdings = {row["isin"]: row["after"] for row in harness.diff().to_dict()["holdings"]}
+    assert holdings == {SAP: "10"}
+
+    harness.accept()
+
+    txn = only(harness.transactions())
+    assert txn.state == "accepted"
+    assert txn.quantity == Decimal("10")
+    assert txn.fees_eur == Decimal("1.00")
+    assert txn.batch_id == summary.batch_id  # released into the batch of the file that completed it
+    assert harness.holdings() == {SAP: Decimal("10")}
+    # You dismissed the item, so it stays dismissed.
+    assert only(harness.items(kind="missing_field")).status == "dismissed"
+
+
+def test_a_dismissed_amounts_item_stops_holding_once_a_manual_row_sets_the_figures(harness, docs) -> None:
+    harness.run(text_pdf(docs, "tr.wertpapierabrechnung.de.2023/amounts_off_by_one_euro.txt"))
+    harness.dismiss(only(harness.items()).id, reason="I do not trust this document")
+
+    # Your manual row now gives the fields in use (plan 5.3.5), so the document's numbers no longer count.
+    harness.run(
+        docs.manual("korrektur.csv", ["2024-05-08;14:02;buy;IE00BK5BQT80;5;104.20;EUR;-523.00;2.00;;the fee was 2.00"])
+    )
+
+    txn = only(harness.transactions())
+    assert txn.state == "accepted"
+    assert txn.fees_eur == Decimal("2.00")
+    assert harness.holdings() == {VWRL: Decimal("5")}
+    assert only(harness.items(kind="amounts_do_not_add_up")).status == "dismissed"
 
 
 def test_missing_cost_basis_is_raised_at_staging_for_a_transfer_in(harness, docs) -> None:
