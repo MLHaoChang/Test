@@ -187,6 +187,8 @@ def test_review_commands(data_dir: str) -> None:
 
     dismissed = pg(data_dir, "review", "dismiss", str(by_kind["unknown_layout"]["id"]), "--reason", "only costs")
     assert dismissed.exit_code == 0, dismissed.output
+    assert "cannot be undone" in dismissed.stdout
+    assert "cannot undo" in pg(data_dir, "review", "dismiss", "--help").stdout
     resolved = pg(data_dir, "review", "resolve", str(by_kind["amounts_do_not_add_up"]["id"]), "--use-parsed")
     assert resolved.exit_code == 0, resolved.output
 

@@ -69,7 +69,12 @@ def dismiss_command(
     reason: str | None = typer.Option(None, "--reason", help="Why you dismiss it (required)."),
     json_output: bool = _JSON,
 ) -> None:
-    """Dismiss an item. A transaction it holds back stays out of your holdings until a later file removes the problem."""
+    """Dismiss an item for good. You cannot undo it.
+
+    A transaction it holds back stays out of your holdings.
+
+    It is released only if a later file gives a missing field, or a manual CSV row replaces figures that did not add up.
+    """
     app_ctx: AppContext = ctx.obj
     if not reason:
         fail("Say why you dismiss the item with --reason.")
@@ -78,7 +83,7 @@ def dismiss_command(
     if json_output:
         print_json(item)
         return
-    typer.echo(f"Dismissed review item {item_id}.")
+    typer.echo(f"Dismissed review item {item_id}. A dismissal cannot be undone.")
 
 
 @review_app.command(name="resolve")

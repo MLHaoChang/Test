@@ -37,8 +37,9 @@ condition no longer holds is resolved as superseded by the file whose data remov
 
 A held `possible_duplicate` whose check finds an exact match is merged into it; one whose near
 match is gone becomes a transaction of its own; one that stays open names its near transactions
-as they are now. The other kinds stay open until you resolve or dismiss them. A dismissed item stays dismissed; its `dedupe_key` stops it from coming back. An
-item superseded automatically opens again if its problem comes back.
+as they are now. The other kinds stay open until you resolve or dismiss them. A dismissed item
+stays dismissed; its `dedupe_key` stops it from coming back. An item superseded automatically
+opens again if its problem comes back.
 """
 
 from collections.abc import Iterable, Iterator, Mapping
@@ -518,8 +519,12 @@ def get_item(conn: Connection, portfolio_id: int, item_id: int) -> dict[str, Any
 
 
 def dismiss_item(conn: Connection, item_id: int, *, reason: str, clock: Clock) -> dict[str, Any]:
-    """Dismiss an open item with your reason. A transaction it holds back stays out of your holdings
-    until a later file removes the problem (`Workspace.holds`)."""
+    """Dismiss an open item with your reason, for good: no command undoes a dismissal.
+
+    A transaction it holds back stays out of your holdings while its problem remains
+    (`Workspace.holds`). For a possible duplicate, and for most items a parser raised, that is
+    for good; a later file can still give a missing field or replace figures that did not add up.
+    """
     return _settle(conn, item_id, clock=clock, how="dismiss", reason=reason)
 
 
