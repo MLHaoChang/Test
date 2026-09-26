@@ -3,7 +3,8 @@
 `stage_files` (and `stage_inputs`, for files already in memory) takes one batch:
 
 1. Each file is copied to `uploads/<sha256>.<ext>` and its kind is found: a PDF by its magic
-   bytes, a CSV by its extension. Anything else is refused before anything is stored.
+   bytes, a CSV by its extension. Anything else, and a CSV file that is not text in UTF-8 or
+   Windows-1252, is refused before anything is stored.
 2. **File level.** A file already imported in a batch that was not discarded is recorded as
    `duplicate_file` and not parsed again. The exception is a file whose earlier import failed or
    found no parser: it is classified again, so a parser added since then takes effect. If a
@@ -303,6 +304,13 @@ def _prepare(item: InputFile) -> _File:
         kind: Literal["pdf", "csv"] = "pdf"
     elif item.name.lower().endswith(".csv"):
         kind = "csv"
+        try:
+            decode_csv_bytes(item.data)
+        except UnicodeDecodeError as exc:
+            raise UnsupportedFileError(
+                f"{item.name} is not a readable CSV file. It is not text in UTF-8 or Windows-1252, the two "
+                "character encodings the importer reads. Nothing was imported."
+            ) from exc
     else:
         raise UnsupportedFileError(
             f"{item.name} is neither a PDF nor a CSV file. Only Trade Republic PDF documents and CSV files, "

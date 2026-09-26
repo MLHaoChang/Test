@@ -55,6 +55,11 @@ def test_the_golden_confirmed_holdings_file_gives_five_rows() -> None:
     assert {holding.as_of for holding in holdings} == {date(2024, 12, 31)}
 
 
+def test_a_file_that_is_not_readable_text_is_refused() -> None:
+    with pytest.raises(ConfirmedCsvError, match="not text in UTF-8 or Windows-1252"):
+        parse_confirmed_csv(b"# decimal=,\nisin;quantity;as_of\n\x81\n")
+
+
 def test_a_missing_decimal_directive_is_refused() -> None:
     data = b"isin;quantity;as_of\nDE0007164600;3;2024-12-31\n"
     with pytest.raises(ConfirmedCsvError, match="decimal separator"):

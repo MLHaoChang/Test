@@ -81,6 +81,20 @@ def test_import_of_a_missing_or_unsupported_file_is_an_input_error(data_dir: str
     assert json.loads(pg(data_dir, "imports", "list", "--json").stdout)["batches"] == []
 
 
+def test_import_of_a_csv_file_that_is_not_text_is_an_input_error(data_dir: str, tmp_path: Path) -> None:
+    unreadable = tmp_path / "export.csv"
+    unreadable.write_bytes(b"Datum;Uhrzeit;Typ\n\x81\x8d\x90\n")
+
+    result = pg(data_dir, "import", str(unreadable))
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)  # a plain message, not a traceback
+    assert "export.csv is not a readable CSV file" in result.output
+    assert "Nothing was imported" in result.output
+    assert json.loads(pg(data_dir, "imports", "list", "--json").stdout)["batches"] == []
+    assert list((Path(data_dir) / "uploads").glob("*")) == []
+
+
 def test_a_second_import_while_one_is_staged_is_refused(data_dir: str) -> None:
     assert pg(data_dir, "import", str(T2)).exit_code == 0
     result = pg(data_dir, "import", str(CSV))
@@ -150,6 +164,15 @@ def test_reconcile_refuses_a_bad_confirmed_file(data_dir: str, tmp_path: Path) -
 
     assert result.exit_code == 1
     assert "decimal" in result.output
+
+    unreadable = tmp_path / "unreadable.csv"
+    unreadable.write_bytes(b"# decimal=,\nisin;quantity;as_of\n\x81\n")
+    result = pg(data_dir, "reconcile", "latest", "--confirmed", str(unreadable))
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "unreadable.csv" in result.output
+    assert "not text in UTF-8 or Windows-1252" in result.output
 
 
 def test_review_commands(data_dir: str) -> None:

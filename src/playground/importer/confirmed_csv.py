@@ -46,7 +46,12 @@ class ConfirmedHolding:
 
 def parse_confirmed_csv(data: bytes) -> list[ConfirmedHolding]:
     """Read a confirmed-holdings file (5.3.3). Raises `ConfirmedCsvError` naming the bad line."""
-    lines = decode_csv_bytes(data).splitlines()
+    try:
+        lines = decode_csv_bytes(data).splitlines()
+    except UnicodeDecodeError as exc:
+        raise ConfirmedCsvError(
+            "The file is not text in UTF-8 or Windows-1252, the two character encodings the importer reads."
+        ) from exc
     first_line = lines[0] if lines else ""
     if not first_line.strip().startswith(_DECIMAL_DIRECTIVE):
         raise ConfirmedCsvError(

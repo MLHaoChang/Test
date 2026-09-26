@@ -17,8 +17,10 @@ def decode_csv_bytes(data: bytes) -> str:
     """Decode CSV bytes as UTF-8 (with or without a byte-order mark), else Windows-1252 (5.3.3).
 
     `utf-8-sig` decodes plain UTF-8 correctly too (it only strips a BOM when one is present), so
-    it is tried first; only bytes that are not valid UTF-8 fall back to `cp1252`, which accepts
-    any byte sequence and therefore never itself raises.
+    it is tried first; only bytes that are not valid UTF-8 fall back to `cp1252`. That codec
+    leaves five bytes undefined (0x81, 0x8D, 0x8F, 0x90 and 0x9D), so bytes that are neither
+    raise `UnicodeDecodeError`. Such a file is not a text CSV file, and each caller refuses it
+    in its own words.
     """
     try:
         return data.decode("utf-8-sig")

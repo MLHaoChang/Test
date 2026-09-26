@@ -27,6 +27,13 @@ def test_bytes_that_are_not_valid_utf8_fall_back_to_windows_1252() -> None:
     assert decode_csv_bytes(data) == "Gebühren;Währung"
 
 
+@pytest.mark.parametrize("byte", [b"\x81", b"\x8d", b"\x8f", b"\x90", b"\x9d"])
+def test_bytes_that_are_neither_utf8_nor_windows_1252_raise(byte: bytes) -> None:
+    # Windows-1252 leaves these five bytes undefined, so the fallback cannot decode them either.
+    with pytest.raises(UnicodeDecodeError):
+        decode_csv_bytes(b"Datum;Typ\n" + byte + b"\n")
+
+
 def test_hh_mm_reads_a_plain_time() -> None:
     assert parse_hh_mm("09:05") == time(9, 5)
     assert parse_hh_mm("23:59") == time(23, 59)

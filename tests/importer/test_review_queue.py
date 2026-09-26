@@ -319,6 +319,19 @@ def test_a_file_that_is_neither_pdf_nor_csv_is_refused_before_anything_is_staged
     assert harness.imports() == []
 
 
+def test_a_csv_file_that_is_not_readable_text_is_refused_before_anything_is_stored(harness, docs) -> None:
+    # 0x81 and 0x8D are neither UTF-8 nor characters of Windows-1252.
+    unreadable = InputFile(name="export.csv", data=b"Datum;Uhrzeit;Typ\n\x81\x8d\n")
+
+    with pytest.raises(UnsupportedFileError, match="export.csv is not a readable CSV file") as refused:
+        harness.stage(docs.trade("kauf_sap.pdf"), unreadable)
+
+    assert "Nothing was imported" in str(refused.value)
+    assert harness.imports() == []
+    assert harness.transactions() == []
+    assert list(harness.uploads_dir.iterdir()) == []
+
+
 def test_resolutions_that_do_not_fit_the_item_are_refused(harness, docs) -> None:
     harness.run(
         docs.statement(
