@@ -22,7 +22,10 @@ dependencies = [
     "tzdata>=2024.1",
 ]
 
-[project.optional-dependencies]
+[project.scripts]
+pg = "playground.cli.main:app"
+
+[dependency-groups]
 dev = [
     "ruff>=0.6",
     "mypy>=1.11",
@@ -31,9 +34,6 @@ dev = [
     "hypothesis>=6.0",
     "pytest-playwright>=0.4",
 ]
-
-[project.scripts]
-pg = "playground.cli.main:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/playground"]

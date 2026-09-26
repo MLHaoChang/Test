@@ -1019,7 +1019,7 @@ dependencies = [
     { name = "uvicorn" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "hypothesis" },
     { name = "mypy" },
@@ -1033,23 +1033,26 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.25" },
-    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.11" },
     { name = "pdfplumber", specifier = ">=0.11" },
     { name = "pyarrow", specifier = ">=15.0" },
     { name = "pydantic", specifier = ">=2.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-playwright", marker = "extra == 'dev'", specifier = ">=0.4" },
-    { name = "pytest-socket", marker = "extra == 'dev'", specifier = ">=0.7" },
     { name = "python-multipart", specifier = ">=0.0.6" },
     { name = "reportlab", specifier = ">=5.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "sqlalchemy", specifier = ">=2.0" },
     { name = "typer", specifier = ">=0.12" },
     { name = "tzdata", specifier = ">=2024.1" },
     { name = "uvicorn", specifier = ">=0.30" },
 ]
-provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "hypothesis", specifier = ">=6.0" },
+    { name = "mypy", specifier = ">=1.11" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-playwright", specifier = ">=0.4" },
+    { name = "pytest-socket", specifier = ">=0.7" },
+    { name = "ruff", specifier = ">=0.6" },
+]
 
 [[package]]
 name = "playwright"
