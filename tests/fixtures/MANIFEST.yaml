@@ -341,6 +341,10 @@ files:
     imitates: tr.sparplan.de
     generated_from: tr/text/tr.sparplan.de/same_day_b.txt
     description: Document B of the pair, different from A only in its execution number.
+  - path: idempotency/same_day_savings_plans/transactions.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: The CSV export for the pair, listing both savings plan executions of 2 September 2024 (plan 6.2).
 
   # Trade Republic CSV export, synthetic profile tr_csv_synthetic_v1 (plan 6.1).
   - path: tr/csv/tr_csv_synthetic_v1/all_types.csv
