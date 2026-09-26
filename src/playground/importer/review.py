@@ -84,6 +84,12 @@ TYPE_LABELS = {
     TxnType.TRANSFER_OUT: "transfer out",
 }
 FIELD_NAMES = {"quantity": "quantity", "isin": "ISIN"}
+REPORT_LABELS = {
+    SourceKind.MANUAL_CSV: "a manual CSV file",
+    SourceKind.PDF_DOCUMENT: "a PDF document",
+    SourceKind.CSV_EXPORT: "the CSV export",
+    SourceKind.PDF_STATEMENT: "an account statement",
+}
 
 
 class ReviewError(PlaygroundError):
@@ -395,13 +401,22 @@ def _cost_message(txn: Txn, quantity: str) -> str:
 
 
 def _duplicate_message(txn: Txn, near: Iterable[Txn]) -> str:
-    dates = sorted({other.day.isoformat() for other in near})
+    near = list(near)
+    dates = " and ".join(sorted({other.day.isoformat() for other in near}))
     amount = txn.fields.amount_eur
     booked = f" for {format(amount, 'f')} EUR" if amount is not None else ""
+    if len(near) == 1:
+        which = f"the one on {dates}"
+        how = "Run pg review resolve with --merge if it is the same transaction, or --keep-both if there are two."
+    else:
+        which = f"one of the {len(near)} on {dates}"
+        how = (
+            "Run pg review resolve with --merge and --into to name the one it is the same as, "
+            "or with --keep-both if it is a transaction of its own."
+        )
     return (
-        f"{subject(txn)[0].upper()}{subject(txn)[1:]}{booked} may be the same transaction as the one "
-        f"on {' and '.join(dates)}: the dates differ by up to 3 days. It is held back until you decide. "
-        "Run pg review resolve with --merge if it is the same transaction, or --keep-both if there are two."
+        f"{subject(txn)[0].upper()}{subject(txn)[1:]}{booked} may be the same transaction as {which}: "
+        f"the dates differ by up to 3 days. It is held back until you decide. {how}"
     )
 
 
@@ -572,18 +587,66 @@ def _check_allowed(ws: Workspace, item: Item, how: str) -> None:
 
 
 def _merge_target(ws: Workspace, item: Item, txn: Txn | None, into: int | None) -> Txn:
+    """The transaction a possible duplicate is merged into (plan 5.3.4, rule c).
+
+    Only a near-date match that has no report of a kind the held transaction has can take it:
+    one transaction holds at most one report of each kind. Without `into`, the ones on the dates
+    the item names come first; when more than one remains, you name it with `into`.
+    """
     if txn is None:
         raise ReviewError(f"Review item {item.id} has no transaction to merge.")
-    candidates = ws.near(txn.parts, exclude=txn.key)
+    candidates = [other for other in ws.near(txn.parts, exclude=txn.key) if not (other.kinds & txn.kinds)]
     if into is not None:
         chosen = ws.txns.get(into)
-        if chosen is None or not chosen.alive or chosen.key == txn.key:
+        if chosen is None or not chosen.alive:
             raise ReviewError(f"There is no transaction {into} to merge into.")
+        if chosen.key == txn.key:
+            raise ReviewError(f"Transaction {into} is the one review item {item.id} holds back. Name another one.")
+        if chosen.key not in {other.key for other in candidates}:
+            raise ReviewError(_not_a_candidate(ws, item, txn, chosen, candidates))
         return chosen
-    if not candidates:
-        raise ReviewError(f"Review item {item.id}: no transaction near this one is left to merge into.")
-    # The nearest date first; between two on one date, the lower occurrence (the earlier one).
-    return min(candidates, key=lambda other: (abs((other.day - txn.day).days), other.occurrence, abs(other.key)))
+    named = str(item.fields.get("near_dates", "")).split(",")
+    preferred = [other for other in candidates if other.day.isoformat() in named] or candidates
+    if not preferred:
+        raise ReviewError(
+            f"Review item {item.id}: no transaction near this one is left to merge into. "
+            "Use --keep-both if it is a transaction of its own."
+        )
+    if len(preferred) > 1:
+        raise ReviewError(
+            f"Review item {item.id} may be the same as {_choices(preferred)}. "
+            f"Name the one to merge into with --into, for example --into {_by_date(preferred)[0].id}."
+        )
+    return preferred[0]
+
+
+def _not_a_candidate(ws: Workspace, item: Item, txn: Txn, chosen: Txn, candidates: list[Txn]) -> str:
+    """Why `--into` cannot name `chosen`, and what it can name instead."""
+    shared = chosen.kinds & txn.kinds
+    if shared and chosen.key in {other.key for other in ws.near(txn.parts, exclude=txn.key)}:
+        reports = " and ".join(sorted(REPORT_LABELS[kind] for kind in shared))
+        reason = (
+            f"Transaction {chosen.id} and the transaction of review item {item.id} are both reported by {reports}. "
+            "A transaction holds at most one report of each kind of file, so they cannot be merged."
+        )
+    else:
+        reason = (
+            f"Transaction {chosen.id} cannot take review item {item.id}: a merge needs the same type, "
+            "instrument and amount, and a booking date 1 to 3 days apart."
+        )
+    if candidates:
+        return f"{reason} You can merge into {_choices(candidates)}."
+    return f"{reason} Use --keep-both if it is a transaction of its own."
+
+
+def _by_date(txns: Iterable[Txn]) -> list[Txn]:
+    return sorted(txns, key=lambda txn: (txn.day, txn.key))
+
+
+def _choices(txns: Iterable[Txn]) -> str:
+    """ "transaction 12 on 2024-01-14 or transaction 15 on 2024-01-18", by date."""
+    names = [f"transaction {txn.id} on {txn.day.isoformat()}" for txn in _by_date(txns)]
+    return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} or {names[-1]}"
 
 
 def _apply_decision(item: Item, how: str, reason: str | None, now: str, target: Txn | None) -> None:

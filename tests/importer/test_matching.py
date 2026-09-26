@@ -22,6 +22,8 @@ from pathlib import Path
 
 import pytest
 
+from playground.importer.review import ReviewError
+
 SAP = "DE0007164600"
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 SAME_DAY = FIXTURES / "idempotency" / "same_day_savings_plans"
@@ -234,6 +236,96 @@ def test_a_possible_duplicate_reaches_the_same_ledger_in_both_orders_once_you_de
         assert harness.holdings() == expected
 
     assert ledgers[0] == ledgers[1]
+
+
+def near_trade_and_kept_csv_row(harness, docs):
+    """A trade of 16 January, a CSV row of 14 January kept as a second purchase, then a trade of
+    15 January near both. The trade of 16 January already has a PDF document, so the new trade
+    can only be the CSV row's transaction (one report of each kind per transaction)."""
+    harness.run(docs.trade("kauf_16_januar.pdf", day=date(2024, 1, 16), execution="aaaa-0016"))
+    harness.run(docs.csv("export.csv", [T2_ROW.replace("15.01.2024", "14.01.2024")]))
+    harness.resolve(only(harness.items(kind="possible_duplicate", status="open")).id, "keep-both")
+    harness.run(docs.trade("kauf_15_januar.pdf", execution="aaaa-0015"))
+    return only(harness.items(kind="possible_duplicate", status="open"))
+
+
+def test_merge_takes_the_near_transaction_the_item_names_and_keeps_one_report_of_each_kind(harness, docs) -> None:
+    item = near_trade_and_kept_csv_row(harness, docs)
+    csv_row = only([txn for txn in harness.transactions() if txn.kinds == ("csv_export",)])
+    assert item.fields["near_dates"] == "2024-01-14"
+    assert "the one on 2024-01-14" in item.message
+
+    resolved = harness.resolve(item.id, "merge")
+
+    assert resolved["resolution"] == {"how": "merge", "into": csv_row.id}
+    by_day = {txn.day: txn for txn in harness.transactions()}
+    assert set(by_day) == {"2024-01-15", "2024-01-16"}
+    assert by_day["2024-01-15"].id == csv_row.id
+    assert by_day["2024-01-15"].kinds == ("csv_export", "pdf_document")
+    assert by_day["2024-01-15"].source_ref == "aaaa-0015"
+    assert by_day["2024-01-16"].kinds == ("pdf_document",)
+    assert by_day["2024-01-16"].source_ref == "aaaa-0016"
+    assert {txn.state for txn in harness.transactions()} == {"accepted"}
+    assert harness.holdings() == {SAP: Decimal("20")}
+
+
+def test_merge_into_a_transaction_that_is_no_candidate_is_refused(harness, docs) -> None:
+    item = near_trade_and_kept_csv_row(harness, docs)
+    harness.run(docs.csv("einzahlung.csv", ["02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;r-1"]))
+    txns = harness.transactions()
+    trade_16 = only([txn for txn in txns if txn.source_ref == "aaaa-0016"])
+    csv_row = only([txn for txn in txns if txn.kinds == ("csv_export",) and txn.type == "buy"])
+    deposit = only([txn for txn in txns if txn.type == "deposit"])
+    before = harness.canonical()
+
+    with pytest.raises(ReviewError, match="PDF document"):
+        harness.resolve(item.id, "merge", into=trade_16.id)
+    with pytest.raises(ReviewError, match="1 to 3 days apart"):
+        harness.resolve(item.id, "merge", into=deposit.id)
+    with pytest.raises(ReviewError, match="no transaction 10000"):
+        harness.resolve(item.id, "merge", into=10_000)
+    with pytest.raises(ReviewError, match="holds back"):
+        harness.resolve(item.id, "merge", into=item.transaction_id)
+
+    assert harness.canonical() == before
+    harness.resolve(item.id, "merge", into=csv_row.id)
+    assert only([txn for txn in harness.transactions() if txn.id == csv_row.id]).kinds == (
+        "csv_export",
+        "pdf_document",
+    )
+
+
+def test_merge_needs_into_when_the_item_is_near_more_than_one_transaction(harness, docs) -> None:
+    harness.run(
+        docs.statement(
+            "kontoauszug.pdf",
+            [
+                docs.statement_row(date(2024, 1, 14), "Kauf", "-1401.00", isin=SAP),
+                docs.statement_row(date(2024, 1, 18), "Kauf", "-1401.00", isin=SAP),
+            ],
+        )
+    )
+    harness.run(docs.trade("kauf_16_januar.pdf", day=date(2024, 1, 16)))
+    item = only(harness.items(kind="possible_duplicate"))
+    by_day = {txn.day: txn for txn in harness.transactions()}
+
+    with pytest.raises(ReviewError, match="--into") as refused:
+        harness.resolve(item.id, "merge")
+
+    assert f"transaction {by_day['2024-01-14'].id} on 2024-01-14" in str(refused.value)
+    assert f"transaction {by_day['2024-01-18'].id} on 2024-01-18" in str(refused.value)
+    assert only(harness.items(kind="possible_duplicate")).status == "open"
+
+    harness.resolve(item.id, "merge", into=by_day["2024-01-18"].id)
+
+    txns = {txn.id: txn for txn in harness.transactions()}
+    assert len(txns) == 2
+    merged = txns[by_day["2024-01-18"].id]
+    assert merged.kinds == ("pdf_document", "pdf_statement")
+    assert merged.day == "2024-01-16"
+    assert merged.state == "accepted"
+    assert txns[by_day["2024-01-14"].id].state == "held"
+    assert harness.holdings() == {SAP: Decimal("10")}
 
 
 # --- Rule d: new transactions -----------------------------------------------------------------

@@ -88,7 +88,9 @@ def resolve_command(
     merge: bool = typer.Option(False, "--merge", help="A possible duplicate is the same transaction: merge them."),
     keep_both: bool = typer.Option(False, "--keep-both", help="A possible duplicate is a second transaction."),
     use_parsed: bool = typer.Option(False, "--use-parsed", help="Keep a held-back transaction as it was read."),
-    into: int | None = typer.Option(None, "--into", help="With --merge: the transaction to merge into."),
+    into: int | None = typer.Option(
+        None, "--into", help="With --merge: the transaction to merge into, when there is more than one."
+    ),
     json_output: bool = _JSON,
 ) -> None:
     """Settle an item with one of --merge, --keep-both or --use-parsed. Lots are rebuilt at once."""
