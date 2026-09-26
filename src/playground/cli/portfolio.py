@@ -20,7 +20,7 @@ from playground.core.isin import InvalidIsinError, normalise_isin
 from playground.core.numbers import parse_en_decimal
 from playground.importer.keys import quantity_text
 from playground.importer.reconcile import stored_ledger
-from playground.importer.transfers import TransferError, list_transfers, set_cost
+from playground.importer.transfers import list_transfers, set_cost
 from playground.ledger.fifo import build_lots
 from playground.storage import repos
 
@@ -202,18 +202,15 @@ def transfers_set_cost(
     except NumberFormatError as exc:
         fail(f"--cost-eur: {exc}")
     with portfolio_transaction(app_ctx) as (conn, portfolio_id):
-        try:
-            result = set_cost(
-                conn,
-                portfolio_id,
-                isin=normalised,
-                acquired_on=acquired_on,
-                cost_eur=amount,
-                clock=app_ctx.clock,
-                txn_id=txn,
-            )
-        except TransferError as exc:
-            fail(str(exc))
+        result = set_cost(
+            conn,
+            portfolio_id,
+            isin=normalised,
+            acquired_on=acquired_on,
+            cost_eur=amount,
+            clock=app_ctx.clock,
+            txn_id=txn,
+        )
     if json_output:
         print_json(result)
         return
