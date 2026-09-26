@@ -157,6 +157,33 @@ def test_possible_duplicate_is_superseded_when_its_near_date_match_gets_its_own_
     assert together.canonical() == harness.canonical()
 
 
+def test_a_possible_duplicate_that_stays_open_names_its_near_transactions_as_they_are_now(harness, docs) -> None:
+    harness.run(
+        docs.csv(
+            "export.csv",
+            [
+                T2_ROW.replace("15.01.2024", "14.01.2024"),
+                T2_ROW.replace("15.01.2024", "16.01.2024").replace("csv-0002", "csv-0003"),
+            ],
+        )
+    )
+    harness.run(docs.trade("kauf_sap.pdf", execution="aaaa-0015"))
+    item = only(harness.items(kind="possible_duplicate"))
+    assert item.fields["near_dates"] == "2024-01-14,2024-01-16"
+    assert "--into" in item.message
+
+    # The trade of 16 January gets its own document, so only the row of 14 January is left near.
+    harness.run(docs.trade("kauf_16_januar.pdf", day=date(2024, 1, 16), execution="aaaa-0016"))
+
+    item = only(harness.items(kind="possible_duplicate"))
+    assert item.status == "open"
+    assert item.fields["near_dates"] == "2024-01-14"
+    assert "the one on 2024-01-14" in item.message
+    assert "2024-01-16" not in item.message
+    harness.resolve(item.id, "merge")
+    assert harness.holdings() == {SAP: Decimal("20")}
+
+
 # --- missing_cost_basis -----------------------------------------------------------------------
 
 

@@ -36,8 +36,8 @@ condition no longer holds is resolved as superseded by the file whose data remov
 | unknown and ambiguous layouts, unknown CSV headers | no parser recognises the file |
 
 A held `possible_duplicate` whose check finds an exact match is merged into it; one whose near
-match is gone becomes a transaction of its own. The other kinds stay open until you resolve or
-dismiss them. A dismissed item stays dismissed; its `dedupe_key` stops it from coming back. An
+match is gone becomes a transaction of its own; one that stays open names its near transactions
+as they are now. The other kinds stay open until you resolve or dismiss them. A dismissed item stays dismissed; its `dedupe_key` stops it from coming back. An
 item superseded automatically opens again if its problem comes back.
 """
 
@@ -218,6 +218,7 @@ def _settle_possible_duplicates(ws: Workspace, cause: Cause, plan: Plan, now: st
                 break
             match = ws.rematch(txn)
             if match.possible_duplicate:
+                _refresh_duplicate(item, txn, match.near, plan)
                 continue
             nearby = [txn, *ws.near(txn.parts, exclude=txn.key)]
             if match.target is not None:
@@ -420,23 +421,35 @@ def _duplicate_message(txn: Txn, near: Iterable[Txn]) -> str:
     )
 
 
+def _duplicate_fields(txn: Txn, near: Iterable[Txn]) -> dict[str, Any]:
+    return {"date": txn.day.isoformat(), "near_dates": ",".join(sorted({other.day.isoformat() for other in near}))}
+
+
 def possible_duplicate_item(ws: Workspace, txn: Txn, near: Iterable[Txn], *, cause: Cause, now: str) -> Item:
     """The item for a candidate that rule c holds back as a possible duplicate (plan 5.3.4)."""
     near = list(near)
-    fields = {
-        "date": txn.day.isoformat(),
-        "near_dates": ",".join(sorted({other.day.isoformat() for other in near})),
-    }
     return _new_item(
         ws,
         f"possible_duplicate|txn|{txn.ref}",
         ReviewKind.POSSIBLE_DUPLICATE,
         txn,
         _duplicate_message(txn, near),
-        fields,
+        _duplicate_fields(txn, near),
         cause,
         now,
     )
+
+
+def _refresh_duplicate(item: Item, txn: Txn, near: Iterable[Txn], plan: Plan) -> None:
+    """A possible duplicate that stays open names its near transactions as they are now: a later
+    file can add one, or give one a report of the held transaction's kind, which rules it out."""
+    near = list(near)
+    message, fields = _duplicate_message(txn, near), _duplicate_fields(txn, near)
+    if item.message == message and item.fields == fields:
+        return
+    item.message, item.fields = message, fields
+    if not item.is_new and item not in plan.updated_items:
+        plan.updated_items.append(item)
 
 
 # --- Records for the CLI, the diff and the API -------------------------------------------------
