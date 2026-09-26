@@ -1,0 +1,5 @@
+# Test fixtures must reach every machine byte for byte (plan 6.2): each PDF must extract to
+# exactly its text file, so git must never convert line endings in either.
+*.pdf binary
+tests/fixtures/**/*.txt text eol=lf
+tests/fixtures/**/*.json text eol=lf
