@@ -1,10 +1,12 @@
 # Trading-bot playground: principal design specification
 
-Version 0.2, 26 September 2026. Companion to [playground-design.md](playground-design.md) (research and rationale), [bot-performance-evidence.md](bot-performance-evidence.md) and [implementation-plan.md](implementation-plan.md). Wireframes: [wireframes/README.md](wireframes/README.md) (source) and the Claude Design canvas at https://claude.ai/artifact/NkeAGz5uqV72dV7dUChFQF.
+Version 0.3, 26 September 2026. Companion to [playground-design.md](playground-design.md) (research and rationale), [bot-performance-evidence.md](bot-performance-evidence.md) and [implementation-plan.md](implementation-plan.md). Wireframes: [wireframes/README.md](wireframes/README.md) (source) and the Claude Design canvas at https://claude.ai/artifact/NkeAGz5uqV72dV7dUChFQF.
 
 This document is the build contract: what the system is, how it is decomposed, what each part must do, how the parts talk to each other, what it costs, and in what order it is built. Where the research document explains why, this one says what.
 
 **What changed in 0.2 (portfolio-first reframe).** Version 0.1 described a research lab for strategy experiments; its Home page opened on a list of runs. After reviewing the wireframes you asked for something different at the front door: your real portfolio (imported from Trade Republic), its performance against a benchmark, live news filtered to what you hold, an explanation of why the portfolio performed as it did, what-if scenarios ("add this stock instead of that one") compared on one chart, agents that run those scenarios forward with fake money and draft real trade proposals for your approval, an ideas page that sweeps the market against your preferences, and an assistant that learns what you like. Nothing in the 0.1 simulation core is thrown away: a scenario is a run, an idea's test is a run, an agent's rule went through validation. The research screens now live behind an "Advanced" menu. Sections 0 (second table), 1, 2, 3.6, 3.7, 3.10 to 3.15, 4.4, 5, 9, 10, 12 and 13 changed; the simulation core (3.2 to 3.5) and the validation protocol are unchanged.
+
+**What changed in 0.3.** Scenarios now open on an overview: the real portfolio as the base case and every scenario, running forward or replayed, as a small chart against it with a scoreboard. Behind it, a weekly scenario learning loop (3.16) compares all scenarios with the base case, decomposes each difference, writes lessons with evidence and a confidence label, and feeds them, only after your confirmation, into the ideas ranking, the preference profile and agent rules. A runtime and delivery section (3.17) answers "app or web page": an always-on backend service on a small server does the 24/7 monitoring, and the interface is a web app you can install on your phone and laptop; no native app. Sections 0, 3.6, 3.7, 3.16, 3.17, 4.4, 5, 9, 10 and 12 changed.
 
 ## 0. Decision record
 
@@ -42,6 +44,7 @@ Decisions taken in the interview on 26 September 2026. Each is a default the bui
 | Preferences | Risk tolerance and drawdown comfort, sectors and themes and exclusions, position and concentration limits, feedback on ideas and proposals | Preference profile (3.15) read by screens, scenarios, agents and the assistant; changes learned from feedback are proposed and confirmed, never applied silently |
 | Benchmarks | MSCI World in EUR plus S&P 500 | Benchmark series in the lake; both shown on Home, Portfolio and Compare |
 | Everyday navigation | Home, Portfolio, Scenarios, Market, Ideas, Agents, Assistant; research tools under "Advanced" | Screen table in 3.7; wireframes rows 1 to 3 versus row A |
+| Delivery and runtime (0.3 recommendation, to confirm) | One always-on backend service on a small Linux server does the 24/7 monitoring; the interface is a web app installable on phone and laptop (PWA); no native desktop or mobile app; the server is reached over a private network (Tailscale), not a public address | Section 3.17; hosting cost moves from P4 to P1 in section 10 |
 
 ## 1. Scope
 
@@ -267,6 +270,8 @@ Local-only by default (binds to localhost; on the VPS behind a reverse proxy wit
 | `GET /portfolio/risk` | Weights against the preference limits; concentration and sleeve checks |
 | `GET /scenarios`, `POST /scenarios`, `GET /scenarios/{id}`, `POST /scenarios/{id}/run` | What-if definitions; a run creates a `mode=scenario` run |
 | `GET /scenarios/compare?ids=a,b,c&benchmark=` | Aligned curves, metrics, warnings and the "why" narrative |
+| `GET /scenarios/overview?period=` | Base case plus every scenario indexed to 100 from its start, scoreboard metrics, the latest one-line reading per scenario |
+| `GET /lessons?status=`, `GET /lessons/{id}`, `POST /lessons/{id}/confirm`, `/dismiss`, `/snooze` | Lessons from the scenario learning loop; confirm applies the linked change (ideas ranking weight, preference suggestion, agent rule proposal) |
 | `GET /agents`, `POST /agents`, `POST /agents/{id}/pause`, `/resume` | Agent policies on the real portfolio (proposal mode) and on scenarios (virtual mode) |
 | `GET /proposals?status=`, `GET /proposals/{id}`, `POST /proposals/{id}/approve`, `/edit`, `/reject` | Proposal review; approve records a decision and never sends an order |
 | `GET /market/pulse`, `GET /market/sectors`, `GET /market/note` | Indices, gauges, sector returns, the weekly written note |
@@ -284,6 +289,7 @@ Vite, TypeScript, React, TanStack Query for data, a WebSocket client for events,
 | Home | Portfolio value and today's change against the benchmark, market pulse, proposals awaiting approval, live news filtered to holdings, what to do next, alerts | P1 |
 | Portfolio | Value and performance against MSCI World EUR and S&P 500, helpers and detractors, holdings with sleeve tags, risk against your own limits, recommendations | P1 |
 | Why did it perform | Plain-language attribution, waterfall (selection, allocation, currency, fees, other), by holding and by sector, the events behind it | P1 |
+| Scenarios: overview | The landing page of Scenarios: the base case and every scenario as small charts indexed to 100, a scoreboard (vs base case, worst fall, agent, one-line reading), and the "what the assistant has learned" panel with lessons, evidence, confidence and status (taken into account, suggestion waiting, watching) | P2 (charts and scoreboard), P5 (lessons) |
 | Scenarios: build | New scenario from the real portfolio: edits, rule, period, costs; checks against the preference profile; weights before and after | P2 |
 | Scenarios: compare | Overlay curves with benchmark, side-by-side metrics, "why S1 beat S2" narrative, hindsight and concentration warnings, promote to agent or proposal | P2 |
 | Market | Index tiles, risk gauges with plain meaning, sector heatmap with your weights, weekly note with sources, watchlist | P3 |
@@ -339,6 +345,39 @@ A **proposal** is a list of trades with, per trade, the reason in words, links t
 ### 3.15 Preference profile
 
 A single editable document: maximum drawdown you accept, single-position limit, sector limit, tactical sleeve size, exclusions (sectors, themes, instruments), themes you favour, preferred listings, default trade size, benchmarks. Screens, scenario checks, agent risk rules and the assistant all read it. Learning is two-step: a nightly job looks at your feedback (idea ratings, proposal decisions and edits, scenario choices) for consistent patterns and writes a **suggestion** ("you rejected 6 of 6 ideas above 50 times earnings; add a filter?"); nothing changes until you accept the suggestion on the Assistant page. Every accepted change is logged with its evidence, so you can see how the profile drifted and undo it.
+
+### 3.16 Scenario learning loop
+
+The overview page is fed by a weekly job (Sunday, after the Friday data is in) with a deterministic part and an assistant part.
+
+**Deterministic part (P2, template output).** For every scenario, forward or history-only, and for the base case: align on common trading days, index to 100 at the scenario's start, compute the return difference against the base case after costs and estimated taxes, the worst fall, and the attribution of the difference (allocation, selection, currency, rule timing such as exit and re-entry dates, costs). Group scenarios by the kind of change they make (add or remove a sector exposure, swap within a sector, rule family such as trend filter or rebalance cadence, sizing) and test each group's effect for consistency: sign agreement across scenarios and across at least three sub-windows, magnitude not explained by a single holding, and whether the forward result agrees with the history result. Output: one line per scenario for the scoreboard ("ahead because chips rallied; too early to call") and candidate lessons with their numbers.
+
+**Assistant part (P5).** The assistant reads the candidate lessons, the attribution tables and the relevant news, and writes each lesson in plain language with the evidence links and a confidence label (low, medium; never high from scenario data alone), plus the weekly summary paragraph on the overview page. It may also propose new scenarios that would sharpen a lesson ("run the 10-month filter on 2015 to 2020, a period you have not looked at").
+
+**Taking lessons into account.** A lesson does nothing on its own. Each carries the change it would make, and the change applies only when you confirm it on the overview or Assistant page:
+
+- *Ideas ranking:* a weight in the tier 1 ordering (for example "under-held sector exposure" above "within-sector swap").
+- *Preference profile:* a suggestion in the two-step flow of 3.15.
+- *Agent rules:* a proposed change to a scenario agent's policy applies on confirmation; a change to a real-portfolio agent's policy must in addition pass the validation protocol before it is active.
+- *Scenario suggestions:* appear as drafts in the builder.
+
+Every applied lesson is logged with its evidence and can be reverted. Lessons expire or are re-evaluated when their evidence changes (a scenario ends, a new fall occurs). Warnings the loop attaches to itself: `few_scenarios` (fewer than three scenarios in a group), `short_forward_window` (fewer than six months forward), `one_direction_market` (all evidence from a rising or all from a falling market).
+
+### 3.17 Runtime and delivery: an always-on service with a web interface
+
+**The question.** Should this be an app or a web page, given that you want something that runs around the clock, watching the market and the news?
+
+**The answer is both, in two separate pieces.** The part that must run 24/7 is not the interface; it is the backend: the news poller, the market pulse, the agents on their weekly and monthly cadences, the nightly screens, the weekly learning loop, and the Telegram alerts. That is a headless service, and it belongs on a machine that never sleeps. The interface is a web application served by that same service, which you open in a browser on your laptop or add to your phone's home screen as an installable web app (a Progressive Web App: full-screen, an icon, offline shell, and push notifications on Android and, for installed web apps, on iOS 16.4 and later). Telegram remains the primary alert channel because it already works everywhere and needs no store account.
+
+**Why not a native app.** A desktop application (Electron or Tauri) or a native mobile app would not give you the 24/7 property: a laptop sleeps, a phone kills background work. It would add a second codebase, store accounts, signing and update mechanics, for a single user. Everything you want from "an app" (an icon, notifications, fast opening, works on the phone) the installable web app provides, and the always-on part comes from the server.
+
+**Where the service runs.** Recommended: a small Linux virtual server (2 vCPU, 4 GB RAM, 40 to 80 GB disk; 5 to 10 USD a month at Hetzner, Netcup or similar, Germany or EU region) running the backend in Docker Compose from phase P1 onward, so the news and market monitoring is continuous from the moment it exists. Alternatives: a Mac mini or a small always-on box at home (no monthly cost, but you own power, internet and updates; a Raspberry Pi 5 is enough for polling and agents but slow for large sweeps), or the laptop only, which is fine for P0 and for backtests but not for monitoring. Heavy research runs (sweeps, minute-data replay) can stay on the Mac and write into the same registry; the server does the light, continuous work.
+
+**How you reach it.** The server is not exposed to the public internet. It joins a private network with your laptop and phone through Tailscale (free for personal use), which gives you HTTPS names and device-level login; the app itself adds a single-user passkey or password as a second layer. Secrets (Anthropic key, Telegram token, data keys) live in an environment file on the server; broker export files are uploaded over that private connection and stored on an encrypted disk, or, if you prefer, imported on the Mac only with the derived holdings synced to the server.
+
+**What "24/7 monitoring" concretely does.** Around the clock: news poll every 15 minutes for holdings and watchlist (US news arrives overnight in Berlin), Telegram alerts on the rules you set (a holding moves more than 5% after hours, a headline tagged to a holding with high relevance, a proposal drafted). Market hours: market pulse every 15 minutes, Frankfurt 09:00 to 17:30 and New York 15:30 to 22:00 Berlin time, with delayed free data. Nightly: data quality, price and FX update, screens, idea scenario tests, template readings. Weekly: tactical agent (Sunday evening for Monday), the learning loop, the market note (Friday after the US close). Monthly: core agent, import reminder. None of it places an order.
+
+**Cost effect.** Hosting moves from P4 to P1 in section 10 (5 to 10 USD a month from roughly month three). Nothing else changes; Tailscale is free for one user, and TLS is included.
 
 ## 4. Data model
 
@@ -420,6 +459,9 @@ news_items(id, ts, source, headline, url, instruments_json, sectors_json, releva
 market_pulse(date, indices_json, sectors_json, breadth, vix, us10y, credit_spread, eurusd, note_md, note_sources_json)
 preferences(version, ts, profile_json, changed_by, evidence_json)
 preference_suggestions(id, ts, suggestion_json, evidence_json, status)
+lessons(id, ts, group_kind, statement, evidence_json, confidence, status, revisit_at, warnings_json)      -- status: new, confirmed, dismissed, snoozed, expired
+lesson_applications(id, lesson_id, target_kind, target_id, change_json, applied_at, reverted_at)           -- target_kind: ideas_ranking, preference_suggestion, agent_policy, scenario_draft
+scenario_readings(scenario_id, week, vs_base_pts, worst_fall, attribution_json, one_liner)
 ```
 
 Scenarios reuse `runs` with `mode=scenario`; scenario agents reuse `runs` with `mode=paper` and a virtual account; proposals in shadow reuse `mode=scenario`. The explanation registry (4.3) gains entries for attribution, contribution, benchmark, drawdown, hindsight bias, proposal, scenario, sleeve and trend filter, and new warnings: `hindsight_named_stock` (a scenario names specific instruments chosen after their results were known), `limit_breach` (a scenario or proposal exceeds a preference limit), `short_window` (a comparison covers fewer than two market cycles), `single_position_explains` (one holding accounts for most of the difference).
@@ -438,6 +480,7 @@ Scenarios reuse `runs` with `mode=scenario`; scenario agents reuse `runs` with `
 10. **Scenario.** The builder posts edits and a rule; the preference checks run first and any breach is shown before the run; the API creates a `mode=scenario` run on the real portfolio's history; compare aligns the scenario, the real portfolio and the benchmark, computes metrics, evaluates the new warnings, and generates the "why S1 beat S2" narrative from the attribution difference.
 11. **Agent cycle.** On its cadence the agent evaluates its policy on the latest data; in virtual mode it places orders in the simulated exchange for its scenario account; in proposal mode it builds a proposal with the risk check, cost and tax estimates, stores it, starts its shadow scenario, and alerts Home and Telegram; your decision is recorded; the next import matches executions.
 12. **Sweep for ideas.** Nightly, the screens run over the universe; new passes become tier 1 ideas with a scenario test queued; the assistant's batch job reads the week's news and filings for holdings, watchlist and sector movers and writes tier 2 cards; both wait on the Ideas page; ratings are stored and the preference job looks for patterns to suggest.
+13. **Scenario learning.** Weekly, the deterministic job aligns every scenario with the base case, computes differences and their attribution, groups scenarios by kind of change, tests consistency and writes scoreboard readings and candidate lessons; the assistant writes the lessons and the summary within budget; lessons wait on the overview page; confirming one applies its linked change (and, for a real-portfolio agent rule, queues validation first); the change is logged for reversal.
 
 ## 6. Realism configuration
 
@@ -447,7 +490,7 @@ The defaults in section 3.2 are the `realism: default` profile. Two more profile
 
 - **Determinism.** Same inputs and seed produce identical fills and metrics; stable event ordering; all random draws from a seeded generator recorded in the run.
 - **Performance targets** (on a recent laptop): daily backtest of 500 symbols over 20 years under 60 seconds; minute backtest of 100 symbols over one year under 10 minutes; sweep of 300 daily trials overnight; dashboard pages under one second on cached data. Vectorised pre-computation of indicators keeps the event loop light.
-- **Reliability.** Paper sessions resume from the account event log after a crash; recorders reconnect with backoff; the scheduler is idempotent.
+- **Reliability.** Paper sessions resume from the account event log after a crash; recorders and pollers reconnect with backoff; the scheduler is idempotent; the service restarts automatically (Docker restart policy) and a missed heartbeat raises a Telegram alert, so a silent server is noticed within an hour.
 - **Safety.** No live credentials accepted by the configuration schema; broker adapters allow only paper endpoints; the word "live" does not appear in the UI except for live news; a red "NO REAL ORDERS" badge on every page; the proposal approve action is worded as your decision, never as an order.
 - **Observability.** Structured JSON logs per run, a heartbeat per paper account, alert on silence.
 - **Privacy.** Everything local, including your broker exports; the only outbound calls are to data and news vendors (tickers and dates), Telegram (alert text you configure) and the Anthropic API (the question and the numbers needed to answer it, never the export files).
@@ -463,10 +506,11 @@ The defaults in section 3.2 are the `realism: default` profile. Two more profile
 | Search and validation | Optuna 5, purgedcv, skfolio, vectorbt for vectorised sweeps |
 | Reports | quantstats, pyfolio-reloaded |
 | Backend | FastAPI, uvicorn, SQLAlchemy over SQLite, APScheduler, websockets |
-| Frontend | Vite, React, TypeScript, TanStack Query, Tailwind CSS, Plotly.js, lightweight-charts |
+| Frontend | Vite, React, TypeScript, TanStack Query, Tailwind CSS, Plotly.js, lightweight-charts; vite-plugin-pwa for the installable web app and Web Push |
+| Access | Tailscale private network, Caddy or the Tailscale HTTPS endpoint, single-user passkey login |
 | Assistant | Anthropic Python SDK |
 | Alerts | python-telegram-bot |
-| Packaging and ops | uv for Python environments, Docker Compose for the VPS, GitHub Actions for tests and nightly data QA |
+| Packaging and ops | uv for Python environments, Docker Compose on the server from P1, GitHub Actions for tests and nightly data QA |
 
 ## 9. Development plan with the phased UI
 
@@ -475,35 +519,35 @@ Estimates in hours of focused work; at 7 hours a week, divide by 7 for weeks. Th
 | Phase | What you get | Core and data | Backend and UI | Hours | Cumulative weeks |
 |---|---|---|---|---|---|
 | P0. Import and value | Your portfolio in EUR, correct holdings, a value chart | Instrument master, Trade Republic CSV and PDF parsers, FIFO lots, reconciliation, daily prices and ECB FX for your names, MSCI World and S&P 500 series | Import endpoint and diff; CLI first, then a minimal import page | 25 to 35 | 4 to 5 |
-| P1. Performance, why, news, Home | The everyday app: Home, Portfolio, Why did it perform, help system | Time- and money-weighted returns, Brinson attribution with currency, template narratives, news poller and filtering, market pulse | Home, Portfolio, Why pages; explanation registry, tooltips, page explainers, first tour | 55 to 70 | 12 to 15 |
-| P2. Scenarios | Build and compare what-ifs against your portfolio | The 0.1 phase 0 and 1 engine: daily simulated exchange, one account, run registry, strategy API, preference checks, scenario transformer, compare and narrative, new warnings, seed rules (buy and hold, rebalance, 10-month trend filter, momentum) | Scenario builder and compare; Advanced: Runs and Run detail | 55 to 70 | 20 to 25 |
-| P3. Market and ideas | Sector view, gauges, weekly note, screener, two-tier ideas, feedback | Point-in-time universe, fundamentals ingestion, screens, idea scenario tests, sweeps and deflated statistics (0.1 phase 1), nightly jobs | Market and Ideas pages; Advanced: Compare, Sweep, Validation, Data | 50 to 65 | 27 to 34 |
-| P4. Agents and proposals | Agents on scenarios with fake money; weekly and monthly proposals with tax estimate; Telegram; VPS | Paper clock, virtual accounts (0.1 phase 4 without the Alpaca mirror), agent scheduler, proposal builder, shadow scenarios, execution matching, Docker Compose | Agents page, proposal review, alerts | 45 to 60 | 34 to 43 |
-| P5. Assistant and preferences | Cited chat, weekly note polished, tier 2 ideas, learned suggestions, budget cap | Assistant service with read tools, batch jobs, preference learning job | Assistant page, preference profile, suggestions | 35 to 45 | 39 to 49 |
-| P6. Advanced lab completion (optional) | Intraday replay, options, Alpaca fill calibration | 0.1 phases 2, 3 and the mirror part of 4 | Replay, Paper, options views | 90 to 120 | 52 to 66 |
+| P1. Performance, why, news, Home | The everyday app: Home, Portfolio, Why did it perform, help system; the service running 24/7 on the server with Telegram alerts | Time- and money-weighted returns, Brinson attribution with currency, template narratives, news poller and filtering, market pulse; Docker Compose, Tailscale, heartbeat | Home, Portfolio, Why pages as an installable web app; explanation registry, tooltips, page explainers, first tour | 60 to 75 | 13 to 16 |
+| P2. Scenarios | Build and compare what-ifs against your portfolio; the overview with small charts and the scoreboard (template readings) | The 0.1 phase 0 and 1 engine: daily simulated exchange, one account, run registry, strategy API, preference checks, scenario transformer, compare and narrative, new warnings, seed rules (buy and hold, rebalance, 10-month trend filter, momentum) | Scenario overview, builder and compare; Advanced: Runs and Run detail | 60 to 75 | 21 to 26 |
+| P3. Market and ideas | Sector view, gauges, weekly note, screener, two-tier ideas, feedback | Point-in-time universe, fundamentals ingestion, screens, idea scenario tests, sweeps and deflated statistics (0.1 phase 1), nightly jobs | Market and Ideas pages; Advanced: Compare, Sweep, Validation, Data | 50 to 65 | 29 to 36 |
+| P4. Agents and proposals | Agents on scenarios with fake money; weekly and monthly proposals with tax estimate; Telegram; VPS | Paper clock, virtual accounts (0.1 phase 4 without the Alpaca mirror), agent scheduler, proposal builder, shadow scenarios, execution matching | Agents page, proposal review, alerts | 40 to 55 | 35 to 44 |
+| P5. Assistant and preferences | Cited chat, weekly note polished, tier 2 ideas, learned suggestions, scenario lessons, budget cap | Assistant service with read tools, batch jobs, preference learning job, scenario learning loop (3.16) | Assistant page, preference profile, suggestions, lessons panel on the scenario overview | 45 to 55 | 42 to 52 |
+| P6. Advanced lab completion (optional) | Intraday replay, options, Alpaca fill calibration | 0.1 phases 2, 3 and the mirror part of 4 | Replay, Paper, options views | 90 to 120 | 55 to 69 |
 
-Total for P0 to P5: roughly 265 to 345 hours, or 9 to 12 months at 7 hours a week; about 30 hours more than the 0.1 plan because import, attribution, news, screener and proposals are new work while the intraday and options engine moved to an optional P6 (another 90 to 120 hours). The React app is about 110 to 140 of the P0 to P5 hours. P0 alone (a month) already gives you something Trade Republic does not: a benchmark-relative view of your own portfolio in EUR with correct cost basis.
+Total for P0 to P5: roughly 280 to 365 hours, or 10 to 13 months at 7 hours a week; about 45 hours more than the 0.1 plan because import, attribution, news, screener and proposals are new work while the intraday and options engine moved to an optional P6 (another 90 to 120 hours). The React app is about 115 to 145 of the P0 to P5 hours. P0 alone (a month) already gives you something Trade Republic does not: a benchmark-relative view of your own portfolio in EUR with correct cost basis.
 
 ## 10. Cost model
 
 **Running costs by phase** (monthly, USD; EUR roughly the same at recent rates)
 
-| Item | P0 to P3 (portfolio, scenarios, market, ideas) | P4 (agents on a VPS) | P5 (assistant) | P6 (options, intraday) |
+| Item | P0 to P3 (portfolio, scenarios, market, ideas) | P4 (agents and proposals) | P5 (assistant) | P6 (options, intraday) |
 |---|---|---|---|---|
 | Market data, US | 0 (Alpaca free bars, Stooq or Tiingo, Alpha Vantage, EDGAR) | 0 | 0 | 40 (ThetaData Value) or 80 (Standard) for intraday options |
 | Market data, European names you hold | 0 (Stooq or Tiingo daily; quality flagged) | 0 | 0 | 0 |
 | News | 0 (Alpaca news free tier, Finnhub free tier, RSS) | 0 | 0 | 0 |
 | FX and benchmarks | 0 (ECB rates, ETF series) | 0 | 0 | 0 |
-| Hosting | 0 (your Mac) | 5 to 10 (small VPS so agents run unattended) | same | same |
+| Hosting | 0 in P0 (your Mac); 5 to 10 from P1 (small server so monitoring runs 24/7, section 3.17) | 5 to 10 | same | same |
 | Telegram | 0 | 0 | 0 | 0 |
 | LLM assistant | 0 (not built yet; template narratives only) | 0 | 50 to 100 (your budget; hard cap in software; weekly note, tier 2 ideas, chat) | same |
-| **Total per month** | **0** | **5 to 10** | **55 to 110** | **95 to 190** |
+| **Total per month** | **0, then 5 to 10** | **5 to 10** | **55 to 110** | **95 to 190** |
 
 **Optional upgrades**: a fundamentals and point-in-time membership source with European coverage (Sharadar for US, or EOD Historical Data at about 20 to 80 USD a month, prices to confirm) when the screener becomes the focus; Alpaca Algo Trader Plus, 99 a month, only if you later want real-time quotes for the advanced paper tools; a 2 TB external SSD, about 100 to 150 EUR once, if minute data and recordings outgrow the laptop.
 
-**First-year total**: about 350 to 800 USD if the VPS starts around month 8 and the assistant around month 10, before optional upgrades; lower than the 0.1 estimate because the options data subscription moved to the optional P6. The assistant is the only recurring cost that matters, and its cap is yours to set.
+**First-year total**: about 400 to 900 USD if the server starts around month 3 and the assistant around month 10, before optional upgrades; lower than the 0.1 estimate because the options data subscription moved to the optional P6. The assistant is the only recurring cost that matters, and its cap is yours to set.
 
-**Your time**: 265 to 345 hours for P0 to P5 (section 9). This is the dominant cost and the reason the UI is phased.
+**Your time**: 280 to 365 hours for P0 to P5 (section 9). This is the dominant cost and the reason the UI is phased.
 
 ## 11. Testing strategy
 
@@ -529,6 +573,8 @@ Total for P0 to P5: roughly 265 to 345 hours, or 9 to 12 months at 7 hours a wee
 | Hindsight in scenarios produces false confidence | `hindsight_named_stock` warning on every scenario naming instruments; scenario agents run forward; validation gate before any policy reaches the real portfolio |
 | Proposals nudge you into over-trading | Cadence limits (weekly tactical, monthly core), the tax estimate on every proposal, the "what if you had followed" record kept honest in both directions |
 | Preference learning drifts silently | Two-step learning: suggestions with evidence, applied only on confirmation, logged and reversible |
+| Lessons from a handful of scenarios read as truths | Confidence never above medium from scenario data; consistency tests across sub-windows and scenarios; `few_scenarios`, `short_forward_window` and `one_direction_market` warnings; real-portfolio agent changes still pass validation |
+| An always-on server holds your portfolio data | No public exposure (Tailscale only), passkey login, encrypted disk, secrets in an environment file, option to import on the Mac and sync only derived holdings |
 | European names poorly covered by free US-centric feeds | Data-quality flags per instrument; RSS fallback for news; optional paid source listed in section 10 |
 
 ## 13. Open items

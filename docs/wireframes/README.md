@@ -1,6 +1,6 @@
 # Dashboard wireframes
 
-Low-fidelity, clickable wireframes of the playground's web dashboard, designed around the decision record in [../playground-spec.md](../playground-spec.md) (version 0.2, portfolio-first).
+Low-fidelity, clickable wireframes of the playground's web dashboard, designed around the decision record in [../playground-spec.md](../playground-spec.md) (version 0.3, portfolio-first).
 
 **View them**: the artboards render on the Claude Design canvas at https://claude.ai/artifact/NkeAGz5uqV72dV7dUChFQF (private to the owner until shared). Use Play on any board to click through the navigation.
 
@@ -15,6 +15,7 @@ Every screen carries the same top navigation and a red badge, **NO REAL ORDERS Â
 | 1 | `Main.dc.html` | Home | Portfolio value and today's change against MSCI World EUR and the S&P 500, a 12-month sparkline, the market pulse, a proposal awaiting your approval, live news filtered to holdings and watchlist with a one-line "why it matters", what to do next, alerts |
 | 1 | `Portfolio.dc.html` | Portfolio | Value against both benchmarks over selectable periods, helpers and detractors, holdings with ISIN and sleeve tags (core, tactical), risk against your own limits, recommendations tagged screen-backed or opinion |
 | 1 | `Why.dc.html` | Why did it perform | A plain-language attribution paragraph, the waterfall (selection, allocation, currency, fees, other), by-holding and by-sector tables, the news events behind the numbers, a short-window warning |
+| 2 | `ScenarioOverview.dc.html` | Scenarios: overview | The landing page of Scenarios: the real portfolio as the base case and every scenario as a small chart against it, indexed to 100; a scoreboard with one-line readings; the "what the assistant has learned" panel with lessons, evidence, confidence and status (taken into account, suggestion waiting, watching); how the comparison stays fair |
 | 2 | `ScenarioBuilder.dc.html` | Scenarios: build | Start from the real portfolio, list of changes (add, replace, remove, reweight), rule, period and costs; checks against the preference profile and a hindsight warning before running; weights before and after |
 | 2 | `ScenarioCompare.dc.html` | Scenarios: compare | Overlay of three scenarios, the real portfolio and the benchmark; side-by-side metrics in plain words; the "why S1 won, and what it cost" narrative with sources; hindsight and limit warnings; run forward with an agent, turn into a proposal |
 | 2 | `Market.dc.html` | Market | Index tiles, risk gauges with a plain-language state, sector heatmap with your weights, watchlist, the weekly note labelled as opinion with sources, sectors to look into tied to your holdings |

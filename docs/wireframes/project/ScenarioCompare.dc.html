@@ -41,7 +41,7 @@ td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
     <span style="width: 12px"></span>
     <a href="Main.dc.html">Home</a>
     <a href="Portfolio.dc.html">Portfolio</a>
-    <a class="on" href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a class="on" href="ScenarioOverview.dc.html">Scenarios</a>
     <a href="Market.dc.html">Market</a>
     <a href="Ideas.dc.html">Ideas</a>
     <a href="Agents.dc.html">Agents</a>
@@ -52,7 +52,7 @@ td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
   </nav>
 
   <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
-    <a href="ScenarioBuilder.dc.html" style="font-size: 13px; text-decoration: none">Scenarios</a><span class="muted">/</span>
+    <a href="ScenarioOverview.dc.html" style="font-size: 13px; text-decoration: none">Scenarios</a><span class="muted">/</span>
     <span class="callout">3</span>
     <h1 class="h1">How would my portfolio have evolved?</h1>
     <span class="muted" style="font-size: 13px">3 scenarios against your real portfolio, 2021-09 to 2026-09, costs included</span>
@@ -65,9 +65,9 @@ td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
       <div style="display: flex; align-items: center; gap: 14px; font-size: 12px">
         <h2 class="h2" style="margin-right: 6px">Value of 50,000 EUR over five years</h2>
         <span><span class="key" style="background: #1C1C1A"></span>Real portfolio</span>
-        <span><span class="key" style="background: #1D5BD6"></span>S1 Add ASML and TSMC</span>
-        <span><span class="key" style="background: #C0392B"></span>S2 Swap SAP for Microsoft</span>
-        <span><span class="key" style="background: #6B6B66"></span>S3 Core only, trend filter</span>
+        <span><span class="key" style="background: #2a78d6"></span>S1 Add ASML and TSMC</span>
+        <span><span class="key" style="background: #eb6834"></span>S2 Swap SAP for Microsoft</span>
+        <span><span class="key" style="background: #1baf7a"></span>S3 Core only, trend filter</span>
         <span><span class="key" style="background: #B8B6AE; height: 1px; border-top: 1px dashed #6B6B66"></span>MSCI World EUR</span>
       </div>
       <svg viewBox="0 0 760 250" width="100%" height="250" role="img" aria-label="Overlay of scenario value curves, placeholder">
@@ -78,12 +78,12 @@ td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
         <rect x="120" y="20" width="160" height="195" fill="#F3F1EA"></rect><text x="130" y="34" font-size="10" fill="#6B6B66">2022 drawdown</text>
         <polyline fill="none" stroke="#B8B6AE" stroke-width="1.5" stroke-dasharray="4 3" points="40,215 120,200 200,225 280,218 360,196 440,178 520,160 600,150 680,132 750,124"></polyline>
         <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,215 120,196 200,232 280,224 360,190 440,166 520,140 600,138 680,110 750,98"></polyline>
-        <polyline fill="none" stroke="#1D5BD6" stroke-width="2" points="40,215 120,192 200,238 280,228 360,180 440,150 520,112 600,116 680,80 750,62"></polyline>
-        <polyline fill="none" stroke="#C0392B" stroke-width="2" points="40,215 120,197 200,230 280,220 360,186 440,160 520,134 600,130 680,104 750,92"></polyline>
-        <polyline fill="none" stroke="#6B6B66" stroke-width="2" points="40,215 120,204 200,210 280,208 360,194 440,180 520,164 600,156 680,142 750,134"></polyline>
-        <circle cx="750" cy="62" r="3" fill="#1D5BD6"></circle><text x="700" y="58" font-size="10" fill="#1D5BD6">91.4k</text>
-        <circle cx="750" cy="98" r="3" fill="#1C1C1A"></circle><text x="700" y="94" font-size="10" fill="#1C1C1A">84.3k</text>
-        <circle cx="750" cy="134" r="3" fill="#6B6B66"></circle><text x="700" y="146" font-size="10" fill="#6B6B66">74.9k</text>
+        <polyline fill="none" stroke="#2a78d6" stroke-width="2" points="40,215 120,192 200,238 280,228 360,180 440,150 520,112 600,116 680,80 750,62"></polyline>
+        <polyline fill="none" stroke="#eb6834" stroke-width="2" points="40,215 120,197 200,230 280,220 360,186 440,160 520,134 600,130 680,104 750,92"></polyline>
+        <polyline fill="none" stroke="#1baf7a" stroke-width="2" points="40,215 120,204 200,210 280,208 360,194 440,180 520,164 600,156 680,142 750,134"></polyline>
+        <circle cx="750" cy="62" r="3" fill="#2a78d6"></circle><text x="700" y="58" font-size="10" fill="#3F3F3B">S1 91.4k</text>
+        <circle cx="750" cy="98" r="3" fill="#1C1C1A"></circle><text x="700" y="94" font-size="10" fill="#3F3F3B">real 84.3k</text>
+        <circle cx="750" cy="134" r="3" fill="#1baf7a"></circle><text x="700" y="146" font-size="10" fill="#3F3F3B">S3 74.9k</text>
       </svg>
       <span class="muted" style="font-size: 12px">Shaded band: the 2022 drawdown. Hover any point for the value of every line on that day. Dashed line: the benchmark you chose in Settings.</span>
     </div>
@@ -91,7 +91,7 @@ td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
     <div class="card" style="display: flex; flex-direction: column; gap: 8px">
       <h2 class="h2">Side by side</h2>
       <table>
-        <thead><tr><th></th><th>Real</th><th style="color: #1D5BD6">S1</th><th style="color: #C0392B">S2</th><th>S3</th><th>World</th></tr></thead>
+        <thead><tr><th></th><th>Real</th><th><span class="key" style="background: #2a78d6"></span>S1</th><th><span class="key" style="background: #eb6834"></span>S2</th><th><span class="key" style="background: #1baf7a"></span>S3</th><th>World</th></tr></thead>
         <tbody>
           <tr><td>End value (EUR)</td><td class="mono">84.3k</td><td class="mono">91.4k</td><td class="mono">85.6k</td><td class="mono">74.9k</td><td class="mono">77.2k</td></tr>
           <tr><td>Return per year <span class="info">i</span></td><td class="mono">11.0%</td><td class="mono">12.8%</td><td class="mono">11.3%</td><td class="mono">8.4%</td><td class="mono">9.1%</td></tr>

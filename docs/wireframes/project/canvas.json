@@ -1,45 +1,246 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-09-26T08:05:00Z"},
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-26T08:05:00Z"
+  },
   "title": "Trading Playground Wireframes",
-  "launch": {"view": "canvas"},
+  "launch": {
+    "view": "canvas"
+  },
   "pages": [],
   "boards": {
-    "Main.dc.html":            {"x": 0,    "y": 0,    "w": 1280, "h": 880,  "title": "1.1 Home", "is_interactive": true},
-    "Portfolio.dc.html":       {"x": 1360, "y": 0,    "w": 1280, "h": 1000, "title": "1.2 Portfolio", "is_interactive": true},
-    "Why.dc.html":             {"x": 2720, "y": 0,    "w": 1280, "h": 880,  "title": "1.3 Why did it perform", "is_interactive": true},
-    "ScenarioBuilder.dc.html": {"x": 0,    "y": 1300, "w": 1280, "h": 880,  "title": "2.1 Scenarios: build", "is_interactive": true},
-    "ScenarioCompare.dc.html": {"x": 1360, "y": 1300, "w": 1280, "h": 880,  "title": "2.2 Scenarios: compare and explain", "is_interactive": true},
-    "Market.dc.html":          {"x": 2720, "y": 1300, "w": 1280, "h": 880,  "title": "2.3 Market", "is_interactive": true},
-    "Ideas.dc.html":           {"x": 4080, "y": 1300, "w": 1280, "h": 880,  "title": "2.4 Ideas (market sweep)", "is_interactive": true},
-    "Agents.dc.html":          {"x": 0,    "y": 2500, "w": 1280, "h": 880,  "title": "3.1 Agents and proposals", "is_interactive": true},
-    "Assistant.dc.html":       {"x": 1360, "y": 2500, "w": 1280, "h": 880,  "title": "3.2 Assistant and preferences", "is_interactive": true},
-    "Tour.dc.html":            {"x": 2720, "y": 2500, "w": 1280, "h": 880,  "title": "3.3 Help system", "is_interactive": true},
-    "Runs.dc.html":            {"x": 0,    "y": 3700, "w": 1280, "h": 920,  "title": "A.1 Advanced: runs", "is_interactive": true},
-    "RunDetail.dc.html":       {"x": 1360, "y": 3700, "w": 1280, "h": 1080, "title": "A.2 Advanced: run detail", "is_interactive": true},
-    "Compare.dc.html":         {"x": 2720, "y": 3700, "w": 1280, "h": 920,  "title": "A.3 Advanced: compare runs", "is_interactive": true},
-    "Sweep.dc.html":           {"x": 4080, "y": 3700, "w": 1280, "h": 920,  "title": "A.4 Advanced: sweep", "is_interactive": true},
-    "Validation.dc.html":      {"x": 0,    "y": 5000, "w": 1280, "h": 920,  "title": "A.5 Advanced: validation", "is_interactive": true},
-    "Data.dc.html":            {"x": 1360, "y": 5000, "w": 1280, "h": 920,  "title": "A.6 Advanced: data", "is_interactive": true},
-    "Replay.dc.html":          {"x": 2720, "y": 5000, "w": 1280, "h": 920,  "title": "A.7 Advanced: replay", "is_interactive": true},
-    "Paper.dc.html":           {"x": 4080, "y": 5000, "w": 1280, "h": 920,  "title": "A.8 Advanced: paper accounts", "is_interactive": true}
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 880,
+      "title": "1.1 Home",
+      "is_interactive": true
+    },
+    "Portfolio.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 1000,
+      "title": "1.2 Portfolio",
+      "is_interactive": true
+    },
+    "Why.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1280,
+      "h": 880,
+      "title": "1.3 Why did it perform",
+      "is_interactive": true
+    },
+    "ScenarioBuilder.dc.html": {
+      "x": 1360,
+      "y": 1300,
+      "w": 1280,
+      "h": 880,
+      "title": "2.2 Scenarios: build",
+      "is_interactive": true
+    },
+    "ScenarioCompare.dc.html": {
+      "x": 2720,
+      "y": 1300,
+      "w": 1280,
+      "h": 880,
+      "title": "2.3 Scenarios: compare and explain",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 4080,
+      "y": 1300,
+      "w": 1280,
+      "h": 880,
+      "title": "2.4 Market",
+      "is_interactive": true
+    },
+    "Ideas.dc.html": {
+      "x": 5440,
+      "y": 1300,
+      "w": 1280,
+      "h": 880,
+      "title": "2.5 Ideas (market sweep)",
+      "is_interactive": true
+    },
+    "Agents.dc.html": {
+      "x": 0,
+      "y": 2500,
+      "w": 1280,
+      "h": 880,
+      "title": "3.1 Agents and proposals",
+      "is_interactive": true
+    },
+    "Assistant.dc.html": {
+      "x": 1360,
+      "y": 2500,
+      "w": 1280,
+      "h": 880,
+      "title": "3.2 Assistant and preferences",
+      "is_interactive": true
+    },
+    "Tour.dc.html": {
+      "x": 2720,
+      "y": 2500,
+      "w": 1280,
+      "h": 880,
+      "title": "3.3 Help system",
+      "is_interactive": true
+    },
+    "Runs.dc.html": {
+      "x": 0,
+      "y": 3700,
+      "w": 1280,
+      "h": 920,
+      "title": "A.1 Advanced: runs",
+      "is_interactive": true
+    },
+    "RunDetail.dc.html": {
+      "x": 1360,
+      "y": 3700,
+      "w": 1280,
+      "h": 1080,
+      "title": "A.2 Advanced: run detail",
+      "is_interactive": true
+    },
+    "Compare.dc.html": {
+      "x": 2720,
+      "y": 3700,
+      "w": 1280,
+      "h": 920,
+      "title": "A.3 Advanced: compare runs",
+      "is_interactive": true
+    },
+    "Sweep.dc.html": {
+      "x": 4080,
+      "y": 3700,
+      "w": 1280,
+      "h": 920,
+      "title": "A.4 Advanced: sweep",
+      "is_interactive": true
+    },
+    "Validation.dc.html": {
+      "x": 0,
+      "y": 5000,
+      "w": 1280,
+      "h": 920,
+      "title": "A.5 Advanced: validation",
+      "is_interactive": true
+    },
+    "Data.dc.html": {
+      "x": 1360,
+      "y": 5000,
+      "w": 1280,
+      "h": 920,
+      "title": "A.6 Advanced: data",
+      "is_interactive": true
+    },
+    "Replay.dc.html": {
+      "x": 2720,
+      "y": 5000,
+      "w": 1280,
+      "h": 920,
+      "title": "A.7 Advanced: replay",
+      "is_interactive": true
+    },
+    "Paper.dc.html": {
+      "x": 4080,
+      "y": 5000,
+      "w": 1280,
+      "h": 920,
+      "title": "A.8 Advanced: paper accounts",
+      "is_interactive": true
+    },
+    "ScenarioOverview.dc.html": {
+      "x": 0,
+      "y": 1300,
+      "w": 1280,
+      "h": 880,
+      "title": "2.1 Scenarios: overview and lessons",
+      "is_interactive": true
+    }
   },
   "order": [
-    "Main.dc.html", "Portfolio.dc.html", "Why.dc.html",
-    "ScenarioBuilder.dc.html", "ScenarioCompare.dc.html", "Market.dc.html", "Ideas.dc.html",
-    "Agents.dc.html", "Assistant.dc.html", "Tour.dc.html",
-    "Runs.dc.html", "RunDetail.dc.html", "Compare.dc.html", "Sweep.dc.html",
-    "Validation.dc.html", "Data.dc.html", "Replay.dc.html", "Paper.dc.html"
+    "Main.dc.html",
+    "Portfolio.dc.html",
+    "Why.dc.html",
+    "ScenarioOverview.dc.html",
+    "ScenarioBuilder.dc.html",
+    "ScenarioCompare.dc.html",
+    "Market.dc.html",
+    "Ideas.dc.html",
+    "Agents.dc.html",
+    "Assistant.dc.html",
+    "Tour.dc.html",
+    "Runs.dc.html",
+    "RunDetail.dc.html",
+    "Compare.dc.html",
+    "Sweep.dc.html",
+    "Validation.dc.html",
+    "Data.dc.html",
+    "Replay.dc.html",
+    "Paper.dc.html"
   ],
   "notes": {
-    "row1": {"x": 0, "y": -300, "text": "1 · Your portfolio: value, history, what helped and hurt, and why", "kind": "title1", "maxW": 4000},
-    "row2": {"x": 0, "y": 1000, "text": "2 · Scenarios and the market: what if I add this, and where to look", "kind": "title1", "maxW": 5360},
-    "row3": {"x": 0, "y": 2200, "text": "3 · Agents that run scenarios and draft proposals, the assistant, help", "kind": "title1", "maxW": 4000},
-    "row4": {"x": 0, "y": 3400, "text": "A · Advanced lab (behind the Advanced menu): the research tools that check an idea is not luck", "kind": "title1", "maxW": 5360},
-    "s1": {"x": 4080, "y": 0, "w": 380, "text": "Row 1 notes. The badge now reads NO REAL ORDERS: the real portfolio is imported read-only from Trade Republic exports. (1) Home opens on your portfolio value and today's change against the benchmark, not on a list of runs. (2) Live news is filtered to holdings and watchlist, each headline with a one-line 'why it matters'. (3) Proposals from agents wait for your approval here. (4) Portfolio page: performance against MSCI World in EUR and the S&P 500, helpers and detractors, holdings, risk against your own limits. (5) 'Why did it perform' decomposes the result into market, allocation, selection, currency and fees, then explains it in words with sources.", "fill": "blue"},
-    "s2": {"x": 5440, "y": 1300, "w": 380, "text": "Row 2 notes. (1) A scenario starts from your real portfolio and applies edits (add, replace, remove, reweight) and a policy (buy and hold, rebalance, trend filter, agent). (2) Constraint checks against your preference profile run before the simulation. (3) Compare shows the curves, the metrics and, most important, why one scenario beat another, with hindsight and concentration warnings. (4) Market: indices, sectors, risk gauges and a written weekly trend note with sources. (5) Ideas: two tiers, screen-backed (with a scenario test attached) and opinion (labelled). Every idea can become a scenario in one click and you rate it, which feeds your preference profile.", "fill": "blue"},
-    "s3": {"x": 4080, "y": 2500, "w": 380, "text": "Row 3 notes. (1) Agents: one for the core (monthly), one for the tactical sleeve (weekly), plus scenario agents running your what-ifs forward with fake money. (2) A proposal lists trades with reasons, evidence and the risk check; you approve, edit or reject; the app never executes. (3) 'What if you had followed' tracks proposals you rejected. (4) The assistant answers about your own portfolio with citations and keeps the preference profile that screens and scenarios read. (5) Help: tour starting from your portfolio, page explainers, glossary, expert mode.", "fill": "blue"},
-    "s4": {"x": 5440, "y": 3700, "w": 380, "text": "Advanced lab notes. These are the original research screens, unchanged in purpose: runs, sweeps with trial budgets, validation gates with deflated statistics, data health, replay and paper accounts. They sit behind the Advanced menu so everyday use is portfolio, scenarios, market, ideas and agents. Scenarios and ideas call these tools underneath: a scenario is a run, an idea's test is a run, an agent's policy went through validation.", "fill": "blue"}
+    "row1": {
+      "x": 0,
+      "y": -300,
+      "text": "1 · Your portfolio: value, history, what helped and hurt, and why",
+      "kind": "title1",
+      "maxW": 4000
+    },
+    "row2": {
+      "x": 0,
+      "y": 1000,
+      "text": "2 · Scenarios and the market: what if I add this, and where to look",
+      "kind": "title1",
+      "maxW": 6720
+    },
+    "row3": {
+      "x": 0,
+      "y": 2200,
+      "text": "3 · Agents that run scenarios and draft proposals, the assistant, help",
+      "kind": "title1",
+      "maxW": 4000
+    },
+    "row4": {
+      "x": 0,
+      "y": 3400,
+      "text": "A · Advanced lab (behind the Advanced menu): the research tools that check an idea is not luck",
+      "kind": "title1",
+      "maxW": 5360
+    },
+    "s1": {
+      "x": 4080,
+      "y": 0,
+      "w": 380,
+      "text": "Row 1 notes. The badge now reads NO REAL ORDERS: the real portfolio is imported read-only from Trade Republic exports. (1) Home opens on your portfolio value and today's change against the benchmark, not on a list of runs. (2) Live news is filtered to holdings and watchlist, each headline with a one-line 'why it matters'. (3) Proposals from agents wait for your approval here. (4) Portfolio page: performance against MSCI World in EUR and the S&P 500, helpers and detractors, holdings, risk against your own limits. (5) 'Why did it perform' decomposes the result into market, allocation, selection, currency and fees, then explains it in words with sources.",
+      "fill": "blue"
+    },
+    "s2": {
+      "x": 6800,
+      "y": 1300,
+      "w": 380,
+      "text": "Row 2 notes. (1) Scenarios opens on an overview: your real portfolio as the base case and every scenario as a small chart against it, indexed to 100, with a scoreboard. Forward scenarios are traded by agents with fake money from their start date; history-only scenarios were replayed once. (2) The assistant compares all scenarios with the base case weekly, decomposes each difference (sector, stock, currency, rule timing, costs) and writes lessons with evidence and a confidence label. A lesson is 'taken into account' only after you confirm it: it can reorder Ideas, propose a preference change or an agent rule change, and every change is logged and reversible. (3) A scenario starts from your real portfolio and applies edits (add, replace, remove, reweight) and a policy (buy and hold, rebalance, trend filter, agent). Constraint checks against your preference profile run before the simulation. (4) Compare shows the curves, the metrics and why one scenario beat another, with hindsight and concentration warnings. (5) Market: indices, sectors, risk gauges and a written weekly trend note with sources. (6) Ideas: two tiers, screen-backed (with a scenario test attached) and opinion (labelled); every idea can become a scenario in one click and you rate it, which feeds your preference profile.",
+      "fill": "blue"
+    },
+    "s3": {
+      "x": 4080,
+      "y": 2500,
+      "w": 380,
+      "text": "Row 3 notes. (1) Agents: one for the core (monthly), one for the tactical sleeve (weekly), plus scenario agents running your what-ifs forward with fake money. (2) A proposal lists trades with reasons, evidence and the risk check; you approve, edit or reject; the app never executes. (3) 'What if you had followed' tracks proposals you rejected. (4) The assistant answers about your own portfolio with citations and keeps the preference profile that screens and scenarios read. (5) Help: tour starting from your portfolio, page explainers, glossary, expert mode.",
+      "fill": "blue"
+    },
+    "s4": {
+      "x": 5440,
+      "y": 3700,
+      "w": 380,
+      "text": "Advanced lab notes. These are the original research screens, unchanged in purpose: runs, sweeps with trial budgets, validation gates with deflated statistics, data health, replay and paper accounts. They sit behind the Advanced menu so everyday use is portfolio, scenarios, market, ideas and agents. Scenarios and ideas call these tools underneath: a scenario is a run, an idea's test is a run, an agent's policy went through validation.",
+      "fill": "blue"
+    }
   },
   "designSystems": []
 }
