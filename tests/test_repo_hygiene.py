@@ -226,3 +226,52 @@ def test_src_does_not_import_scraping_or_automation_packages() -> None:
     for py_file in sorted(src_dir.rglob("*.py")):
         found = _imported_top_level_modules(py_file) & _BANNED_IN_SRC_IMPORTS
         assert not found, f"{py_file} imports banned package(s): {sorted(found)}"
+
+
+# core/clock.py is the one file allowed to read the real system clock (plan 3.3, 7.1): every
+# other module must ask an injected Clock instead, so PG_TODAY can fix "today" everywhere.
+# The lookbehind excludes a call on some other object whose name happens to end in "date" or
+# "datetime" (e.g. "mydate.today(" or "some_datetime.now("), while still matching a dotted
+# access like "datetime.datetime.now(" (the "." right before "datetime" is not a word character).
+_CLOCK_READING_PATTERNS = {
+    "datetime.now(": re.compile(r"(?<!\w)datetime\.now\s*\("),
+    "date.today(": re.compile(r"(?<!\w)date\.today\s*\("),
+}
+
+
+def test_clock_reading_patterns_detect_both_forms_and_no_others(tmp_path: Path) -> None:
+    """Unit test for the regexes above, independent of real repo content."""
+    hit_now = tmp_path / "a.py"
+    hit_now.write_text("ts = datetime.now(UTC)\n")
+    hit_today = tmp_path / "b.py"
+    hit_today.write_text("d = date.today()\n")
+    miss = tmp_path / "c.py"
+    miss.write_text("mydate.today()\nsome_datetime.now()\n")
+
+    assert _CLOCK_READING_PATTERNS["datetime.now("].search(hit_now.read_text())
+    assert _CLOCK_READING_PATTERNS["date.today("].search(hit_today.read_text())
+    assert not _CLOCK_READING_PATTERNS["datetime.now("].search(miss.read_text())
+    assert not _CLOCK_READING_PATTERNS["date.today("].search(miss.read_text())
+
+
+def test_system_clock_is_read_only_from_core_clock() -> None:
+    """Test that `datetime.now()` and `date.today()` appear only in core/clock.py (3.3, 7.1).
+
+    Everything else that needs the current time or date must take an
+    injected `Clock` instead, so tests, the e2e scenario and the
+    Playwright server can fix "today" with PG_TODAY and get reproducible
+    timestamps and a reproducible 30-day import reminder.
+    """
+    src_dir = _repo_root() / "src"
+    assert src_dir.exists(), "src/ must exist by WP1; if this fails, the path above is wrong"
+    allowed_file = src_dir / "playground" / "core" / "clock.py"
+
+    offenders = []
+    for py_file in sorted(src_dir.rglob("*.py")):
+        if py_file == allowed_file:
+            continue
+        text = py_file.read_text()
+        for label, pattern in _CLOCK_READING_PATTERNS.items():
+            if pattern.search(text):
+                offenders.append(f"{py_file}: {label}")
+    assert not offenders, f"System clock read outside core/clock.py: {offenders}"
