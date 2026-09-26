@@ -4,7 +4,8 @@ Three ways, one per moment:
 
 - `store_stage`: a stage writes only what is new, the new transactions (staged or held), every
   new source and every new review item. Accepted data is not touched until accept, so closures,
-  releases and merges are only listed in the diff.
+  releases and merges are only listed in the diff. The instruments are the one exception (see
+  `store_stage`).
 - `apply_plan`: accept, a resolution and a refresh write everything the check decided: merges,
   the fields in use, key and state of every transaction, the review items, and the lot book,
   which is replaced as a whole.
@@ -82,7 +83,13 @@ def row_values(ws: Workspace, txn: Txn, *, state: str, batch_id: int, instrument
 
 
 def store_stage(conn: Connection, ws: Workspace, plan: Plan) -> None:
-    """Write what a stage found: new transactions, new sources and new review items."""
+    """Write what a stage found: new transactions, new sources and new review items.
+
+    Nothing else changes until accept, with one small exception: the instruments. The ones the
+    files name are created, and an instrument named so far by its ISIN (a manual CSV row names
+    none) takes the name a document gives it. A discard removes the instruments only this batch
+    brought, but keeps such a name.
+    """
     instruments = _Instruments(conn)
     placeholders: dict[str, str] = {}
     for txn in ws.alive():

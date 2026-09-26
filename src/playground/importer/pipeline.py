@@ -4,7 +4,8 @@
 
 1. Each file's kind is found: a PDF by its magic bytes, a CSV by its extension. Anything else,
    and a CSV file that is not text in UTF-8 or Windows-1252, is refused before anything is
-   stored. Once the stage is stored, each file is copied to `uploads/<sha256>.<ext>`.
+   stored. Once the stage is written, each file is copied to `uploads/<sha256>.<ext>`
+   (`_store_uploads`).
 2. **File level.** A file already imported in a batch that was not discarded is recorded as
    `duplicate_file` and not parsed again. The exception is a file whose earlier import failed or
    found no parser: it is classified again, so a parser added since then takes effect. If a
@@ -21,9 +22,11 @@
    the lot book raises `oversell` and `split_unclear`, and the diff lists what accept will
    close. New transactions are stored as `staged`, or as `held` when an item holds them back.
 
-Only one batch can be staged at a time, and nothing touches accepted data until `accept_batch`.
-It marks the batch accepted, applies the closures and merges, releases what is no longer held,
-rebuilds the lot book from every accepted transaction, and sets the time of the last import.
+Only one batch can be staged at a time, and nothing touches accepted data until `accept_batch`,
+apart from the instruments: a stage stores the ones its files name, and names one known so far
+only by its ISIN (`persist.store_stage`). Accept marks the batch accepted, applies the closures
+and merges, releases what is no longer held, rebuilds the lot book from every accepted
+transaction, and sets the time of the last import.
 `discard_batch` removes the batch's transactions and sources and closes the items it raised as
 "batch discarded". `pg status` shows a reminder when the last import is more than 30 days old.
 """
@@ -329,7 +332,10 @@ def _upload_path(uploads_dir: Path, file: _File) -> str:
 def _store_uploads(uploads_dir: Path, files: Sequence[_File]) -> None:
     """Keep a copy of every file in `uploads/`, so review items can be reopened (plan 4.3).
 
-    Called once the stage is stored, so a refused or failed import leaves no copy behind.
+    Called last, once the stage is written, so a refused import or a file that cannot be read
+    leaves no copy behind. The caller commits after this and can still fail first (the CLI builds
+    the diff before it commits). The copies then stay, which does no harm: a copy is named by its
+    content, so the next import of the same file finds it and keeps it.
     """
     uploads_dir.mkdir(parents=True, exist_ok=True)
     for file in files:

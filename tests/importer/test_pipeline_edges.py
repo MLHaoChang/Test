@@ -10,7 +10,8 @@
 - An instrument first known from a manual row (which names no instrument) is named by its ISIN
   until a document names it.
 - Discarding a batch removes the instruments only it had brought.
-- The files are kept in `uploads/` once the stage is stored, so a failed import leaves no copy.
+- The files are kept in `uploads/` once the stage is written, so a file that cannot be read
+  leaves no copy.
 - No row takes a key and occurrence another row still holds: not a new row of a stage while a
   stored transaction moves in memory, and not a merge that waited for a staged batch.
 """
