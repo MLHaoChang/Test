@@ -650,6 +650,8 @@ def test_personal_data_is_never_copied_into_parsed_fields(text_fixture: Path) ->
 
 
 def test_parsers_never_raise_when_a_line_is_missing(text_fixture: Path) -> None:
+    # A WP4 layout may have no ISIN at all (tax and interest notes, and a deposit or withdrawal
+    # line of an account statement); when one is present, it must still be a valid one.
     lines = text_fixture.read_text(encoding="utf-8").splitlines(keepends=True)
     for index in range(len(lines)):
         damaged = "".join(lines[:index] + lines[index + 1 :])
@@ -657,8 +659,8 @@ def test_parsers_never_raise_when_a_line_is_missing(text_fixture: Path) -> None:
             result = parser.parse(damaged)
             assert isinstance(result, ParseResult)
             for txn in result.transactions:
-                assert txn.isin is not None
-                assert is_valid_isin(txn.isin)
+                if txn.isin is not None:
+                    assert is_valid_isin(txn.isin)
 
 
 def test_parsers_never_raise_when_a_document_is_cut_off(text_fixture: Path) -> None:

@@ -12,18 +12,32 @@ from collections.abc import Sequence
 
 from playground.importer.model import ReviewKind, ReviewNeeded
 from playground.importer.tr.layouts.common import DocumentParser
+from playground.importer.tr.layouts.corporate_action import CORPORATE_ACTION
+from playground.importer.tr.layouts.dividende import DIVIDENDE
+from playground.importer.tr.layouts.kontoauszug_2023 import KONTOAUSZUG_2023
+from playground.importer.tr.layouts.kontoauszug_2024 import KONTOAUSZUG_2024
 from playground.importer.tr.layouts.settlement_en import SETTLEMENT_EN_2023
+from playground.importer.tr.layouts.split import SPLIT
+from playground.importer.tr.layouts.steuer import STEUER
 from playground.importer.tr.layouts.wertpapierabrechnung import (
     SPARPLAN,
     WERTPAPIERABRECHNUNG_2019,
     WERTPAPIERABRECHNUNG_2023,
 )
+from playground.importer.tr.layouts.zinsen import ZINSEN
 
 PARSERS: tuple[DocumentParser, ...] = (
     WERTPAPIERABRECHNUNG_2019,
     WERTPAPIERABRECHNUNG_2023,
     SPARPLAN,
     SETTLEMENT_EN_2023,
+    DIVIDENDE,
+    STEUER,
+    ZINSEN,
+    SPLIT,
+    KONTOAUSZUG_2023,
+    KONTOAUSZUG_2024,
+    CORPORATE_ACTION,
 )
 
 
