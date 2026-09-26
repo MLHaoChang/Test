@@ -48,13 +48,26 @@ line-length = 120
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "S", "DTZ", "PT", "SIM"]
+select = ["E", "F", "I", "B", "UP", "S", "DTZ", "PT", "SIM", "TID"]
 extend-select = ["I"]
 ignore = ["E501"]
-per-file-ignores = {"tests/**" = ["S101", "S603", "S607"]}
+# TID251 (banned-api) is scoped to src/ by exempting tests/** here: pytest-playwright
+# is a legitimate dev dependency for the web end-to-end test, so a Python test may
+# import playwright, but no module under src/ may (see banned-api below).
+per-file-ignores = {"tests/**" = ["S101", "S603", "S607", "TID251"]}
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+# Design review condition 9: read-only scope, no broker login, no scraping, no order
+# path. No module under src/ may import a broker-scraping or browser-automation
+# package (2.2). Playwright itself is fine as a dev/test dependency; it just must
+# not be imported from src/.
+"pytr" = {msg = "No broker login or scraping: the app only reads Trade Republic exports (CSV and PDF)."}
+"requests_html" = {msg = "No browser automation for broker data: see docs/playground-spec.md condition 9."}
+"selenium" = {msg = "No browser automation for broker data: see docs/playground-spec.md condition 9."}
+"playwright" = {msg = "playwright is a test-only dependency; it must not be imported from src/."}
 
 [tool.mypy]
 python_version = "3.11"
