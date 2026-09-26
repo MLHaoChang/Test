@@ -1,0 +1,17 @@
+{
+  "parser_id": "manual_csv",
+  "parser_version": 1,
+  "doc_type": "manual_transaction",
+  "transactions": [],
+  "review": [
+    {
+      "kind": "unknown_csv_header",
+      "message": "This file's header does not match the manual transaction format (\"date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\"). Nothing was imported from it.",
+      "fields": {
+        "header": "date,time,type,isin,quantity,price,currency,amount_eur,fees_eur,tax_eur,note"
+      },
+      "extracted_text": "date,time,type,isin,quantity,price,currency,amount_eur,fees_eur,tax_eur,note\n2024-01-15,10:05,buy,DE0007164600,10,140.00,EUR,-1401.00,1.00,0,typed by hand"
+    }
+  ],
+  "confirmed_holdings": []
+}

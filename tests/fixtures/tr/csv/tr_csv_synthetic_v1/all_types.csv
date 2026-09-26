@@ -1,0 +1,15 @@
+Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz
+05.01.2024;09:00;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;r-0001
+01.02.2024;;Sparplan;IE00B4L5Y983;iShsIII-Core MSCI World U.ETF;2,5;80,00;-200,00;;;EUR;;r-0002
+12.06.2024;11:20;Verkauf;DE0007164600;SAP SE;12;175,00;1999,41;1,00;99,59;EUR;;r-0003
+15.05.2024;;Dividende;DE0007164600;SAP SE;15;2,20;24,30;;8,70;EUR;;r-0004
+20.02.2024;;Ausschüttung;IE00B4L5Y983;iShsIII-Core MSCI World U.ETF;5;1,00;5,00;;;EUR;;r-0005
+01.07.2024;;Zinsen;;;;;3,12;;;EUR;;r-0006
+02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;r-0007
+05.08.2024;;Auszahlung;;;;;-500,00;;;EUR;;r-0008
+10.09.2024;;Steuer;DE0007164600;SAP SE;;;-12,50;;12,50;EUR;;r-0009
+15.09.2024;;Gebühr;;;;;-2,00;2,00;;EUR;;r-0010
+20.06.2024;;Depotübertrag eingehend;DE0008404005;Allianz SE;4;;;;;EUR;;r-0011
+25.06.2024;;Depotübertrag ausgehend;DE0008404005;Allianz SE;1;;;;;EUR;;r-0012
+10.06.2024;;Split;US67066G1040;NVIDIA Corp.;20;;;;;EUR;;r-0013
+16.05.2024;;Dividende;US0378331005;Apple Inc.;5;0,24;0,94;;0,17;USD;1,0800;r-0014

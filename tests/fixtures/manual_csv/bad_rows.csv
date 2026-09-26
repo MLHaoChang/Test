@@ -1,0 +1,7 @@
+date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note
+2024-01-15;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;confirmed by hand
+2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist
+2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type
+2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit
+2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number
+2024-06-01;;interest;;;;;3.12;;;a good row after the bad ones

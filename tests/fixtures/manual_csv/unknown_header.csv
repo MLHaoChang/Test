@@ -1,0 +1,2 @@
+date,time,type,isin,quantity,price,currency,amount_eur,fees_eur,tax_eur,note
+2024-01-15,10:05,buy,DE0007164600,10,140.00,EUR,-1401.00,1.00,0,typed by hand

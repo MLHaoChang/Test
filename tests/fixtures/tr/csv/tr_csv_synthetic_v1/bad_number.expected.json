@@ -1,0 +1,75 @@
+{
+  "parser_id": "tr.csv_export",
+  "parser_version": 1,
+  "doc_type": "csv_export",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "ts_utc": "2024-01-15T09:05:00Z",
+      "ts_local": "2024-01-15T10:05:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": null,
+      "quantity": "10",
+      "price": "140.00",
+      "currency": "EUR",
+      "amount": "-1401.00",
+      "amount_eur": "-1401.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "bn-0001",
+      "source_kind": "csv_export",
+      "evidence": [
+        2,
+        2
+      ]
+    },
+    {
+      "type": "deposit",
+      "isin": null,
+      "name": null,
+      "ts_utc": "2024-01-01T23:00:00Z",
+      "ts_local": "2024-01-02T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": "5000.00",
+      "amount_eur": "5000.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "bn-0003",
+      "source_kind": "csv_export",
+      "evidence": [
+        4,
+        4
+      ]
+    }
+  ],
+  "review": [
+    {
+      "kind": "unparsed_row",
+      "message": "Line 3: the Kurs value \"abc\" could not be read.",
+      "fields": {
+        "line": "3",
+        "line_text": "20.03.2024;15:45;Kauf;US67066G1040;NVIDIA Corp.;2;abc;-1701,00;1,00;;EUR;;bn-0002"
+      },
+      "extracted_text": "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n15.01.2024;10:05;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;bn-0001\n20.03.2024;15:45;Kauf;US67066G1040;NVIDIA Corp.;2;abc;-1701,00;1,00;;EUR;;bn-0002\n02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;bn-0003\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

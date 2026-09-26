@@ -1,0 +1,17 @@
+{
+  "parser_id": "tr.csv_export",
+  "parser_version": 1,
+  "doc_type": "csv_export",
+  "transactions": [],
+  "review": [
+    {
+      "kind": "unknown_csv_header",
+      "message": "This CSV file's header does not match any known Trade Republic export format. Nothing was imported from it.",
+      "fields": {
+        "header": "Date;Time;Type;ISIN;Name;Quantity;Price;Amount;Fees;Tax;Currency;FXRate;Reference"
+      },
+      "extracted_text": "Date;Time;Type;ISIN;Name;Quantity;Price;Amount;Fees;Tax;Currency;FXRate;Reference\n2024-01-15;10:05;BUY;DE0007164600;SAP SE;10;140.00;-1401.00;1.00;0.00;EUR;;uh-0001"
+    }
+  ],
+  "confirmed_holdings": []
+}

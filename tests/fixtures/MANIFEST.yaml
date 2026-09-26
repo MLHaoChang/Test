@@ -341,3 +341,67 @@ files:
     imitates: tr.sparplan.de
     generated_from: tr/text/tr.sparplan.de/same_day_b.txt
     description: Document B of the pair, different from A only in its execution number.
+
+  # Trade Republic CSV export, synthetic profile tr_csv_synthetic_v1 (plan 6.1).
+  - path: tr/csv/tr_csv_synthetic_v1/all_types.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: One row of every Typ value the profile knows, plus a second USD dividend row with Wechselkurs.
+  - path: tr/csv/tr_csv_synthetic_v1/bom_and_crlf.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: A UTF-8 byte-order mark and CRLF line endings, as a spreadsheet application commonly writes.
+  - path: tr/csv/tr_csv_synthetic_v1/windows1252.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: The whole file encoded as Windows-1252, not valid UTF-8, to exercise the encoding fallback.
+  - path: tr/csv/tr_csv_synthetic_v1/empty_time.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: Every row has an empty Uhrzeit column, giving day-precision entries.
+  - path: tr/csv/tr_csv_synthetic_v1/unknown_row_type.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: Negative case. The middle row has an unrecognised Typ; the rows before and after still import.
+  - path: tr/csv/tr_csv_synthetic_v1/bad_number.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: Negative case. The middle row's Kurs is not a number; the rows before and after still import.
+  - path: tr/csv/unknown_header.csv
+    synthetic: true
+    imitates: a Trade Republic CSV export with a header no known profile recognises
+    description: Negative case. Must give unknown_csv_header, showing the header and the first rows.
+
+  # The manual transaction format (plan 5.3.3, 5.3.4): whatever the automatic parsers cannot read.
+  - path: manual_csv/sample.csv
+    synthetic: true
+    imitates: the manual transaction format
+    description: One row of several types, including a transfer in and a split, and a free-text note in each.
+  - path: manual_csv/bad_rows.csv
+    synthetic: true
+    imitates: the manual transaction format
+    description: Negative case. A non-existent date, an unknown type, an invalid ISIN and a bad quantity, each on its own row, with a good row before and after.
+  - path: manual_csv/unknown_header.csv
+    synthetic: true
+    imitates: the manual transaction format
+    description: Negative case. Comma-separated instead of semicolon-separated. Must give unknown_csv_header.
+
+  # The confirmed-holdings format (plan 5.3.3, 5.3.6): what you say you actually hold.
+  - path: confirmed/holdings_comma.csv
+    synthetic: true
+    imitates: the confirmed-holdings format
+    description: Decimal comma, declared by the "# decimal=," directive, with one fractional quantity.
+  - path: confirmed/holdings_dot.csv
+    synthetic: true
+    imitates: the confirmed-holdings format
+    description: The same holdings with a decimal point, declared by the "# decimal=." directive.
+
+  # Golden portfolio inputs (plan 1.2), the CSV family (WP5). See golden/README.md.
+  - path: golden/inputs/tr_transactions_2024.csv
+    synthetic: true
+    imitates: tr_csv_synthetic_v1
+    description: Golden portfolio CSV export, the 11 rows for T1-T7, T9, T12-T14 (plan 1.2).
+  - path: golden/inputs/confirmed_holdings_2024-12-31.csv
+    synthetic: true
+    imitates: the confirmed-holdings format
+    description: Golden portfolio confirmed holdings on 2024-12-31, used by the reconciliation diff.

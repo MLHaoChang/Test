@@ -1,0 +1,102 @@
+{
+  "parser_id": "manual_csv",
+  "parser_version": 1,
+  "doc_type": "manual_transaction",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "DE0007164600",
+      "name": "confirmed by hand",
+      "ts_utc": "2024-01-15T09:05:00Z",
+      "ts_local": "2024-01-15T10:05:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": null,
+      "quantity": "10",
+      "price": "140.00",
+      "currency": "EUR",
+      "amount": "-1401.00",
+      "amount_eur": "-1401.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": null,
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": null,
+      "source_kind": "manual_csv",
+      "evidence": [
+        2,
+        2
+      ]
+    },
+    {
+      "type": "interest",
+      "isin": null,
+      "name": "a good row after the bad ones",
+      "ts_utc": "2024-05-31T22:00:00Z",
+      "ts_local": "2024-06-01T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": "3.12",
+      "amount_eur": "3.12",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": null,
+      "tax_eur": null,
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": null,
+      "source_kind": "manual_csv",
+      "evidence": [
+        7,
+        7
+      ]
+    }
+  ],
+  "review": [
+    {
+      "kind": "unparsed_row",
+      "message": "Line 3: the date \"2024-02-30\" could not be read.",
+      "fields": {
+        "line": "3",
+        "line_text": "2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist"
+      },
+      "extracted_text": "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\n2024-01-15;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;confirmed by hand\n2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist\n2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type\n2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit\n2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number\n2024-06-01;;interest;;;;;3.12;;;a good row after the bad ones\n"
+    },
+    {
+      "kind": "unparsed_row",
+      "message": "Line 4: unknown transaction type \"bewilderment\".",
+      "fields": {
+        "line": "4",
+        "line_text": "2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type"
+      },
+      "extracted_text": "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\n2024-01-15;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;confirmed by hand\n2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist\n2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type\n2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit\n2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number\n2024-06-01;;interest;;;;;3.12;;;a good row after the bad ones\n"
+    },
+    {
+      "kind": "invalid_isin",
+      "message": "Line 5: 'DE0007164601' is not a valid ISIN.",
+      "fields": {
+        "line": "5",
+        "line_text": "2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit"
+      },
+      "extracted_text": "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\n2024-01-15;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;confirmed by hand\n2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist\n2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type\n2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit\n2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number\n2024-06-01;;interest;;;;;3.12;;;a good row after the bad ones\n"
+    },
+    {
+      "kind": "unparsed_row",
+      "message": "Line 6: the quantity \"abc\" could not be read.",
+      "fields": {
+        "line": "6",
+        "line_text": "2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number"
+      },
+      "extracted_text": "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\n2024-01-15;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;confirmed by hand\n2024-02-30;;buy;DE0007164600;1;140.00;EUR;-140.00;;;this date does not exist\n2024-03-01;;bewilderment;DE0007164600;1;140.00;EUR;-140.00;;;unknown type\n2024-04-01;;buy;DE0007164601;1;140.00;EUR;-140.00;;;invalid ISIN check digit\n2024-05-01;;buy;DE0007164600;abc;140.00;EUR;-140.00;;;quantity is not a number\n2024-06-01;;interest;;;;;3.12;;;a good row after the bad ones\n"
+    }
+  ],
+  "confirmed_holdings": []
+}
