@@ -11,6 +11,10 @@
   show it) or `missing_in_confirmed` (the import shows it, your list does not). Each of your rows
   is compared on its own day.
 
+For a batch accepted earlier, before and after are the portfolio as it is now, without and with
+that batch's transactions: the registry keeps no history, so later imports and resolutions count
+on both sides. The text says so.
+
 The day defaults to today, from the clock (plan 3.3). Nothing here writes to the registry.
 
 `render_diff_text` writes the same diff in plain English for `pg import` and `pg reconcile`.
@@ -216,7 +220,8 @@ def _books(conn: Connection, batch: Any, clock: Clock) -> tuple[LotBook, LotBook
     """The lot book before and after the batch.
 
     For a staged batch: the accepted transactions, then those plus the batch as accept would take
-    them. For an accepted batch: every accepted transaction but the batch's, then all of them.
+    them. For an accepted batch: every accepted transaction but the batch's, then all of them, so
+    for a batch accepted earlier both books include what later batches brought.
     """
     portfolio_id = int(batch.portfolio_id)
     if batch.status == "staged":
@@ -318,7 +323,10 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
     for item in data["review_closed"]:
         resolution = item.get("resolution") or {}
         lines.append(f"  - closes {item['kind']}: {resolution.get('how')} by {resolution.get('by')}")
-    lines.append(f"Holdings on {data['as_of']} (before -> after):")
+    if batch["status"] == "accepted":
+        lines.append(f"Holdings on {data['as_of']} (without this batch -> with it, as your portfolio is now):")
+    else:
+        lines.append(f"Holdings on {data['as_of']} (before -> after):")
     if not data["holdings"]:
         lines.append("  none")
     for change in data["holdings"]:

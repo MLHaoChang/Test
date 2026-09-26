@@ -17,6 +17,7 @@ import sqlalchemy as sa
 
 from playground.importer.confirmed_csv import ConfirmedHolding, parse_confirmed_csv
 from playground.importer.pipeline import BatchNotFoundError, BatchNotStagedError
+from playground.importer.reconcile import render_diff_text
 from playground.storage.schema import disposals, portfolios
 
 GOLDEN = Path(__file__).resolve().parents[1] / "fixtures" / "golden"
@@ -123,6 +124,21 @@ def test_holdings_before_are_the_accepted_ones_and_after_leave_held_transactions
     assert summary.counts["held_back"] == 1
     assert holdings_table(diff) == {SAP: ("10", "10"), NVDA: ("0", "2")}
     assert diff.to_dict()["confirmed"] is None
+
+
+def test_the_diff_of_an_earlier_accepted_batch_compares_the_portfolio_now_without_and_with_it(harness, docs) -> None:
+    first = harness.run(docs.trade("kauf_sap.pdf"))
+    harness.run(
+        docs.trade(
+            "kauf_nvda.pdf", isin=NVDA, day=date(2024, 3, 20), at="15:45", quantity="2", price="850.00", execution="n-1"
+        )
+    )
+
+    diff = harness.diff(first.batch_id)
+
+    # The registry keeps no history, so the later batch counts on both sides, and the text says so.
+    assert holdings_table(diff) == {SAP: ("0", "10"), NVDA: ("2", "2")}
+    assert "(without this batch -> with it, as your portfolio is now)" in render_diff_text(diff)
 
 
 def test_the_diff_uses_the_ledger_as_of_the_given_day(harness, docs) -> None:
