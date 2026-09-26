@@ -280,7 +280,7 @@ def stage_inputs(
     files = sorted((_prepare(item) for item in inputs), key=lambda file: (file.name, file.sha256))
 
     now = format_ts_utc(clock.now_utc())
-    ws = Workspace.load(conn, portfolio_id)
+    ws = Workspace.load(conn, portfolio_id, staging=True)
     batch_id = repos.insert_batch(conn, portfolio_id=portfolio_id, created_at=now)
     ws.batches[batch_id] = "staged"
     results, reparsed = _read_files(conn, ws, files, batch_id, now, uploads_dir, extract, parsers, csv_profiles)

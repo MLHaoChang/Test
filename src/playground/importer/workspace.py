@@ -11,7 +11,8 @@ The pieces:
 - `Txn`: a transaction: its sources, the fields in use (merged by precedence, `merge.py`), its
   semantic key and its occurrence. A transaction always follows its merged fields: when a new
   source changes them, its key is computed again and, if it changed, it takes the next
-  occurrence of the new key (the next number after the highest one in use).
+  occurrence of the new key (the next number after the highest one in use, counting the rows
+  the next write leaves as they are).
 - `Item`: a review item.
 
 Matching (`match`) is rules a to d of plan 5.3.4. A transaction that is merged into another one
@@ -221,15 +222,23 @@ class Workspace:
     _by_report: dict[str, int] = field(default_factory=dict)
     _by_key: dict[str, set[int]] = field(default_factory=dict)
     _by_near: dict[tuple[str, str], set[int]] = field(default_factory=dict)
+    _kept: dict[str, set[int]] = field(default_factory=dict)
 
     # --- Loading ---
 
     @classmethod
-    def load(cls, conn: Connection, portfolio_id: int, *, exclude_batch: int | None = None) -> "Workspace":
+    def load(
+        cls, conn: Connection, portfolio_id: int, *, exclude_batch: int | None = None, staging: bool = False
+    ) -> "Workspace":
         """Load the portfolio: every transaction and source of a batch that is not discarded.
 
         `exclude_batch` leaves one batch out, with its sources and the items it raised: a
         resolution while a batch is staged works on the accepted data only.
+
+        Two writes leave some rows as they are, and a row keeps its key and occurrence until it
+        is written again, so no other row may take them (`next_occurrence`): the rows of
+        `exclude_batch`, and, with `staging`, every stored row. A stage adds rows only: a stored
+        transaction whose key moves in memory keeps its old key in the registry until accept.
         """
         ws = cls(portfolio_id=portfolio_id, excluded_batch=exclude_batch)
         for row in conn.execute(
@@ -258,6 +267,15 @@ class Workspace:
                 )
             )
         }
+        kept = list(stored.values()) if staging else []
+        if exclude_batch is not None:
+            kept += conn.execute(
+                sa.select(transactions.c.semantic_key, transactions.c.occurrence).where(
+                    transactions.c.portfolio_id == portfolio_id, transactions.c.batch_id == exclude_batch
+                )
+            ).all()
+        for row in kept:
+            ws._kept.setdefault(row.semantic_key, set()).add(row.occurrence)
         sources: dict[int, list[Source]] = {txn_id: [] for txn_id in stored}
         for row in conn.execute(
             sa.select(transaction_sources, imports.c.batch_id, imports.c.file_name)
@@ -524,8 +542,13 @@ class Workspace:
         self._index(txn)
 
     def next_occurrence(self, key: str) -> int:
-        """The next number after the highest occurrence of `key` in use (1 for the first)."""
+        """The next number after the highest occurrence of `key` in use (1 for the first).
+
+        In use are the occurrences of the transactions here, and those of the rows the next
+        write leaves as they are (see `load`).
+        """
         used = [self.txns[k].occurrence for k in self._by_key.get(key, set()) if self.txns[k].alive]
+        used += self._kept.get(key, set())
         return max(used, default=0) + 1
 
     def add_item(self, item: Item) -> Item:

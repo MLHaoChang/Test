@@ -13,7 +13,9 @@ Three ways, one per moment:
 
 A transaction row always holds the fields in use of its sources (`merge.py`). Its content hash
 is unique per portfolio, and a new key can take an occurrence that another row gives up in the
-same write, so changed hashes are first set to a placeholder and then to their final value.
+same write, so changed hashes are first set to a placeholder and then to their final value. A
+stage, and a resolution while a batch is staged, leave some rows as they are: their keys and
+occurrences stay taken (`Workspace.load`).
 """
 
 from collections.abc import Mapping

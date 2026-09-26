@@ -8,6 +8,8 @@
 - An instrument first known from a manual row (which names no instrument) is named by its ISIN
   until a document names it.
 - Discarding a batch removes the instruments only it had brought.
+- No row takes a key and occurrence another row still holds: not a new row of a stage while a
+  stored transaction moves in memory, and not a merge while a batch is staged.
 """
 
 from datetime import date
@@ -16,6 +18,7 @@ from pathlib import Path
 
 import sqlalchemy as sa
 
+from playground.importer.keys import content_hash
 from playground.importer.pipeline import InputFile
 from playground.storage.schema import instruments
 
@@ -34,6 +37,17 @@ def only(items):
 def amounts_off(docs):
     path = TEXT / "tr.wertpapierabrechnung.de.2023" / "amounts_off_by_one_euro.txt"
     return docs.pdf("amounts_off_by_one_euro.pdf", path.read_text(encoding="utf-8"))
+
+
+def statement_buy(docs, day: date):
+    return docs.statement("kontoauszug.pdf", [docs.statement_row(day, "Kauf", "-1401.00", isin=SAP)])
+
+
+def assert_keys_hold(harness) -> None:
+    """Every row's content hash is its key and occurrence, and no two rows share one."""
+    txns = harness.transactions()
+    assert all(txn.content_hash == content_hash(txn.semantic_key, txn.occurrence) for txn in txns)
+    assert len({txn.content_hash for txn in txns}) == len(txns)
 
 
 def instrument_names(harness) -> dict[str, str]:
@@ -145,3 +159,49 @@ def test_discarding_a_batch_removes_the_instruments_only_it_brought(harness, doc
     harness.discard()
 
     assert set(instrument_names(harness)) == {SAP}
+
+
+def test_a_new_row_never_takes_the_key_and_occurrence_a_stored_row_still_holds(harness, docs) -> None:
+    harness.run(statement_buy(docs, date(2024, 1, 17)))
+
+    # The row of 15 January matches the statement line by rule c and moves its key to 15 January,
+    # in memory only until accept. The identical row of 17 January is a purchase of its own. The
+    # stored row still holds its key and occurrence 1, so the new one takes occurrence 2.
+    row_17 = T2_ROW.replace("15.01.2024", "17.01.2024").replace("csv-0002", "csv-0003")
+    summary = harness.stage(docs.csv("export.csv", [T2_ROW, row_17]))
+
+    assert summary.counts["new"] == 1
+    assert summary.counts["already_known"] == 1
+    assert_keys_hold(harness)
+
+    harness.accept()
+
+    by_day = {txn.day: txn for txn in harness.transactions()}
+    assert set(by_day) == {"2024-01-15", "2024-01-17"}
+    assert by_day["2024-01-15"].kinds == ("csv_export", "pdf_statement")
+    assert by_day["2024-01-17"].kinds == ("csv_export",)
+    assert {txn.state for txn in by_day.values()} == {"accepted"}
+    assert_keys_hold(harness)
+    assert harness.holdings() == {SAP: Decimal("20")}
+
+
+def test_a_merge_while_a_batch_is_staged_never_takes_the_occurrence_of_a_staged_row(harness, docs) -> None:
+    # A CSV row of 14 January, then two identical trades of 16 January, each a possible duplicate of it.
+    harness.run(docs.csv("export.csv", [T2_ROW.replace("15.01.2024", "14.01.2024")]))
+    harness.run(docs.trade("kauf_16_januar_1.pdf", day=date(2024, 1, 16), execution="aaaa-0001"))
+    first = only(harness.items(kind="possible_duplicate"))
+    harness.run(docs.trade("kauf_16_januar_2.pdf", day=date(2024, 1, 16), execution="aaaa-0002"))
+    # A third one is staged: it takes occurrence 3 of the key of 16 January.
+    harness.stage(docs.trade("kauf_16_januar_3.pdf", day=date(2024, 1, 16), execution="aaaa-0003"))
+
+    # The merge gives the CSV row's transaction the key of 16 January. The staged row keeps
+    # occurrence 3 until accept, so the merged transaction cannot take it.
+    harness.resolve(first.id, "merge")
+
+    assert_keys_hold(harness)
+    harness.accept()
+    txns = harness.transactions()
+    assert [txn.day for txn in txns] == ["2024-01-16"] * 3
+    assert {txn.state for txn in txns} == {"accepted"}
+    assert_keys_hold(harness)
+    assert harness.holdings() == {SAP: Decimal("30")}
