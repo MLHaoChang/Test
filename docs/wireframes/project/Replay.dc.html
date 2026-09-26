@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Replay</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.btn.sel{background:#EEF3FC;border-color:#1D5BD6;color:#1D5BD6}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
+label{font-size:13px;font-weight:600}
+input,select{font:inherit;font-size:13px;padding:7px 9px;border:1px solid #D9D7D0;border-radius:6px;background:#fff;color:#1C1C1A}
+.log{display:flex;gap:10px;font-size:13px;padding:8px 0;border-bottom:1px solid #EFEEE9}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a class="on" href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Replay</h1>
+    <span class="muted" style="font-size: 13px">Run any past day through the live code path, at your pace. Nothing here can reach a real account.</span>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px">
+    <div class="card" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+      <span class="callout">1</span>
+      <label for="r-strat">Strategy</label>
+      <select id="r-strat"><option>Intraday ORB, 5-minute, S&amp;P 100 (v0.3)</option></select>
+      <label for="r-date">Day</label>
+      <input id="r-date" type="date" value="2020-03-16">
+      <span class="muted" style="font-size: 12px">Suggested: 2020-03-16 (crash), 2024-08-05 (gap), 2026-09-24 (data gaps)</span>
+      <span style="flex-grow: 1"></span>
+      <label>Speed</label>
+      <button class="btn">1x</button><button class="btn sel">10x</button><button class="btn">60x</button>
+      <button class="btn primary" aria-label="Pause">Pause</button>
+      <span class="mono" style="font-size: 16px; padding: 6px 10px; border: 1px solid #D9D7D0; border-radius: 8px; background: #fff">11:47:00 ET</span>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 8fr 4fr; gap: 16px; flex-grow: 1">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">SPY · 5-minute bars · following the clock</h2><span class="muted" style="font-size: 12px">markers: entry, exit, rejected order</span></div>
+        <svg viewBox="0 0 760 240" width="100%" height="240" role="img" aria-label="Price chart placeholder with decision markers">
+          <line x1="40" y1="16" x2="40" y2="200" stroke="#D9D7D0"></line>
+          <line x1="40" y1="200" x2="740" y2="200" stroke="#D9D7D0"></line>
+          <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,60 90,72 140,110 190,96 240,150 290,140 340,172 390,160 440,178 470,170"></polyline>
+          <line x1="470" y1="16" x2="470" y2="200" stroke="#1D5BD6" stroke-dasharray="4 4"></line>
+          <text x="474" y="26" font-size="10" fill="#1D5BD6">now 11:47</text>
+          <circle cx="140" cy="110" r="6" fill="#fff" stroke="#1C1C1A" stroke-width="2"></circle>
+          <text x="150" y="106" font-size="11" fill="#1C1C1A">short entry 10:05</text>
+          <circle cx="290" cy="140" r="6" fill="#1C1C1A"></circle>
+          <text x="300" y="136" font-size="11" fill="#1C1C1A">exit 10:55, +1.4%</text>
+          <rect x="384" y="150" width="12" height="12" fill="#FFF7E6" stroke="#B7791F" stroke-width="2"></rect>
+          <text x="400" y="160" font-size="11" fill="#5C3D00">order rejected 11:20: spread too wide</text>
+          <text x="40" y="216" font-size="10" fill="#6B6B66">09:30</text>
+          <text x="380" y="216" font-size="10" fill="#6B6B66">12:00</text>
+          <text x="700" y="216" font-size="10" fill="#6B6B66">16:00</text>
+          <text x="40" y="236" font-size="11" fill="#6B6B66">Not yet replayed: 11:47 to 16:00. The chart never shows the future.</text>
+        </svg>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="callout">2</span><h2 class="h2">Decision log</h2><span class="muted" style="font-size: 12px">Written by the strategy's own notes, in plain words, as it happens</span></div>
+        <div class="log"><span class="mono muted" style="width: 60px">09:35</span><span>Opening range set: 236.10 to 241.80 (first 5 minutes). Volume 3.1x the 20-day average, symbol qualifies.</span></div>
+        <div class="log"><span class="mono muted" style="width: 60px">10:05</span><span><b>Short 120 SPY</b> at 235.92: price broke below the range low with volume. Stop at 238.10 (range midpoint), target 2x risk. Fill simulated at bid minus one tick; spread 0.03.</span></div>
+        <div class="log"><span class="mono muted" style="width: 60px">10:55</span><span><b>Cover 120 SPY</b> at 232.60: target reached. Profit 1.4% of equity after 4.20 USD fees and 0.02% slippage.</span></div>
+        <div class="log"><span class="mono muted" style="width: 60px">11:20</span><span>Wanted to short again at 233.10. <b>Rejected by risk rules:</b> spread 0.18 exceeded the 0.10 maximum. This protects against paying too much to enter.</span></div>
+        <div class="log"><span class="mono muted" style="width: 60px">11:47</span><span class="muted">Paused by you.</span></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Virtual account at 11:47</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Equity</span><span class="mono">101,410 USD</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Day profit</span><span class="mono">+1.41%</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Positions</span><span class="mono">none</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Open orders</span><span class="mono">none</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Daily loss limit used</span><span class="mono">0 of 1.0%</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Fees and slippage today</span><span class="mono">12.60 USD</span></div>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Realism for this replay</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Data</span><span>recorded quotes, 2020-03-16</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Fills</span><span>bid/ask, one-tick adverse p=0.5</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Latency</span><span>250 ms</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Scenario</span><span>none (change to spread x3, halt, gap)</span></div>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">When finished</h2>
+        <span class="muted" style="font-size: 12px">The replay is stored as a run with mode "replay" so it appears in the run list and can be compared.</span>
+        <button class="btn" style="align-self: flex-start">Save and open as run</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

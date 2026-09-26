@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compare two runs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+.ok{background:#EAF6EE;border-color:#A9D9B8;color:#134D2B}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+label{font-size:13px;font-weight:600}
+select{font:inherit;font-size:13px;padding:7px 9px;border:1px solid #D9D7D0;border-radius:6px;background:#fff;color:#1C1C1A}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.diff{background:#FFF7E6}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a class="on" href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Compare</h1>
+    <label for="c-a">A</label><select id="c-a"><option>r-0141 Momentum top 20, lookback 12 m</option></select>
+    <label for="c-b">B</label><select id="c-b"><option>r-0140 Momentum top 20, lookback 6 m</option></select>
+    <span class="muted" style="font-size: 13px">Same data snapshot and realism profile: yes</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn">Swap</button>
+    <button class="btn">Add C</button>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: 8fr 4fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">4</span><h2 class="h2">What differs, in plain language</h2></div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.5">The only parameter that changed is the momentum lookback: 12 months in A, 6 months in B. A earned 1.2 points a year more with a smaller worst fall (33% against 36%) and traded a third less, so it also paid less in costs. Both are far from passing the validation gates, and the difference between them is within what the noise of 16 years of monthly rebalancing can produce. Prefer A for now, and treat the choice as provisional until the walk-forward test.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div class="warn"><span aria-hidden="true">!</span><span><b>Difference within noise.</b> Sharpe ratios 0.55 and 0.49 on 16 years cannot be told apart statistically.</span></div>
+      <div class="warn ok"><span aria-hidden="true">✓</span><span><b>Fair comparison.</b> Same period, snapshot, costs and universe.</span></div>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Equity overlay</h2><span class="muted" style="font-size: 12px">solid: A · dashed: B · dotted: S&amp;P 500</span></div>
+      <svg viewBox="0 0 700 260" width="100%" height="260" role="img" aria-label="Overlay of two equity curves and the index, placeholder">
+        <line x1="40" y1="16" x2="40" y2="200" stroke="#D9D7D0"></line>
+        <line x1="40" y1="200" x2="680" y2="200" stroke="#D9D7D0"></line>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,190 120,176 200,168 280,150 360,122 440,130 520,96 600,90 680,62"></polyline>
+        <polyline fill="none" stroke="#3F3F3B" stroke-width="2" stroke-dasharray="6 5" points="40,190 120,180 200,174 280,158 360,132 440,146 520,110 600,104 680,80"></polyline>
+        <polyline fill="none" stroke="#9A988F" stroke-width="2" stroke-dasharray="2 4" points="40,190 120,178 200,170 280,146 360,126 440,124 520,100 600,88 680,70"></polyline>
+        <text x="684" y="64" font-size="11" fill="#1C1C1A">A</text>
+        <text x="684" y="82" font-size="11" fill="#3F3F3B">B</text>
+        <text x="684" y="72" font-size="11" fill="#9A988F" dx="16">index</text>
+        <text x="40" y="216" font-size="10" fill="#6B6B66">2010</text>
+        <text x="350" y="216" font-size="10" fill="#6B6B66">2018</text>
+        <text x="650" y="216" font-size="10" fill="#6B6B66">2026</text>
+        <text x="40" y="244" font-size="11" fill="#6B6B66">Drawdown overlay below on the real page; same axis, same scale.</text>
+      </svg>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Metrics</h2>
+        <table>
+          <thead><tr><th>Metric</th><th>A</th><th>B</th><th>Difference</th></tr></thead>
+          <tbody>
+            <tr><td>CAGR <span class="info">i</span></td><td class="mono">11.9%</td><td class="mono">10.7%</td><td class="mono">+1.2 pts</td></tr>
+            <tr><td>Sharpe <span class="info">i</span></td><td class="mono">0.55</td><td class="mono">0.49</td><td class="mono">+0.06</td></tr>
+            <tr><td>Deflated Sharpe <span class="info">i</span></td><td class="mono">0.48</td><td class="mono">0.41</td><td class="mono">+0.07</td></tr>
+            <tr><td>Max drawdown</td><td class="mono">-33.1%</td><td class="mono">-36.4%</td><td class="mono">3.3 pts better</td></tr>
+            <tr><td>Turnover per year</td><td class="mono">2.1x</td><td class="mono">3.2x</td><td class="mono">-1.1x</td></tr>
+            <tr><td>Costs of gross profit</td><td class="mono">9%</td><td class="mono">14%</td><td class="mono">-5 pts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Parameter diff</h2>
+        <table>
+          <thead><tr><th>Parameter</th><th>A</th><th>B</th></tr></thead>
+          <tbody>
+            <tr class="diff"><td>lookback_months</td><td class="mono">12</td><td class="mono">6</td></tr>
+            <tr><td>top_n</td><td class="mono">20</td><td class="mono">20</td></tr>
+            <tr><td>rebalance</td><td class="mono">monthly</td><td class="mono">monthly</td></tr>
+            <tr><td>universe</td><td class="mono">SPX500 as-of</td><td class="mono">SPX500 as-of</td></tr>
+          </tbody>
+        </table>
+        <span class="muted" style="font-size: 12px">Only rows that differ are highlighted.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Run detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+.ok{background:#EAF6EE;border-color:#A9D9B8;color:#134D2B}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+.metric{display:flex;flex-direction:column;gap:4px;padding:10px;border:1px solid #EFEEE9;border-radius:8px}
+.metric .v{font-size:22px;font-weight:600}
+.metric .l{font-size:12px;color:#6B6B66;display:flex;gap:6px;align-items:center}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.chip{font-size:12px;padding:3px 8px;border-radius:999px;background:#EFEEE9;color:#3F3F3B}
+.tooltip{position:absolute;left:0;top:34px;width:300px;background:#1C1C1A;color:#F6F5F1;border-radius:8px;padding:12px;font-size:12px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:5}
+.tooltip a{color:#9CC3FF}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1040px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a class="on" href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+    <a href="Runs.dc.html" style="font-size: 13px; text-decoration: none">Runs</a><span class="muted">/</span>
+    <h1 class="h1"><span class="mono">r-0142</span> SPY 10-month trend</h1>
+    <span class="chip">months=10</span><span class="chip">cash_symbol=BIL</span>
+    <span class="badge" style="border-color: #D9D7D0; background: #fff">backtest · 2006-01 to 2025-03</span>
+    <span class="badge" style="border-color: #D9D7D0; background: #fff">realism: default</span>
+    <span class="badge" style="border-color: #D9D7D0; background: #fff">snap-2026-09-25</span>
+    <span style="flex-grow: 1"></span>
+    <a class="btn" href="Compare.dc.html" style="text-decoration: none">Compare</a>
+    <a class="btn" href="Validation.dc.html" style="text-decoration: none">Validate</a>
+    <a class="btn" href="Replay.dc.html" style="text-decoration: none">Replay a day</a>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: 8fr 4fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <span class="callout">4</span>
+        <h2 class="h2">In plain language</h2>
+        <span class="muted" style="font-size: 12px">Generated from the numbers below; the assistant can expand it</span>
+      </div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.5">This strategy held SPY when its price was above its 10-month average and Treasury bills otherwise. Over 19 years it returned <b>8.6% a year</b> against <b>11.1%</b> for simply holding SPY, so it gave up about 2.5 points a year. In exchange, its worst fall was <b>21.8%</b> instead of <b>51%</b>. Risk-adjusted, the two are about equal (Sharpe 0.69 against 0.67). It traded 34 times, roughly 1.6 switches a year, and costs took 3% of gross profit. This is a defensive result, not an outperforming one.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">5</span><h2 class="h2">Warnings for this run</h2></div>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>Only 34 trades.</b> Statistics on so few trades are unreliable. Extend the period or treat this as a smoke test. <a href="Tour.dc.html">Why this matters</a></span></div>
+      <div class="warn ok"><span aria-hidden="true">✓</span><span><b>Trial 14 of 300.</b> Few configurations tried; the deflated Sharpe barely differs from the raw one.</span></div>
+      <div class="warn ok"><span aria-hidden="true">✓</span><span><b>Holdout untouched.</b> The locked period from 2025-04 has not been used.</span></div>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">6</span><h2 class="h2">Key metrics</h2><span class="muted" style="font-size: 12px">Hover any label for its definition</span></div>
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; position: relative">
+        <div class="metric"><span class="l">CAGR <span class="info">i</span></span><span class="v mono">8.6%</span><span class="muted" style="font-size: 11px">buy-and-hold 11.1%</span></div>
+        <div class="metric"><span class="l">Volatility <span class="info">i</span></span><span class="v mono">10.6%</span><span class="muted" style="font-size: 11px">buy-and-hold 15.1%</span></div>
+        <div class="metric"><span class="l">Max drawdown <span class="info">i</span></span><span class="v mono">-21.8%</span><span class="muted" style="font-size: 11px">buy-and-hold -51.0%</span></div>
+        <div class="metric" style="position: relative; border-color: #1D5BD6">
+          <span class="l">Deflated Sharpe <span class="info" style="border-color: #1D5BD6; color: #1D5BD6">i</span></span><span class="v mono">0.62</span><span class="muted" style="font-size: 11px">raw Sharpe 0.69</span>
+          <div class="tooltip" role="tooltip">
+            <div style="font-weight: 600; margin-bottom: 4px">Deflated Sharpe ratio</div>
+            <div>The Sharpe ratio after accounting for how many configurations you tried, how long the test is, and how non-normal the returns are. Values near 1 mean the result is unlikely to be luck; below 0.5, treat it as noise.</div>
+            <div style="margin-top: 6px; color: #C9C7BF">Formula: probability that the true Sharpe exceeds the best Sharpe expected from N random trials.</div>
+            <div style="margin-top: 6px">Good: above 0.95 &nbsp;·&nbsp; Caveat: needs the true trial count; the registry supplies it.</div>
+            <div style="margin-top: 6px"><a href="Tour.dc.html">Open in glossary</a></div>
+          </div>
+        </div>
+        <div class="metric"><span class="l">Trades <span class="info">i</span></span><span class="v mono">34</span><span class="muted" style="font-size: 11px">1.6 per year</span></div>
+        <div class="metric"><span class="l">Costs of gross profit <span class="info">i</span></span><span class="v mono">3.0%</span><span class="muted" style="font-size: 11px">fees plus slippage</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: 8fr 4fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Equity and drawdown</h2><span class="muted" style="font-size: 12px">solid: strategy · dashed: buy-and-hold · log scale</span></div>
+      <svg viewBox="0 0 760 220" width="100%" height="220" role="img" aria-label="Equity curve placeholder with strategy and buy-and-hold lines and a drawdown band">
+        <line x1="40" y1="20" x2="40" y2="160" stroke="#D9D7D0"></line>
+        <line x1="40" y1="160" x2="740" y2="160" stroke="#D9D7D0"></line>
+        <line x1="40" y1="90" x2="740" y2="90" stroke="#EFEEE9"></line>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,150 120,138 200,142 280,110 360,112 440,96 520,84 600,88 680,66 740,60"></polyline>
+        <polyline fill="none" stroke="#6B6B66" stroke-width="2" stroke-dasharray="6 5" points="40,150 120,132 200,160 280,104 360,100 440,80 520,70 600,78 680,44 740,34"></polyline>
+        <text x="744" y="62" font-size="11" fill="#1C1C1A">strategy</text>
+        <text x="744" y="36" font-size="11" fill="#6B6B66">buy-and-hold</text>
+        <text x="8" y="24" font-size="10" fill="#6B6B66">10x</text>
+        <text x="14" y="164" font-size="10" fill="#6B6B66">1x</text>
+        <polygon fill="#E8E7E1" points="40,180 120,185 200,215 280,190 360,182 440,186 520,200 600,190 680,184 740,182 740,180"></polygon>
+        <text x="8" y="215" font-size="10" fill="#6B6B66">-50%</text>
+        <text x="744" y="184" font-size="11" fill="#6B6B66">drawdown</text>
+        <text x="40" y="176" font-size="10" fill="#6B6B66">2006</text>
+        <text x="380" y="176" font-size="10" fill="#6B6B66">2015</text>
+        <text x="700" y="176" font-size="10" fill="#6B6B66">2025</text>
+      </svg>
+      <span class="muted" style="font-size: 12px">Hover shows date, both values and the current drawdown. Shaded band marks the 2008 and 2020 crises.</span>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">Fill assumptions used</h2>
+      <table>
+        <tbody>
+          <tr><td class="muted">Fills</td><td>next-open, market orders</td></tr>
+          <tr><td class="muted">Slippage</td><td>5 bp plus 10% volume cap</td></tr>
+          <tr><td class="muted">Fees</td><td>IB fixed: 0.005 USD/share, 1 USD min</td></tr>
+          <tr><td class="muted">Latency</td><td>none (backtest)</td></tr>
+          <tr><td class="muted">Corporate actions</td><td>raw prices, dividends as cash</td></tr>
+        </tbody>
+      </table>
+      <span class="muted" style="font-size: 12px">Re-run with the <b>optimistic</b> profile to see how much a rosy backtest would overstate this.</span>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; flex-grow: 1">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Trades</h2><span class="muted" style="font-size: 12px">34 trades · newest first · each row expands to its fills, decision price and slippage against the mid</span><span style="flex-grow: 1"></span><a href="Validation.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Gates: 6 of 8 pass</a></div>
+      <table>
+        <thead><tr><th>Entry</th><th>Exit</th><th>Side</th><th>Symbol</th><th>Quantity</th><th>Entry price</th><th>Exit price</th><th>Profit</th><th>Slippage vs mid</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">2024-11-01</td><td class="mono">open</td><td>long</td><td>SPY</td><td class="mono">176</td><td class="mono">571.20</td><td class="mono">n/a</td><td class="mono">+4.1%</td><td class="mono">0.04%</td><td>price above 10-month average</td></tr>
+          <tr><td class="mono">2023-11-01</td><td class="mono">2024-11-01</td><td>long</td><td>SPY</td><td class="mono">240</td><td class="mono">418.50</td><td class="mono">571.20</td><td class="mono">+36.5%</td><td class="mono">0.05%</td><td>price above 10-month average</td></tr>
+          <tr><td class="mono">2023-09-01</td><td class="mono">2023-11-01</td><td>long</td><td class="mono">SPY</td><td class="mono">222</td><td class="mono">451.10</td><td class="mono">418.50</td><td class="mono">-7.2%</td><td class="mono">0.05%</td><td>whipsaw: crossed below average</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

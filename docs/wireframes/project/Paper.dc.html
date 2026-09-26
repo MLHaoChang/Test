@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paper accounts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.danger{border-color:#B42318;color:#B42318}
+.tab{font:inherit;font-size:13px;padding:8px 14px;border:1px solid #D9D7D0;background:#fff;border-radius:8px 8px 0 0;cursor:pointer}
+.tab.on{background:#F6F5F1;border-bottom-color:#F6F5F1;font-weight:600}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+.ok{background:#EAF6EE;border-color:#A9D9B8;color:#134D2B}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+.bar{height:8px;border-radius:999px;background:#EFEEE9;overflow:hidden}
+.bar span{display:block;height:100%;background:#6B6B66}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a class="on" href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Paper accounts</h1>
+    <span class="muted" style="font-size: 13px">Session open · 17:52 Berlin time · US close in 4 h 08 min · Telegram connected</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn danger">Pause all</button>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px; display: flex; gap: 4px; align-items: flex-end">
+    <span class="callout" style="margin-right: 6px">3</span>
+    <button class="tab on">A · champion · months=10</button>
+    <button class="tab">B · fast · months=6</button>
+    <button class="tab">C · slow · months=14</button>
+    <button class="tab" style="border-color: #F1D48A; background: #FFF7E6">D · paused</button>
+    <button class="tab muted">E · empty slot</button>
+    <span class="muted" style="font-size: 12px; margin-left: 12px; padding-bottom: 8px">Same data stream, separate virtual accounts, separate kill switches</span>
+  </div>
+
+  <div style="padding: 0 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1">
+    <div class="card" style="border-top-left-radius: 0; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 12px">Equity</span><span class="mono" style="font-size: 20px; font-weight: 600">101,820 USD</span></div>
+        <div style="display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 12px">Since start (2026-09-01)</span><span class="mono" style="font-size: 20px; font-weight: 600">+1.8%</span></div>
+        <div style="display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 12px">Backtest twin, same period</span><span class="mono" style="font-size: 20px; font-weight: 600">+2.1%</span></div>
+        <div style="display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 12px">Heartbeat</span><span style="font-size: 14px"><span class="dot" style="background: #1E7B4F"></span> 9 s ago</span></div>
+      </div>
+      <div class="warn ok"><span aria-hidden="true">✓</span><span><b>Tracking the backtest twin.</b> Difference 0.3 points, within the expected slippage band.</span></div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span class="muted">Daily loss limit</span><span class="mono">0.2 of 1.0%</span></span><div class="bar"><span style="width: 20%"></span></div></div>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span class="muted">Gross exposure</span><span class="mono">98 of 100%</span></span><div class="bar"><span style="width: 98%"></span></div></div>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span class="muted">Orders this minute</span><span class="mono">0 of 20</span></span><div class="bar"><span style="width: 0%"></span></div></div>
+      </div>
+      <h2 class="h2">Positions</h2>
+      <table>
+        <thead><tr><th>Symbol</th><th>Quantity</th><th>Average price</th><th>Last</th><th>Unrealised</th><th>Since</th></tr></thead>
+        <tbody>
+          <tr><td>SPY</td><td class="mono">176</td><td class="mono">566.40</td><td class="mono">571.90</td><td class="mono">+968 USD</td><td class="mono">2026-09-01</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h2">Open orders</h2>
+      <span class="muted" style="font-size: 13px">None. Next decision at today's close (monthly rule, evaluated on the last session of the month).</span>
+      <div style="display: flex; gap: 10px; margin-top: auto">
+        <button class="btn">Pause A</button>
+        <button class="btn danger">Flatten A</button>
+        <span class="muted" style="font-size: 12px; align-self: center">Both ask for confirmation and are logged as alerts.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="callout">4</span><h2 class="h2">Shadow fills</h2><span class="muted" style="font-size: 12px">Our simulator against the Alpaca paper account for the same orders</span></div>
+        <table>
+          <thead><tr><th>Order</th><th>Our fill</th><th>Alpaca paper</th><th>Live quote at fill</th><th>Difference</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">09-01 buy SPY 176</td><td class="mono">566.40</td><td class="mono">566.37</td><td class="mono">566.35 / 566.38</td><td class="mono">+0.03</td></tr>
+            <tr><td class="mono">08-01 sell BIL 1,200</td><td class="mono">91.62</td><td class="mono">91.62</td><td class="mono">91.62 / 91.63</td><td class="mono">0.00</td></tr>
+          </tbody>
+        </table>
+        <span class="muted" style="font-size: 12px">Over 14 orders our fills were 0.02% worse on average than Alpaca paper, which itself fills optimistically. The default slippage model looks conservative enough for this strategy.</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Kill criteria (pre-registered)</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Drawdown from start</span><span class="mono">-1.1% of -12.4% limit</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Slippage budget this month</span><span class="mono">0.02% of 0.10%</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Rejected orders today</span><span class="mono">0</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Feed silence</span><span class="mono">longest 4 s (limit 30 s)</span></div>
+        <span class="muted" style="font-size: 12px">The drawdown limit is the 95th percentile of the backtest's bootstrapped drawdowns, not a round number.</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Telegram</h2>
+        <span style="font-size: 13px">Last message 17:42: "Account D paused: daily loss limit 1.0% reached." Commands: /status /positions /pause /resume /flatten</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

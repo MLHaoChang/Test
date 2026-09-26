@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Runs and new run</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+label{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+input,select{font:inherit;font-size:13px;padding:7px 9px;border:1px solid #D9D7D0;border-radius:6px;background:#fff;color:#1C1C1A;box-sizing:border-box}
+.help{font-size:12px;color:#6B6B66}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.chip{font-size:12px;padding:3px 8px;border-radius:999px;background:#EFEEE9;color:#3F3F3B}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a class="on" href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Runs</h1>
+    <span class="muted" style="font-size: 13px">Every backtest, replay and paper session is a run. Example values for layout.</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn primary">New run</button>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; gap: 8px; align-items: center">
+        <label for="f-mode">Mode</label>
+        <select id="f-mode"><option>All</option><option>Backtest</option><option>Replay</option><option>Paper</option></select>
+        <label for="f-exp" style="margin-left: 8px">Experiment</label>
+        <select id="f-exp"><option>All</option><option>SPY trend</option><option>Momentum top 20</option></select>
+        <label for="f-strat" style="margin-left: 8px">Strategy</label>
+        <select id="f-strat"><option>All</option><option>SPY 10-month trend</option><option>Momentum top 20</option></select>
+        <span style="flex-grow: 1"></span>
+        <span class="help">Sorted by newest</span>
+      </div>
+      <table>
+        <thead><tr><th>Run</th><th>Strategy and parameters</th><th>Mode</th><th>Period</th><th>CAGR</th><th>Deflated Sharpe <span class="info" aria-label="definition">i</span></th><th>Max DD</th><th>Trial</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="mono">r-0142</td><td>SPY 10-month trend <span class="chip">months=10</span></td><td>backtest</td><td>2006 to 2026</td><td class="mono">8.6%</td><td class="mono">0.62</td><td class="mono">-21.8%</td><td class="mono">14</td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">r-0141</td><td>Momentum top 20 <span class="chip">lookback=12m</span> <span class="chip">hold=1m</span></td><td>backtest</td><td>2010 to 2026</td><td class="mono">11.9%</td><td class="mono">0.48</td><td class="mono">-33.1%</td><td class="mono">22</td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">r-0140</td><td>Momentum top 20 <span class="chip">lookback=6m</span> <span class="chip">hold=1m</span></td><td>backtest</td><td>2010 to 2026</td><td class="mono">10.7%</td><td class="mono">0.41</td><td class="mono">-36.4%</td><td class="mono">21</td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">r-0139</td><td>SPY 10-month trend <span class="chip">months=10</span></td><td>replay</td><td>2020-03-16 at 10x</td><td class="mono">n/a</td><td class="mono">n/a</td><td class="mono">-4.2%</td><td class="mono">14</td><td><a href="Replay.dc.html">Open</a></td></tr>
+          <tr><td class="mono">r-0138</td><td>SPY 10-month trend <span class="chip">months=8</span></td><td>backtest</td><td>2006 to 2026</td><td class="mono">8.1%</td><td class="mono">0.55</td><td class="mono">-23.0%</td><td class="mono">13</td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">r-0137</td><td>SPY 10-month trend <span class="chip">months=12</span></td><td>backtest</td><td>2006 to 2026</td><td class="mono">8.4%</td><td class="mono">0.58</td><td class="mono">-22.5%</td><td class="mono">12</td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">p-0007</td><td>SPY 10-month trend <span class="chip">months=10</span></td><td>paper</td><td>since 2026-09-01</td><td class="mono">n/a</td><td class="mono">n/a</td><td class="mono">-1.1%</td><td class="mono">14</td><td><a href="Paper.dc.html">Open</a></td></tr>
+        </tbody>
+      </table>
+      <span class="help">Trial = how many configurations this experiment has tried so far. It feeds the deflated Sharpe ratio, which is why it is shown next to the results.</span>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <span class="callout">3</span>
+        <h2 class="h2">New run</h2>
+        <span class="help">The form is generated from the strategy's parameter schema</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-strat">Strategy <span class="info" aria-label="definition">i</span></label>
+          <select id="n-strat"><option>SPY 10-month trend</option><option>Momentum top 20</option></select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-exp">Experiment <span class="info" aria-label="definition">i</span></label>
+          <select id="n-exp"><option>SPY trend (14 of 300 trials used)</option></select>
+        </div>
+      </div>
+      <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 12px; font-weight: 600; color: #6B6B66">Parameters</span>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <label for="p-months" style="width: 140px">months <span class="info" aria-label="definition">i</span></label>
+          <input id="p-months" type="number" value="10" min="3" max="18" step="1" style="width: 90px">
+          <span class="help">Lookback of the moving average in months. Allowed 3 to 18. Sweeps vary this.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <label for="p-cash" style="width: 140px">cash_symbol</label>
+          <input id="p-cash" type="text" value="BIL" style="width: 90px">
+          <span class="help">Where money sits when out of the market.</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-from">From</label>
+          <input id="n-from" type="date" value="2006-01-03">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-to">To</label>
+          <input id="n-to" type="date" value="2025-03-31">
+          <span class="help">Ends before the locked holdout (2025-04 onwards).</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-real">Realism profile <span class="info" aria-label="definition">i</span></label>
+          <select id="n-real"><option>default (pessimistic)</option><option>optimistic (mid fills, no costs)</option><option>harsh (2x slippage, 1.5x fees)</option></select>
+          <span class="help">Default: next-open fills, 5 bp slippage, IB fees.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="n-snap">Data snapshot</label>
+          <select id="n-snap"><option>snap-2026-09-25 (latest)</option></select>
+          <span class="help">Recorded with the run so it can be reproduced.</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <label for="n-acc">Accounts</label>
+        <select id="n-acc" style="width: 220px"><option>1 (this configuration)</option><option>Up to 5 (A/B variants)</option></select>
+        <span class="help">A/B runs the same strategy with several parameter sets on the same data.</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; margin-top: 4px">
+        <button class="btn primary">Run backtest</button>
+        <button class="btn">Save as draft</button>
+        <span class="help">This will be trial 15 of 300 for the experiment.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

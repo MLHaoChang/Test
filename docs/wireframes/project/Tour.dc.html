@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Help system</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h2{font-size:15px;font-weight:600;margin:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.dim{opacity:.45}
+.ph{border:1px dashed #B8B6AE;border-radius:8px;background:#F1F0EB;color:#6B6B66;font-size:13px;display:flex;align-items:center;justify-content:center}
+input{font:inherit;font-size:13px;padding:8px 10px;border:1px solid #D9D7D0;border-radius:6px;background:#fff;color:#1C1C1A;width:100%;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1; position: relative; overflow: hidden">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a class="on" href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Main.dc.html" aria-label="Close help" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">x</a>
+  </nav>
+
+  <div style="display: grid; grid-template-columns: 1fr 380px; flex-grow: 1; min-height: 0">
+    <div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; position: relative">
+      <div class="dim" style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; align-items: center; gap: 12px"><span style="font-size: 22px; font-weight: 600">Runs</span><span class="muted" style="font-size: 13px">Every backtest, replay and paper session is a run.</span></div>
+        <div class="card ph" style="height: 300px">Run list (dimmed while the tour highlights the New run form)</div>
+      </div>
+      <div class="card" style="position: absolute; left: 560px; top: 84px; width: 300px; height: 300px; border: 2px solid #1D5BD6; box-shadow: 0 0 0 6px rgba(29,91,214,.15); display: flex; flex-direction: column; gap: 8px">
+        <span class="h2">New run</span>
+        <div class="ph" style="height: 34px">Strategy</div>
+        <div class="ph" style="height: 34px">Experiment</div>
+        <div class="ph" style="height: 60px">Parameters (from schema)</div>
+        <div class="ph" style="height: 34px">Realism profile</div>
+        <div class="ph" style="height: 34px">Run backtest</div>
+      </div>
+      <div class="card" style="position: absolute; left: 200px; top: 150px; width: 330px; box-shadow: 0 12px 32px rgba(0,0,0,.18); display: flex; flex-direction: column; gap: 10px">
+        <span class="muted" style="font-size: 12px; font-weight: 600; letter-spacing: .04em">FIRST-RUN TOUR · STEP 2 OF 5</span>
+        <span style="font-size: 16px; font-weight: 600">Runs are experiments, not trades</span>
+        <span style="font-size: 14px; line-height: 1.5">Each run records the strategy version, the parameters, the data used and the fill assumptions. This form is generated from the strategy's parameters, so every field comes with its own definition. Start with the seed experiment "SPY trend".</span>
+        <div style="display: flex; gap: 8px; align-items: center">
+          <button class="btn">Back</button>
+          <button class="btn primary">Next: reading a result</button>
+          <span style="flex-grow: 1"></span>
+          <a href="Main.dc.html" style="font-size: 13px">Skip tour</a>
+        </div>
+        <span class="muted" style="font-size: 12px">Steps: Home · Runs · Run detail · Compare · Sweeps and validation. Reopen any time from the ? menu.</span>
+      </div>
+      <div class="card" style="position: absolute; left: 24px; bottom: 24px; right: 24px; height: 250px; display: flex; flex-direction: column; gap: 10px; border-color: #1C1C1A">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="h2">Glossary</span><span class="muted" style="font-size: 12px">Every tooltip links here. Searchable, with plain and precise definitions.</span><span style="flex-grow: 1"></span><input type="search" aria-label="Search glossary" value="deflated" style="width: 240px"></div>
+        <div style="display: grid; grid-template-columns: 220px 1fr; gap: 16px; flex-grow: 1; min-height: 0">
+          <div style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; border-right: 1px solid #EFEEE9">
+            <span style="font-weight: 600; color: #1D5BD6">Deflated Sharpe ratio</span>
+            <span>Drawdown</span>
+            <span>Holdout (lockbox)</span>
+            <span>Look-ahead bias</span>
+            <span>Probability of backtest overfitting</span>
+            <span>Realism profile</span>
+            <span>Slippage</span>
+            <span>Trial budget</span>
+            <span>Walk-forward</span>
+            <span>Whipsaw</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5">
+            <span style="font-size: 15px; font-weight: 600">Deflated Sharpe ratio</span>
+            <span><b>In plain words:</b> a Sharpe ratio that has been marked down for how many things you tried before finding this one. Ten attempts at random will produce one decent-looking Sharpe; the deflated version asks whether yours is better than that.</span>
+            <span><b>Precisely:</b> the probability that the true Sharpe ratio exceeds the expected maximum Sharpe of N independent trials, adjusted for the length of the test and for skew and kurtosis of the returns (Bailey and Lopez de Prado, 2014).</span>
+            <span><b>In this tool:</b> N comes from the experiment's trial counter, which is why every run increments it. Good: 0.95 or higher. Used by: leaderboard ranking, validation gate 3.</span>
+            <span class="muted">Related: probability of backtest overfitting, trial budget, minimum track record length.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="card" style="border-radius: 0; border-top: none; border-right: none; border-bottom: none; display: flex; flex-direction: column; gap: 12px; overflow: hidden" aria-label="Explain this page">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="h2">Explain this page: Runs</span><span style="flex-grow: 1"></span><button class="btn" style="padding: 4px 10px; font-size: 12px">Hide</button></div>
+      <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5">
+        <span style="font-weight: 600">What you are looking at</span>
+        <span>A list of everything you have run, and a form to start a new run. A run is one strategy with one set of parameters on one data snapshot with one set of fill assumptions.</span>
+        <span style="font-weight: 600">How to read it</span>
+        <span>Compare runs within the same experiment, not across experiments; they share a trial budget and a holdout. "Deflated Sharpe" is the honest score; "Trial" shows how much has been tried.</span>
+        <span style="font-weight: 600">What to do next</span>
+        <span>Open a run to read its plain-language summary and warnings. Select two runs and press Compare. When a configuration looks stable, press Validate rather than running more variants.</span>
+        <span style="font-weight: 600">Common mistakes</span>
+        <span>Picking the single best run from a sweep (choose the plateau). Running variants after seeing holdout results (the tool blocks this). Comparing runs with different realism profiles (flagged).</span>
+      </div>
+      <div style="border-top: 1px solid #EFEEE9; padding-top: 10px; display: flex; flex-direction: column; gap: 6px">
+        <span class="muted" style="font-size: 12px">Explain mode shows this panel, the tooltips, the summaries and the warnings. <b>Expert mode</b> hides them all in one switch. Your choice is remembered.</span>
+        <button class="btn" style="align-self: flex-start">Switch to expert mode</button>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

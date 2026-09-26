@@ -439,6 +439,8 @@ Order rationale: daily stock strategies need only free data and the simplest fil
 
 ## 11. Decisions I need from you
 
+Answered on 26 September 2026 in a four-round interview; the decision record and the resulting specification are in [playground-spec.md](playground-spec.md), section 0. The questions are kept below for reference.
+
 1. **Interface.** A web dashboard you open in a browser (recommended: it makes comparing runs and watching paper trading easy), notebooks only, or a command-line tool with reports? [Assumed: web dashboard plus notebooks.]
 2. **Self-hosted or hosted engine.** Build the playground around a self-hosted open-source engine on your own machine or VPS (full control, free data first), or lean on a hosted quant platform for backtesting and paper trading and keep your own code to strategies and analysis (less to build, monthly fee, their data)? [Assumed: self-hosted, with the hosted option kept as a comparison.]
 3. **Intraday realism budget.** Minute bars are free for stocks; realistic intraday options simulation needs paid quote data (about 80 USD a month). Start stocks-only for intraday and add options data later, or budget the data from the start? [Assumed: stocks-only intraday first; options on daily data first, intraday options when the data subscription starts.]

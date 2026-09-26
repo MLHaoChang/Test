@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sweep and leaderboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.bar{height:10px;border-radius:999px;background:#EFEEE9;overflow:hidden}
+.bar span{display:block;height:100%;background:#1D5BD6}
+.pass{color:#134D2B;font-weight:600}.fail{color:#7A1B10;font-weight:600}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a class="on" href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Sweep <span class="mono" style="font-weight: 500; font-size: 16px">sw-0009</span> · SPY trend, months 3 to 18</h1>
+    <span class="badge" style="border-color: #D9D7D0; background: #fff">running · 240 of 300 trials</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn">Pause sweep</button>
+    <button class="btn">Stop and keep results</button>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">1</span><h2 class="h2">Trial budget</h2><span class="muted" style="font-size: 12px">Pre-registered: 300 trials for this experiment. Every configuration tried counts, including manual re-runs and approved assistant proposals.</span></div>
+      <div class="bar" aria-label="240 of 300 trials used"><span style="width: 80%"></span></div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px" class="muted"><span>0</span><span>240 used · 60 left</span><span>300</span></div>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>The more you try, the higher the bar.</b> With 240 trials, a raw Sharpe of about 0.9 is what luck alone would produce for the best one. The leaderboard therefore ranks by deflated Sharpe.</span></div>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">Objective over trials</h2>
+      <svg viewBox="0 0 440 130" width="100%" height="130" role="img" aria-label="Scatter of trial objective values over trial number, placeholder">
+        <line x1="30" y1="10" x2="30" y2="110" stroke="#D9D7D0"></line>
+        <line x1="30" y1="110" x2="430" y2="110" stroke="#D9D7D0"></line>
+        <circle cx="50" cy="80" r="3" fill="#6B6B66"></circle><circle cx="70" cy="66" r="3" fill="#6B6B66"></circle><circle cx="95" cy="90" r="3" fill="#6B6B66"></circle><circle cx="120" cy="58" r="3" fill="#6B6B66"></circle><circle cx="150" cy="72" r="3" fill="#6B6B66"></circle><circle cx="180" cy="50" r="3" fill="#6B6B66"></circle><circle cx="210" cy="62" r="3" fill="#6B6B66"></circle><circle cx="240" cy="46" r="3" fill="#6B6B66"></circle><circle cx="270" cy="55" r="3" fill="#6B6B66"></circle><circle cx="300" cy="44" r="3" fill="#6B6B66"></circle><circle cx="330" cy="52" r="3" fill="#6B6B66"></circle><circle cx="360" cy="43" r="3" fill="#6B6B66"></circle><circle cx="390" cy="48" r="3" fill="#6B6B66"></circle><circle cx="415" cy="45" r="3" fill="#6B6B66"></circle>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="50,80 120,58 180,50 240,46 300,44 360,43 415,43"></polyline>
+        <text x="418" y="40" font-size="10" fill="#1C1C1A">best so far</text>
+        <text x="4" y="14" font-size="10" fill="#6B6B66">Sharpe</text>
+        <text x="380" y="124" font-size="10" fill="#6B6B66">trial 240</text>
+      </svg>
+      <span class="muted" style="font-size: 12px">Flattening curve: more trials are unlikely to help. Parameter importance: months 91%, cash_symbol 9%.</span>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; flex-grow: 1">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px; height: 100%; box-sizing: border-box">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">2</span><h2 class="h2">Leaderboard</h2><span class="muted" style="font-size: 12px">Ranked by deflated Sharpe, never by raw Sharpe. Neighbouring parameter values are shown so you can see a plateau rather than a spike.</span></div>
+      <table>
+        <thead><tr><th>Rank</th><th>months</th><th>CAGR</th><th>Raw Sharpe <span class="info">i</span></th><th>Deflated Sharpe <span class="info">i</span></th><th>Max drawdown</th><th>Trades</th><th>Neighbours (8 to 12)</th><th>Gates</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td class="mono">10</td><td class="mono">8.6%</td><td class="mono">0.69</td><td class="mono">0.62</td><td class="mono">-21.8%</td><td class="mono">34</td><td class="mono">0.55 · 0.58 · <b>0.62</b> · 0.60 · 0.58</td><td><span class="pass">6 of 8</span></td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">2</td><td class="mono">11</td><td class="mono">8.5%</td><td class="mono">0.67</td><td class="mono">0.60</td><td class="mono">-22.1%</td><td class="mono">31</td><td class="mono">plateau</td><td><span class="pass">6 of 8</span></td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">3</td><td class="mono">12</td><td class="mono">8.4%</td><td class="mono">0.66</td><td class="mono">0.58</td><td class="mono">-22.5%</td><td class="mono">29</td><td class="mono">plateau</td><td><span class="pass">6 of 8</span></td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">4</td><td class="mono">9</td><td class="mono">8.3%</td><td class="mono">0.65</td><td class="mono">0.58</td><td class="mono">-22.9%</td><td class="mono">38</td><td class="mono">plateau</td><td><span class="fail">5 of 8</span></td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+          <tr><td class="mono">5</td><td class="mono">4</td><td class="mono">6.1%</td><td class="mono">0.44</td><td class="mono">0.31</td><td class="mono">-19.4%</td><td class="mono">92</td><td class="mono">isolated</td><td><span class="fail">3 of 8</span></td><td><a href="RunDetail.dc.html">Open</a></td></tr>
+        </tbody>
+      </table>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>Top three differ by less than noise.</b> Choose the middle of the plateau (10 to 12 months) rather than the single best value; then run validation on that choice.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

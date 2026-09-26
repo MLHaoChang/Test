@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Data and health</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
+td{padding:8px;border-bottom:1px solid #EFEEE9}
+.pass{color:#134D2B;font-weight:600}.warnt{color:#5C3D00;font-weight:600}.fail{color:#7A1B10;font-weight:600}
+.cov{display:grid;grid-template-columns:200px repeat(27, minmax(0,1fr));gap:2px;align-items:center;font-size:11px}
+.sq{height:14px;border-radius:2px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a class="on" href="Data.dc.html">Data</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Data and health</h1>
+    <span class="muted" style="font-size: 13px">If a result looks strange, check here first. Example values for layout.</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn">Run checks now</button>
+    <button class="btn">Create snapshot</button>
+  </div>
+
+  <div style="padding: 16px 24px 0 24px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">5</span><h2 class="h2">Coverage by dataset and year</h2><span class="muted" style="font-size: 12px">Dark: complete · light: partial · empty: none. PIT = stored as of the date it was known.</span></div>
+      <div class="cov" aria-label="Coverage grid">
+        <div class="muted">Year</div>
+        <div>00</div><div>01</div><div>02</div><div>03</div><div>04</div><div>05</div><div>06</div><div>07</div><div>08</div><div>09</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div><div>19</div><div>20</div><div>21</div><div>22</div><div>23</div><div>24</div><div>25</div><div>26</div>
+        <div>Daily bars, S&amp;P 500 (Stooq, Tiingo)</div>
+        <div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div>
+        <div>Minute bars, S&amp;P 500 (Alpaca)</div>
+        <div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#B8B6AE"></div>
+        <div>Daily option chains (Alpha Vantage)</div>
+        <div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div>
+        <div>Fundamentals, PIT (SEC EDGAR)</div>
+        <div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div>
+        <div>S&amp;P 500 membership <span class="warnt">(not PIT before 2012)</span></div>
+        <div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#B8B6AE"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div><div class="sq" style="background:#3F3F3B"></div>
+        <div>Live quote recordings (Alpaca IEX)</div>
+        <div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#EFEEE9"></div><div class="sq" style="background:#3F3F3B"></div>
+      </div>
+      <span class="muted" style="font-size: 12px">Membership before 2012 is today's list projected backwards. Stock-selection backtests before 2012 will be flagged as survivorship-biased in their warnings.</span>
+    </div>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">Quality checks · last run 03:10</h2>
+      <table>
+        <thead><tr><th>Check</th><th>Dataset</th><th>Result</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Gaps and duplicates</td><td>Minute bars</td><td class="warnt">2 warnings</td><td>3 symbols missing 09:31 to 09:34 on 2026-09-24 (vendor outage); flagged in affected runs</td></tr>
+          <tr><td>Split consistency</td><td>Daily bars vs corporate actions</td><td class="pass">pass</td><td>All price jumps above 40% explained by a recorded split</td></tr>
+          <tr><td>Point-in-time</td><td>Fundamentals</td><td class="pass">pass</td><td>No value known before its filing date</td></tr>
+          <tr><td>Stale recording</td><td>Live quotes</td><td class="pass">pass</td><td>Recorder heartbeat within 30 s all session</td></tr>
+          <tr><td>Option chain sanity</td><td>Daily chains</td><td class="warnt">1 warning</td><td>41 contracts with zero bid retained but marked unfillable</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Snapshots</h2>
+        <table>
+          <thead><tr><th>Snapshot</th><th>Created</th><th>Files</th><th>Used by runs</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">snap-2026-09-25</td><td class="mono">2026-09-25 03:12</td><td class="mono">4,218</td><td class="mono">31</td></tr>
+            <tr><td class="mono">snap-2026-09-18</td><td class="mono">2026-09-18 03:11</td><td class="mono">4,190</td><td class="mono">58</td></tr>
+          </tbody>
+        </table>
+        <span class="muted" style="font-size: 12px">A run always names its snapshot so it can be reproduced after data revisions.</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Recorders</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span>Alpaca IEX quotes, 30 symbols</span><span class="pass">recording · 0.4 GB today</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span>Alpaca news</span><span class="pass">recording</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px"><span>ThetaData options stream</span><span class="muted">not configured (phase 3)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

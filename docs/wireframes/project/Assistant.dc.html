@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Assistant</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+.ok{background:#EAF6EE;border-color:#A9D9B8;color:#134D2B}
+.msg{padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.5;max-width:92%}
+.me{background:#EEF3FC;align-self:flex-end}
+.bot{background:#F6F5F1;border:1px solid #EFEEE9;align-self:flex-start}
+input{font:inherit;font-size:14px;padding:10px 12px;border:1px solid #D9D7D0;border-radius:8px;background:#fff;color:#1C1C1A;flex-grow:1}
+.bar{height:10px;border-radius:999px;background:#EFEEE9;overflow:hidden}
+.bar span{display:block;height:100%;background:#1D5BD6}
+.diff{font-size:13px;border:1px solid #D9D7D0;border-radius:8px;overflow:hidden}
+.diff div{padding:4px 10px}
+.del{background:#FCEBE9}.add{background:#EAF6EE}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">SIMULATION · fake money</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Runs.dc.html">Runs</a>
+    <a href="Compare.dc.html">Compare</a>
+    <a href="Sweep.dc.html">Sweeps</a>
+    <a href="Replay.dc.html">Replay</a>
+    <a href="Paper.dc.html">Paper</a>
+    <a href="Data.dc.html">Data</a>
+    <a class="on" href="Assistant.dc.html">Assistant</a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <h1 class="h1">Assistant</h1>
+    <span class="muted" style="font-size: 13px">Reads your registry and data. Explains, proposes, drafts. Cannot trade, cannot touch accounts.</span>
+  </div>
+
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+        <div class="msg me">Why did r-0142 fall behind buy-and-hold from 2013 onwards when it kept up before?</div>
+        <div class="msg bot">Two reasons, both visible in the run's trades. First, the 2013 to 2026 period had only three drawdowns deeper than 15% and the rule sat in cash during the recoveries that followed each of them, missing about 1.1 points a year. Second, three whipsaws in 2015, 2018 and 2023 each cost 5 to 7% while the index recovered within weeks. That is the normal price of a trend rule: it pays in 2008 and 2020 and pays out in long bull markets. The <a href="Validation.dc.html">walk-forward windows</a> confirm the pattern; the rule is not broken, it is doing what it is for.<br><span class="muted" style="font-size: 12px">Sources: run r-0142 trades, metrics, walk-forward gates. Glossary: <a href="Tour.dc.html">whipsaw</a>, <a href="Tour.dc.html">drawdown</a>.</span></div>
+        <div class="msg me">Would a shorter average have helped?</div>
+        <div class="msg bot">The sweep already tried 3 to 18 months. Shorter averages traded more and lost more to whipsaws: 4 months gave 6.1% a year with 92 trades. The plateau at 10 to 12 months is the most defensible choice. If you want to keep more of the bull-market upside, the lever is not the lookback but a partial exposure when below the average, for example 50% instead of 0%. I can turn that into a proposal for the experiment; it would count as trial 241 of 300.</div>
+      </div>
+      <div style="display: flex; gap: 10px">
+        <input type="text" aria-label="Ask the assistant" value="Yes, propose the partial-exposure variant.">
+        <button class="btn primary">Send</button>
+      </div>
+      <span class="muted" style="font-size: 12px">Answers cite the runs and glossary entries they used. The assistant's knowledge of markets stops at its training date; treat any strategy idea as a hypothesis to test on data after that date.</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="callout">5</span><h2 class="h2">Proposal awaiting your decision</h2></div>
+        <span style="font-size: 13px">Add parameter <span class="mono">below_average_exposure</span> to SPY 10-month trend, default 0.5, allowed 0 to 1.</span>
+        <div class="diff">
+          <div class="del mono">- exposure_below = 0.0</div>
+          <div class="add mono">+ below_average_exposure = 0.5   # allowed 0.0 to 1.0, step 0.1</div>
+        </div>
+        <span class="muted" style="font-size: 12px">Reasoning: keeps half the upside during recoveries; expected to raise CAGR toward 9.5 to 10% and deepen the worst drawdown toward 30%. Approving creates run r-0143 as trial 241 of 300.</span>
+        <div style="display: flex; gap: 10px">
+          <button class="btn primary">Approve and run</button>
+          <button class="btn">Reject</button>
+        </div>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Budget this month</h2>
+        <div class="bar" aria-label="31 of 80 USD used"><span style="width: 39%"></span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px" class="muted"><span>31 USD used</span><span>warning at 60 · hard stop at 80</span></div>
+        <span class="muted" style="font-size: 12px">Nightly digests run through the half-price batch route. Every call is logged with its cost.</span>
+      </div>
+      <div class="warn ok"><span aria-hidden="true">✓</span><span><b>What it cannot do.</b> No order tool, no account access, no credentials. Read-only database connection. Every action is logged to the registry.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

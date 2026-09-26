@@ -1,0 +1,37 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-09-26T08:05:00Z"},
+  "title": "Trading Playground Wireframes",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html":       {"x": 0,    "y": 0,    "w": 1280, "h": 880, "title": "1.1 Home", "is_interactive": true},
+    "Runs.dc.html":       {"x": 1360, "y": 0,    "w": 1280, "h": 880, "title": "1.2 Runs and new run", "is_interactive": true},
+    "RunDetail.dc.html":  {"x": 2720, "y": 0,    "w": 1280, "h": 1040, "title": "1.3 Run detail", "is_interactive": true},
+    "Compare.dc.html":    {"x": 4080, "y": 0,    "w": 1280, "h": 880, "title": "1.4 Compare two runs", "is_interactive": true},
+    "Sweep.dc.html":      {"x": 0,    "y": 1300, "w": 1280, "h": 880, "title": "2.1 Sweep and leaderboard", "is_interactive": true},
+    "Validation.dc.html": {"x": 1360, "y": 1300, "w": 1280, "h": 880, "title": "2.2 Validation report", "is_interactive": true},
+    "Data.dc.html":       {"x": 2720, "y": 1300, "w": 1280, "h": 880, "title": "2.3 Data and health", "is_interactive": true},
+    "Replay.dc.html":     {"x": 0,    "y": 2500, "w": 1280, "h": 880, "title": "3.1 Replay (time machine)", "is_interactive": true},
+    "Paper.dc.html":      {"x": 1360, "y": 2500, "w": 1280, "h": 880, "title": "3.2 Paper accounts", "is_interactive": true},
+    "Assistant.dc.html":  {"x": 2720, "y": 2500, "w": 1280, "h": 880, "title": "3.3 Assistant", "is_interactive": true},
+    "Tour.dc.html":       {"x": 0,    "y": 3700, "w": 1280, "h": 880, "title": "4.1 Help system: tour, explainer, glossary", "is_interactive": true}
+  },
+  "order": [
+    "Main.dc.html", "Runs.dc.html", "RunDetail.dc.html", "Compare.dc.html",
+    "Sweep.dc.html", "Validation.dc.html", "Data.dc.html",
+    "Replay.dc.html", "Paper.dc.html", "Assistant.dc.html",
+    "Tour.dc.html"
+  ],
+  "notes": {
+    "row1": {"x": 0, "y": -300, "text": "1 · Core loop: run a strategy, read the result, compare", "kind": "title1", "maxW": 5360},
+    "row2": {"x": 0, "y": 1000, "text": "2 · Research discipline: sweeps, validation gates, data health", "kind": "title1", "maxW": 4000},
+    "row3": {"x": 0, "y": 2200, "text": "3 · Time machine, paper trading and the assistant", "kind": "title1", "maxW": 4000},
+    "row4": {"x": 0, "y": 3400, "text": "4 · The help system that makes it understandable", "kind": "title1", "maxW": 2000},
+    "s1": {"x": 5440, "y": 0, "w": 380, "text": "Row 1 notes. Every screen carries the red SIMULATION badge and an Explain-mode switch. Callout numbers on the boards: (1) 'What to do next' replaces an empty dashboard with guidance. (2) Paper accounts show a heartbeat so silence is visible. (3) New-run form is generated from the strategy's parameter schema; each field has a definition. (4) Plain-language summary comes before any number. (5) Warnings sit next to the number they concern. (6) Every metric label opens a tooltip with definition, formula, good range and caveat.", "fill": "blue"},
+    "s2": {"x": 4080, "y": 1300, "w": 380, "text": "Row 2 notes. (1) Trial budget bar: the count of things tried is always visible because the deflated Sharpe depends on it. (2) Leaderboard ranks by deflated Sharpe, never raw Sharpe; gate badges show pass or fail. (3) Validation report reads top to bottom as a checklist with a verdict; each gate explains what it protects against. (4) Holdout evaluation is a single, deliberate action with a confirmation step. (5) Data page shows coverage and quality so a bad result can be traced to data, and marks datasets that are not point-in-time.", "fill": "blue"},
+    "s3": {"x": 4080, "y": 2500, "w": 380, "text": "Row 3 notes. (1) Replay controls are media-player controls: date, speed, pause. The chart follows the clock and marks each decision. (2) Decision log narrates why the bot acted, in plain words, from the strategy's own notes. (3) Paper accounts: champion plus challengers on the same data; each has its own kill switch. (4) Shadow fills compare the simulator's fill with the external paper account's fill. (5) Assistant can explain, propose and draft; proposals are diffs you approve, and it has no order tool. Budget meter with hard cap.", "fill": "blue"},
+    "s4": {"x": 1360, "y": 3700, "w": 380, "text": "Row 4 notes. The first-run tour has five steps and can be reopened from the help menu. 'Explain this page' is a side panel with what the page shows, how to read it and what to do next. The glossary drawer is searchable and every tooltip links into it. Expert mode hides all of this chrome in one switch.", "fill": "blue"}
+  },
+  "designSystems": []
+}
