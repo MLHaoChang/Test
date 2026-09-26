@@ -63,6 +63,7 @@ from playground.importer.workspace import (
 )
 from playground.ledger.fifo import LedgerTxn, build_lots
 from playground.storage import repos
+from playground.storage.schema import review_items
 
 Decision = Literal["merge", "keep-both", "use-parsed"]
 
@@ -534,8 +535,6 @@ def _settle(
 
 
 def _portfolio_of_item(conn: Connection, item_id: int) -> int:
-    from playground.storage.schema import review_items
-
     row = conn.execute(review_items.select().where(review_items.c.id == item_id)).first()
     if row is None:
         raise ReviewError(f"There is no review item {item_id}.")
@@ -579,7 +578,8 @@ def _merge_target(ws: Workspace, item: Item, txn: Txn | None, into: int | None) 
         return chosen
     if not candidates:
         raise ReviewError(f"Review item {item.id}: no transaction near this one is left to merge into.")
-    return candidates[0]
+    # The nearest date first; between two on one date, the lower occurrence (the earlier one).
+    return min(candidates, key=lambda other: (abs((other.day - txn.day).days), other.occurrence, abs(other.key)))
 
 
 def _apply_decision(item: Item, how: str, reason: str | None, now: str, target: Txn | None) -> None:

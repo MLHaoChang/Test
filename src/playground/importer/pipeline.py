@@ -400,7 +400,7 @@ def _read_files(
         if duplicate is not None:
             doc_type = duplicate.doc_type
             parser_id = duplicate.parser_id
-            parser_version = duplicate.parser_version if isinstance(duplicate, _FileResult) else None
+            parser_version = duplicate.parser_version
             duplicate_of = duplicate.file.name if isinstance(duplicate, _FileResult) else duplicate.file_name
             status = "duplicate_file"
         elif reading is not None:
@@ -431,6 +431,7 @@ def _read_files(
             status=status,
             parser_id=parser_id,
             doc_type=doc_type,
+            parser_version=parser_version,
         )
         result = _FileResult(
             file=file,

@@ -100,11 +100,6 @@ def instrument_names(conn: Connection) -> dict[str, str]:
     return {row.isin: row.name for row in conn.execute(sa.select(instruments.c.isin, instruments.c.name))}
 
 
-def instrument_isins(conn: Connection) -> dict[int, str]:
-    """The ISIN of every known instrument, by instrument id."""
-    return {row.id: row.isin for row in conn.execute(sa.select(instruments.c.id, instruments.c.isin))}
-
-
 def delete_unused_instruments(conn: Connection) -> int:
     """Delete unmapped instruments that no transaction, lot or mapping log row refers to (after a discard)."""
     used = (
@@ -174,10 +169,6 @@ def set_batch_summary(conn: Connection, batch_id: int, summary: Mapping[str, Any
 def insert_import(conn: Connection, **values: Any) -> int:
     """Record one file of a batch (the `imports` table, plan 4.1) and return its id."""
     return _inserted_id(conn.execute(sa.insert(imports), values))
-
-
-def batch_imports(conn: Connection, batch_id: int) -> list[Row[Any]]:
-    return list(conn.execute(sa.select(imports).where(imports.c.batch_id == batch_id).order_by(imports.c.id)).all())
 
 
 def set_import_status(conn: Connection, import_id: int, status: str) -> None:

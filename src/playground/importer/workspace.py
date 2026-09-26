@@ -60,6 +60,7 @@ class ImportInfo:
     status: str
     parser_id: str | None
     doc_type: str
+    parser_version: int | None = None
 
 
 @dataclass
@@ -234,7 +235,7 @@ class Workspace:
             sa.select(import_batches.c.id, import_batches.c.status).where(import_batches.c.portfolio_id == portfolio_id)
         ):
             ws.batches[row.id] = row.status
-        live = {batch for batch, status in ws.batches.items() if status != "discarded" and batch != exclude_batch}
+        active = {batch for batch, status in ws.batches.items() if status != "discarded" and batch != exclude_batch}
 
         for row in conn.execute(sa.select(imports).where(imports.c.portfolio_id == portfolio_id)):
             ws.imports[row.id] = ImportInfo(
@@ -245,13 +246,14 @@ class Workspace:
                 status=row.status,
                 parser_id=row.parser_id,
                 doc_type=row.doc_type,
+                parser_version=row.parser_version,
             )
 
         stored: dict[int, Any] = {
             row.id: row
             for row in conn.execute(
                 sa.select(transactions).where(
-                    transactions.c.portfolio_id == portfolio_id, transactions.c.batch_id.in_(live)
+                    transactions.c.portfolio_id == portfolio_id, transactions.c.batch_id.in_(active)
                 )
             )
         }
@@ -259,7 +261,7 @@ class Workspace:
         for row in conn.execute(
             sa.select(transaction_sources, imports.c.batch_id, imports.c.file_name)
             .join(imports, imports.c.id == transaction_sources.c.import_id)
-            .where(imports.c.portfolio_id == portfolio_id, imports.c.batch_id.in_(live))
+            .where(imports.c.portfolio_id == portfolio_id, imports.c.batch_id.in_(active))
             .order_by(transaction_sources.c.id)
         ):
             if row.transaction_id not in sources:

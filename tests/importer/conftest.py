@@ -621,7 +621,10 @@ class Harness:
 
     def canonical(self) -> tuple[Any, ...]:
         """The accepted ledger, the held transactions and the open review items, without ids,
-        occurrence numbers, content hashes and timestamps (plan 7.2), so two registries can be compared."""
+        occurrence numbers, content hashes and timestamps (plan 7.2), so two registries can be compared.
+
+        The ordinal of a listing row's report key is left out as well: it is the occurrence
+        number of a report inside its file."""
         txns = self.transactions()
         key_of = {txn.id: _canonical_txn_key(txn) for txn in txns}
         ledger = sorted(_canonical_txn(txn) for txn in txns if txn.state in ("accepted", "held"))
@@ -679,8 +682,17 @@ def _canonical_txn(txn: TxnRow) -> tuple[Any, ...]:
         txn.origin or "",
         txn.source_ref or "",
         txn.precedence,
-        tuple(sorted((source.kind, source.file_name, source.report_key) for source in txn.sources)),
+        tuple(sorted((source.kind, source.file_name, _without_ordinal(source.report_key)) for source in txn.sources)),
     )
+
+
+def _without_ordinal(report_key: str) -> str:
+    """A listing row's report key without its ordinal: which of two identical rows of one file
+    reports which of two identical transactions is as arbitrary as their occurrence numbers."""
+    kind, _, rest = report_key.partition("|")
+    if kind in ("csv_export", "manual_csv", "pdf_statement"):
+        return report_key.rsplit("|", 1)[0]
+    return report_key
 
 
 def _make_harness(base: Path, *, in_memory: bool) -> Harness:

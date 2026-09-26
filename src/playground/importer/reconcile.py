@@ -22,7 +22,6 @@ from datetime import date
 from decimal import Decimal
 from typing import Any
 
-import sqlalchemy as sa
 from sqlalchemy import Connection
 
 from playground.core.clock import Clock
@@ -34,7 +33,6 @@ from playground.importer.review import evaluate, ledger_txn
 from playground.importer.workspace import Cause, Workspace
 from playground.ledger.fifo import LedgerTxn, LotBook, build_lots
 from playground.storage import repos
-from playground.storage.schema import transactions
 
 _ZERO = Decimal(0)
 SUMMARY_KEYS = (
@@ -266,14 +264,6 @@ def transaction_records(
         records.append(record)
     selected = records[offset:]
     return selected[:limit] if limit is not None else selected
-
-
-def count_transactions(conn: Connection, portfolio_id: int) -> int:
-    return int(
-        conn.execute(
-            sa.select(sa.func.count()).select_from(transactions).where(transactions.c.portfolio_id == portfolio_id)
-        ).scalar_one()
-    )
 
 
 # --- Plain text -------------------------------------------------------------------------------
