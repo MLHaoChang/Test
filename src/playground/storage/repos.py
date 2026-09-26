@@ -5,7 +5,9 @@ the caller controls the transaction and can compose several calls into
 one. WP2 added what `pg init` needs (`get_or_create_portfolio`); WP7 adds
 the functions of the import pipeline: instruments named by documents,
 batches, imports, transactions and their sources, review items, the lot
-book and the time of the last import. Later work packages add theirs.
+book and the time of the last import. WP8 adds reading the stored lot
+book back (`list_lots`, `list_disposals`) and storing a transfer's cost
+basis (`insert_cost_basis_input`). Later work packages add theirs.
 """
 
 from collections.abc import Mapping, Sequence
@@ -293,6 +295,63 @@ def replace_lots_and_disposals(
 def delete_lots_and_disposals(conn: Connection, portfolio_id: int) -> None:
     conn.execute(sa.delete(disposals).where(disposals.c.portfolio_id == portfolio_id))
     conn.execute(sa.delete(lots).where(lots.c.portfolio_id == portfolio_id))
+
+
+def list_lots(conn: Connection, portfolio_id: int, *, isin: str | None = None) -> list[Row[Any]]:
+    """The stored lot book, oldest booking first (`pg lots`, plan 5.9); only `isin`'s lots when given."""
+    query = (
+        sa.select(lots, instruments.c.isin)
+        .join(instruments, instruments.c.id == lots.c.instrument_id)
+        .where(lots.c.portfolio_id == portfolio_id)
+        .order_by(lots.c.booked_ts, lots.c.id)
+    )
+    if isin is not None:
+        query = query.where(instruments.c.isin == isin)
+    return list(conn.execute(query).all())
+
+
+def list_disposals(conn: Connection, portfolio_id: int, *, isin: str | None = None) -> list[Row[Any]]:
+    """The stored disposals, oldest first (`pg lots`, plan 5.9); only `isin`'s when given."""
+    query = (
+        sa.select(disposals, instruments.c.isin)
+        .join(lots, lots.c.id == disposals.c.lot_id)
+        .join(instruments, instruments.c.id == lots.c.instrument_id)
+        .where(disposals.c.portfolio_id == portfolio_id)
+        .order_by(disposals.c.ts_utc, disposals.c.id)
+    )
+    if isin is not None:
+        query = query.where(instruments.c.isin == isin)
+    return list(conn.execute(query).all())
+
+
+# --- Cost basis for transfers in ---------------------------------------------------------------
+
+
+def insert_cost_basis_input(
+    conn: Connection,
+    *,
+    transaction_id: int,
+    acquired_on: date,
+    cost_eur: Decimal,
+    entered_at: str,
+    note: str | None = None,
+) -> int:
+    """Store the cost basis you enter for a transfer in (`pg transfers set-cost`, plan 5.3.5).
+
+    A transaction can be given a cost more than once, correcting an earlier entry; only the most
+    recent one is the one the ledger uses (`Workspace.load`, ordered by `entered_at` then `id`).
+    """
+    return _inserted_id(
+        conn.execute(
+            sa.insert(cost_basis_inputs).values(
+                transaction_id=transaction_id,
+                acquired_on=acquired_on,
+                cost_eur=cost_eur,
+                entered_at=entered_at,
+                note=note,
+            )
+        )
+    )
 
 
 # --- Portfolios -------------------------------------------------------------------------------

@@ -7,6 +7,7 @@ import typer
 
 import playground
 from playground.cli import imports as import_commands
+from playground.cli import portfolio as portfolio_commands
 from playground.cli import review as review_commands
 from playground.cli.context import AppContext
 from playground.config import Settings
@@ -67,6 +68,7 @@ def init(ctx: typer.Context) -> None:
 
 import_commands.register(app)
 review_commands.register(app)
+portfolio_commands.register(app)
 
 
 if __name__ == "__main__":

@@ -1,13 +1,17 @@
-"""The review queue commands (plan 5.9): `pg review list`, `show`, `dismiss` and `resolve`.
+"""The review queue commands (plan 5.9): `pg review list`, `show`, `dismiss`, `resolve` and `export`.
 
 The review queue lists documents, rows and conflicts the app could not handle with certainty.
-A resolution applies at once, and the lots are rebuilt. `pg review export` (the anonymised text
-of an item) comes with WP8.
+A resolution applies at once, and the lots are rebuilt. `pg review export` writes an item's
+extracted text to a file, optionally anonymised, so a new layout can be shared and turned into a
+fixture without ever sending the file itself (plan 5.3.5).
 """
+
+from pathlib import Path
 
 import typer
 
 from playground.cli.context import AppContext, fail, portfolio_transaction, print_json
+from playground.importer.anonymise import anonymise_text
 from playground.importer.review import dismiss_item, get_item, list_items, resolve_item
 
 review_app = typer.Typer(help="The review queue: documents, rows and conflicts that need you.", no_args_is_help=True)
@@ -111,6 +115,36 @@ def resolve_command(
         print_json(item)
         return
     typer.echo(f"Resolved review item {item_id} with --{chosen[0]}.")
+
+
+@review_app.command(name="export")
+def export_command(
+    ctx: typer.Context,
+    item_id: int = typer.Argument(..., help="The review item number."),
+    out: Path = typer.Option(..., "--out", help="Write the text to this file."),  # noqa: B008
+    anonymise: bool = typer.Option(
+        False, "--anonymise", help="Mask your name, address, IBAN, depot and order numbers first."
+    ),
+    json_output: bool = _JSON,
+) -> None:
+    """Write a review item's extracted text to a file, so a new layout can be shared without the file itself.
+
+    Check the written file yourself before you share it: `anonymise_text` is a first pass, not a guarantee.
+    """
+    app_ctx: AppContext = ctx.obj
+    with portfolio_transaction(app_ctx) as (conn, portfolio_id):
+        item = get_item(conn, portfolio_id, item_id)
+    text = item["extracted_text"]
+    if not text:
+        fail(f"Review item {item_id} has no extracted text to export.")
+    if anonymise:
+        text = anonymise_text(text)
+    out.write_text(text, encoding="utf-8")
+    if json_output:
+        print_json({"id": item_id, "out": str(out), "anonymised": anonymise})
+        return
+    what = "Anonymised text" if anonymise else "Text"
+    typer.echo(f"{what} of review item {item_id} written to {out}.")
 
 
 def register(app: typer.Typer) -> None:
