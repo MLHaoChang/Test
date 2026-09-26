@@ -24,3 +24,11 @@ PG_TODAY=2024-12-31 uv run pg --version
 ```
 
 This project uses Python 3.13, ruff for formatting and linting, mypy for type checking, pytest with socket disabled for testing, and the `pg` CLI entry point.
+
+The PDF test fixtures are written from their text files, which are the source of truth. After adding or changing a text fixture under `tests/fixtures/tr/text/`, write the PDFs again and list the new files in `tests/fixtures/MANIFEST.yaml`:
+
+```bash
+uv run python tests/fixtures/tr/make_pdfs.py
+```
+
+`pytest --update-goldens` rewrites the expected JSON files from the current output. Check every rewrite in the git diff before you commit it.

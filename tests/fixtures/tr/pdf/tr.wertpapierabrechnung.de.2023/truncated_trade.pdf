@@ -1,0 +1,89 @@
+%PDF-1.3
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/Contents 7 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 6 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+4 0 obj
+<<
+/PageMode /UseNone /Pages 6 0 R /Type /Catalog
+>>
+endobj
+5 0 obj
+<<
+/Author (Synthetic test fixture \(playground\)) /CreationDate (D:20000101000000+00'00') /Creator (tests/fixtures/tr/make_pdfs.py) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (truncated_trade) /Trapped /False
+>>
+endobj
+6 0 obj
+<<
+/Count 1 /Kids [ 3 0 R ] /Type /Pages
+>>
+endobj
+7 0 obj
+<<
+/Length 1317
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 50 791.8898 Tm (TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN) Tj T* ET
+BT 1 0 0 1 50 780.8898 Tm (Tom Probe SEITE 1 von 2) Tj T* ET
+BT 1 0 0 1 50 769.8898 Tm (Birkenallee 12 DATUM 16.10.2023) Tj T* ET
+BT 1 0 0 1 50 758.8898 Tm (54321 Beispielheim ORDER a8e1-5c09) Tj T* ET
+BT 1 0 0 1 50 747.8898 Tm (AUSF\334HRUNG 4b73-f2d6) Tj T* ET
+BT 1 0 0 1 50 736.8898 Tm (DEPOT 0000002222) Tj T* ET
+BT 1 0 0 1 50 725.8898 Tm (WERTPAPIERABRECHNUNG) Tj T* ET
+BT 1 0 0 1 50 714.8898 Tm (\334BERSICHT) Tj T* ET
+BT 1 0 0 1 50 703.8898 Tm (Market-Order Kauf am 16.10.2023, um 13:37 Uhr \(Europe/Berlin\) an der Lang & Schwarz Exchange.) Tj T* ET
+BT 1 0 0 1 50 692.8898 Tm (Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.) Tj T* ET
+BT 1 0 0 1 50 681.8898 Tm (POSITION ANZAHL PREIS BETRAG) Tj T* ET
+BT 1 0 0 1 50 670.8898 Tm (Allianz SE 2 Stk. 225,40 EUR 450,80 EUR) Tj T* ET
+BT 1 0 0 1 50 659.8898 Tm (vink.Namens-Aktien o.N.) Tj T* ET
+BT 1 0 0 1 50 648.8898 Tm (ISIN: DE0008404005) Tj T* ET
+BT 1 0 0 1 50 637.8898 Tm (GESAMT 450,80 EUR) Tj T* ET
+BT 1 0 0 1 50 626.8898 Tm (ABRECHNUNG) Tj T* ET
+BT 1 0 0 1 50 615.8898 Tm (POSITION BETRAG) Tj T* ET
+BT 1 0 0 1 50 604.8898 Tm (Fremdkostenzuschlag -1,00 EUR) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000061 00000 n 
+0000000092 00000 n 
+0000000199 00000 n 
+0000000402 00000 n 
+0000000470 00000 n 
+0000000787 00000 n 
+0000000846 00000 n 
+trailer
+<<
+/ID 
+[<29ba6f618fb6b154ddea09898ca5e3dd><29ba6f618fb6b154ddea09898ca5e3dd>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 5 0 R
+/Root 4 0 R
+/Size 8
+>>
+startxref
+2214
+%%EOF

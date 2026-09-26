@@ -89,3 +89,104 @@ files:
     synthetic: true
     imitates: tr.wertpapierabrechnung.de.2019 and tr.wertpapierabrechnung.de.2023 in one file
     description: Negative case. A 2019 trade on page 1 and a 2023 trade on page 2. Must give ambiguous_layout.
+
+  # PDFs written by tr/make_pdfs.py from the text fixtures above (reportlab, Helvetica, invariant).
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2019/kauf_market_winter.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2019/kauf_market_winter.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2019/verkauf_limit_summer_taxes.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2019/verkauf_limit_summer_taxes.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2023/limit_kauf_tausend_stk.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/limit_kauf_tausend_stk.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2023/stop_market_verkauf_iso_wertstellung.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/stop_market_verkauf_iso_wertstellung.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2023/truncated_trade.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/truncated_trade.txt
+    description: PDF of the negative text fixture.
+  - path: tr/pdf/tr.wertpapierabrechnung.de.2023/amounts_off_by_one_euro.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/amounts_off_by_one_euro.txt
+    description: PDF of the negative text fixture.
+  - path: tr/pdf/tr.sparplan.de/kurs_iso_valuta.pdf
+    synthetic: true
+    imitates: tr.sparplan.de
+    generated_from: tr/text/tr.sparplan.de/kurs_iso_valuta.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.settlement.en.2023/buy_market_winter.pdf
+    synthetic: true
+    imitates: tr.settlement.en.2023
+    generated_from: tr/text/tr.settlement.en.2023/buy_market_winter.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.settlement.en.2023/sell_limit_summer_taxes.pdf
+    synthetic: true
+    imitates: tr.settlement.en.2023
+    generated_from: tr/text/tr.settlement.en.2023/sell_limit_summer_taxes.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/unclassified/two_layouts_mixed.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019 and tr.wertpapierabrechnung.de.2023 in one file
+    generated_from: tr/text/unclassified/two_layouts_mixed.txt
+    description: PDF of the negative text fixture, two pages.
+
+  # Golden portfolio inputs (plan 1.2), round 1. See golden/README.md.
+  - path: golden/inputs/pdf/2024-01-15_kauf_sap.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/golden_t02_kauf_sap.txt
+    description: Golden portfolio T2, the SAP buy of 15 January 2024.
+  - path: golden/inputs/pdf/2024-02-01_sparplan_msciw.pdf
+    synthetic: true
+    imitates: tr.sparplan.de
+    generated_from: tr/text/tr.sparplan.de/golden_t03_sparplan_msciw.txt
+    description: Golden portfolio T3, the MSCI World savings plan buy of 1 February 2024.
+  - path: golden/inputs/pdf/2024-03-20_kauf_nvda.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/golden_t06_kauf_nvda.txt
+    description: Golden portfolio T6, the NVIDIA buy of 20 March 2024.
+  - path: golden/inputs/pdf/2024-04-10_kauf_sap.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/golden_t08_kauf_sap.txt
+    description: Golden portfolio T8, the SAP buy of 10 April 2024.
+  - path: golden/inputs/pdf/2024-06-12_verkauf_sap.pdf
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    generated_from: tr/text/tr.wertpapierabrechnung.de.2023/golden_t12_verkauf_sap.txt
+    description: Golden portfolio T12, the SAP sell of 12 June 2024.
+  - path: golden/inputs/pdf/unbekannt_kosteninformation.pdf
+    synthetic: true
+    imitates: Trade Republic cost information sheet (KOSTENINFORMATION), which no parser reads
+    generated_from: tr/text/unclassified/unknown_cost_information.txt
+    description: Golden portfolio input that must land in the review queue as unknown_layout.
+
+  # Same-day savings plans (plan 6.2): two executions for the same ETF, day and amount.
+  - path: idempotency/same_day_savings_plans/same_day_a.pdf
+    synthetic: true
+    imitates: tr.sparplan.de
+    generated_from: tr/text/tr.sparplan.de/same_day_a.txt
+    description: Document A of the pair.
+  - path: idempotency/same_day_savings_plans/same_day_a_copy.pdf
+    synthetic: true
+    imitates: tr.sparplan.de
+    generated_from: tr/text/tr.sparplan.de/same_day_a.txt
+    description: Document A again with another PDF title, so the bytes differ but the text is the same.
+  - path: idempotency/same_day_savings_plans/same_day_b.pdf
+    synthetic: true
+    imitates: tr.sparplan.de
+    generated_from: tr/text/tr.sparplan.de/same_day_b.txt
+    description: Document B of the pair, different from A only in its execution number.

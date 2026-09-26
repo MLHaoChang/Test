@@ -10,6 +10,7 @@ from types import ModuleType
 from typing import Any
 
 import pytest
+import yaml
 
 from playground.importer.tr.pdf_text import extract_text
 
@@ -109,3 +110,11 @@ def test_check_mode_reports_up_to_date_pdfs_and_writes_nothing(make_pdfs: Module
     before = {path: path.stat().st_mtime_ns for path in FIXTURES_DIR.rglob("*.pdf")}
     assert make_pdfs.main(["--check"]) == 0
     assert {path: path.stat().st_mtime_ns for path in FIXTURES_DIR.rglob("*.pdf")} == before
+
+
+def test_the_manifest_names_the_text_each_pdf_was_generated_from(make_pdfs: ModuleType) -> None:
+    manifest = yaml.safe_load((FIXTURES_DIR / "MANIFEST.yaml").read_text(encoding="utf-8"))
+    generated_from = {entry["path"]: entry.get("generated_from") for entry in manifest["files"]}
+    for job in make_pdfs.pdf_jobs():
+        target = job.target.relative_to(FIXTURES_DIR).as_posix()
+        assert generated_from.get(target) == job.source.relative_to(FIXTURES_DIR).as_posix(), target
