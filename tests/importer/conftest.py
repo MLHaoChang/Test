@@ -21,6 +21,7 @@ writing PDFs. The PDF text layer itself is tested in `tests/importer/tr/test_pdf
 """
 
 import hashlib
+import sqlite3
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date
@@ -30,7 +31,7 @@ from typing import Any
 
 import pytest
 import sqlalchemy as sa
-from sqlalchemy import Engine, event
+from sqlalchemy import Engine
 from sqlalchemy.pool import StaticPool
 
 from playground.core.clock import FixedClock
@@ -400,17 +401,27 @@ class ItemRow:
     dedupe_key: str
 
 
+_TEMPLATE: list[sqlite3.Connection] = []
+# One compiled-statement cache for every in-memory registry: a fresh engine would compile each
+# statement again, which is most of the cost of a short property-test example.
+_COMPILED_CACHE: dict[Any, Any] = {}
+
+
+def _template() -> sqlite3.Connection:
+    """An in-memory database with the registry schema, copied into every in-memory harness."""
+    if not _TEMPLATE:
+        template = sqlite3.connect(":memory:", check_same_thread=False)
+        metadata.create_all(sa.create_engine("sqlite://", creator=lambda: template, poolclass=StaticPool))
+        _TEMPLATE.append(template)
+    return _TEMPLATE[0]
+
+
 def _registry_engine_in_memory() -> Engine:
-    engine = sa.create_engine("sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False})
-
-    @event.listens_for(engine, "connect")
-    def _foreign_keys(dbapi_connection: Any, connection_record: Any) -> None:
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.close()
-
-    metadata.create_all(engine)
-    return engine
+    connection = sqlite3.connect(":memory:", check_same_thread=False)
+    _template().backup(connection)
+    connection.execute("PRAGMA foreign_keys=ON")
+    engine = sa.create_engine("sqlite://", creator=lambda: connection, poolclass=StaticPool)
+    return engine.execution_options(compiled_cache=_COMPILED_CACHE)
 
 
 @dataclass

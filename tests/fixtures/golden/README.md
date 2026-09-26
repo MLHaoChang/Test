@@ -77,3 +77,14 @@ The PDF documents are written by `tests/fixtures/tr/make_pdfs.py` from text fixt
 | `inputs/instrument_mapping.csv`, `inputs/manual_prices_allianz.csv` | the instrument mapping and the manual Allianz prices | | | WP9 |
 
 What each golden document reads as, field by field, is in the expected JSON next to its text fixture. For example, T12 gives a sell of 12 SAP at 175.00 on 2024-06-12 at 11:20 Berlin time (09:20 UTC, summer time), a booking of +1,999.41 EUR with the value date 2024-06-14, fees of 1.00 EUR and taxes of 99.59 EUR (capital gains tax 94.40, solidarity surcharge 5.19), and the execution number as `source_ref`. T3, a savings plan, has day precision: 2024-02-01 at 00:00 Berlin time, which is 2024-01-31 23:00 UTC.
+
+## Expected outputs
+
+The files in `expected/` are the JSON outputs of the end-to-end scenario (plan 7.6). `scripts/assert_golden.py` compares a run's output with them and ignores ids and timestamps. They are written by the code (`pytest --update-goldens`), so `tests/golden/test_golden_portfolio.py` also asserts the figures above directly. Check every rewrite in the git diff before you commit it.
+
+| File | Command (step of plan 7.6) | What it shows | Added in |
+|---|---|---|---|
+| `expected/import1.json` | `pg import` of the CSV export and the nine PDF documents (step 5) | 10 files, 19 candidates, 14 new transactions, 5 merged pairs, 0 held back, the 2 review items, holdings 0 before and SAP 3, MSCIW 5, AAPL 5, NVDA 20, ALV 4 after | WP7 |
+| `expected/reconcile.json` | `pg reconcile latest --confirmed ... --as-of 2024-12-31 --strict` (step 7) | the same diff with your confirmed holdings: 5 of 5 match | WP7 |
+| `expected/import2.json` | `pg import` of the same ten files plus the H1 statement (step 10) | 10 files skipped as already imported, 11 statement lines already known, 0 new | WP7 |
+| `expected/review.json` | `pg review list` after round 2 (step 13) | the unknown layout and the missing cost basis, both open | WP7 |

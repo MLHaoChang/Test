@@ -1,0 +1,842 @@
+{
+  "batch": {
+    "id": 1,
+    "status": "staged",
+    "created_at": "2024-12-31T11:00:00Z",
+    "accepted_at": null
+  },
+  "as_of": "2024-12-31",
+  "counts": {
+    "files": 10,
+    "duplicate_files": 0,
+    "candidates": 19,
+    "new": 14,
+    "merged": 5,
+    "already_known": 0,
+    "held_back": 0,
+    "completed": 0,
+    "review_new": 2,
+    "review_closed": 0
+  },
+  "files": [
+    {
+      "file_name": "2024-01-15_kauf_sap.pdf",
+      "file_hash": "70e139ee899643d6a15961e42d85aec3fdb37037be590cf44f1acd98b7624f8b",
+      "status": "parsed",
+      "doc_type": "trade_confirmation",
+      "parser_id": "tr.wertpapierabrechnung.de.2023",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 1,
+      "stored_path": "uploads/70e139ee899643d6a15961e42d85aec3fdb37037be590cf44f1acd98b7624f8b.pdf"
+    },
+    {
+      "file_name": "2024-02-01_sparplan_msciw.pdf",
+      "file_hash": "46faefb10a8b0f66575932a9007314da7054dabbc99301a19f3d43a76dcc3e1e",
+      "status": "parsed",
+      "doc_type": "savings_plan_confirmation",
+      "parser_id": "tr.sparplan.de",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 2,
+      "stored_path": "uploads/46faefb10a8b0f66575932a9007314da7054dabbc99301a19f3d43a76dcc3e1e.pdf"
+    },
+    {
+      "file_name": "2024-03-20_kauf_nvda.pdf",
+      "file_hash": "63114bcdc4eb858427f56de9465e9fad5c77c1d0936b75e2ef3730cb8ae636a9",
+      "status": "parsed",
+      "doc_type": "trade_confirmation",
+      "parser_id": "tr.wertpapierabrechnung.de.2023",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 3,
+      "stored_path": "uploads/63114bcdc4eb858427f56de9465e9fad5c77c1d0936b75e2ef3730cb8ae636a9.pdf"
+    },
+    {
+      "file_name": "2024-04-10_kauf_sap.pdf",
+      "file_hash": "5ff1b37db86a979d3487b7203ee604a4d5f876ffd9612386db6a27d4e0c8e999",
+      "status": "parsed",
+      "doc_type": "trade_confirmation",
+      "parser_id": "tr.wertpapierabrechnung.de.2023",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 4,
+      "stored_path": "uploads/5ff1b37db86a979d3487b7203ee604a4d5f876ffd9612386db6a27d4e0c8e999.pdf"
+    },
+    {
+      "file_name": "2024-05-15_dividende_sap.pdf",
+      "file_hash": "b053b5af5852f711fa712027b1b7c5fc24ab3094076560b586d329e31c1bb27a",
+      "status": "parsed",
+      "doc_type": "dividend_note",
+      "parser_id": "tr.dividende.de",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 5,
+      "stored_path": "uploads/b053b5af5852f711fa712027b1b7c5fc24ab3094076560b586d329e31c1bb27a.pdf"
+    },
+    {
+      "file_name": "2024-05-16_dividende_aapl.pdf",
+      "file_hash": "a2f7c8920696b59071e2e2f36d316f5a9a099e06ef98e1e3e029c9eb579fd946",
+      "status": "parsed",
+      "doc_type": "dividend_note",
+      "parser_id": "tr.dividende.de",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 6,
+      "stored_path": "uploads/a2f7c8920696b59071e2e2f36d316f5a9a099e06ef98e1e3e029c9eb579fd946.pdf"
+    },
+    {
+      "file_name": "2024-06-10_split_nvda.pdf",
+      "file_hash": "80c8b2e1a746c5c2d65f83001988e998c6925242e06325a758b856d15569b3ae",
+      "status": "parsed",
+      "doc_type": "split_notice",
+      "parser_id": "tr.split.de",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 7,
+      "stored_path": "uploads/80c8b2e1a746c5c2d65f83001988e998c6925242e06325a758b856d15569b3ae.pdf"
+    },
+    {
+      "file_name": "2024-06-12_verkauf_sap.pdf",
+      "file_hash": "8871d03555f7b4185ca83c480d8634bb5004ce70b5a2d6c99ecc51c317d800f3",
+      "status": "parsed",
+      "doc_type": "trade_confirmation",
+      "parser_id": "tr.wertpapierabrechnung.de.2023",
+      "parser_version": 1,
+      "source_kind": "pdf_document",
+      "candidates": 1,
+      "review_new": 0,
+      "duplicate_of": null,
+      "import_id": 8,
+      "stored_path": "uploads/8871d03555f7b4185ca83c480d8634bb5004ce70b5a2d6c99ecc51c317d800f3.pdf"
+    },
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "file_hash": "5c774e5b627fd7fadd55309fc4e839ae9ac6cb841eee9a7da469120fd6142679",
+      "status": "parsed",
+      "doc_type": "csv_export",
+      "parser_id": "tr.csv_export",
+      "parser_version": 1,
+      "source_kind": "csv_export",
+      "candidates": 11,
+      "review_new": 1,
+      "duplicate_of": null,
+      "import_id": 9,
+      "stored_path": "uploads/5c774e5b627fd7fadd55309fc4e839ae9ac6cb841eee9a7da469120fd6142679.csv"
+    },
+    {
+      "file_name": "unbekannt_kosteninformation.pdf",
+      "file_hash": "8235c510e901854efb65422fc52a49225101f0514d377b388203ab91cdb54385",
+      "status": "needs_review",
+      "doc_type": "unknown",
+      "parser_id": null,
+      "parser_version": null,
+      "source_kind": null,
+      "candidates": 0,
+      "review_new": 1,
+      "duplicate_of": null,
+      "import_id": 10,
+      "stored_path": "uploads/8235c510e901854efb65422fc52a49225101f0514d377b388203ab91cdb54385.pdf"
+    }
+  ],
+  "new": [
+    {
+      "id": 9,
+      "state": "staged",
+      "type": "deposit",
+      "isin": null,
+      "name": null,
+      "date": "2024-01-02",
+      "ts_utc": "2024-01-01T23:00:00Z",
+      "ts_local": "2024-01-02T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "amount_eur": "5000.00",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "csv-2024-0001",
+      "semantic_key": "deposit|-|2024-01-02|500000|EUR",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|deposit|-|2024-01-02|500000|EUR|-|1",
+          "line_from": 2,
+          "line_to": 2
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "state": "staged",
+      "type": "buy",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "date": "2024-01-15",
+      "ts_utc": "2024-01-15T09:05:00Z",
+      "ts_local": "2024-01-15T10:05:00",
+      "ts_precision": "minute",
+      "value_date": "2024-01-17",
+      "quantity": "10",
+      "price": "140.00",
+      "amount_eur": "-1401.00",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "5d0a-93f1",
+      "semantic_key": "buy|DE0007164600|2024-01-15|-140100|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-01-15_kauf_sap.pdf",
+          "report_key": "pdf_document|5d0a-93f1",
+          "line_from": 9,
+          "line_to": 22
+        },
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|buy|DE0007164600|2024-01-15|-140100|EUR|10:05|1",
+          "line_from": 3,
+          "line_to": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "state": "staged",
+      "type": "buy",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "date": "2024-02-01",
+      "ts_utc": "2024-01-31T23:00:00Z",
+      "ts_local": "2024-02-01T00:00:00",
+      "ts_precision": "day",
+      "value_date": "2024-02-05",
+      "quantity": "2.5",
+      "price": "80.00",
+      "amount_eur": "-200.00",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "savings_plan",
+      "source_ref": "2c61-7e0b",
+      "semantic_key": "buy|IE00B4L5Y983|2024-02-01|-20000|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-02-01_sparplan_msciw.pdf",
+          "report_key": "pdf_document|2c61-7e0b",
+          "line_from": 9,
+          "line_to": 18
+        },
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|buy|IE00B4L5Y983|2024-02-01|-20000|EUR|-|1",
+          "line_from": 4,
+          "line_to": 4
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "state": "staged",
+      "type": "buy",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "date": "2024-03-01",
+      "ts_utc": "2024-02-29T23:00:00Z",
+      "ts_local": "2024-03-01T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": "2.5",
+      "price": "84.00",
+      "amount_eur": "-210.00",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "savings_plan",
+      "source_ref": "csv-2024-0004",
+      "semantic_key": "buy|IE00B4L5Y983|2024-03-01|-21000|EUR",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|buy|IE00B4L5Y983|2024-03-01|-21000|EUR|-|1",
+          "line_from": 5,
+          "line_to": 5
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "state": "staged",
+      "type": "buy",
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "date": "2024-03-12",
+      "ts_utc": "2024-03-12T13:30:00Z",
+      "ts_local": "2024-03-12T14:30:00",
+      "ts_precision": "minute",
+      "value_date": null,
+      "quantity": "5",
+      "price": "160.00",
+      "amount_eur": "-801.00",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "csv-2024-0005",
+      "semantic_key": "buy|US0378331005|2024-03-12|-80100|EUR",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|buy|US0378331005|2024-03-12|-80100|EUR|14:30|1",
+          "line_from": 6,
+          "line_to": 6
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "state": "staged",
+      "type": "buy",
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "date": "2024-03-20",
+      "ts_utc": "2024-03-20T14:45:00Z",
+      "ts_local": "2024-03-20T15:45:00",
+      "ts_precision": "minute",
+      "value_date": "2024-03-22",
+      "quantity": "2",
+      "price": "850.00",
+      "amount_eur": "-1701.00",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "83ab-d4c6",
+      "semantic_key": "buy|US67066G1040|2024-03-20|-170100|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-03-20_kauf_nvda.pdf",
+          "report_key": "pdf_document|83ab-d4c6",
+          "line_from": 9,
+          "line_to": 22
+        },
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|buy|US67066G1040|2024-03-20|-170100|EUR|15:45|1",
+          "line_from": 7,
+          "line_to": 7
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "state": "staged",
+      "type": "deposit",
+      "isin": null,
+      "name": null,
+      "date": "2024-04-02",
+      "ts_utc": "2024-04-01T22:00:00Z",
+      "ts_local": "2024-04-02T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "amount_eur": "1000.00",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "csv-2024-0007",
+      "semantic_key": "deposit|-|2024-04-02|100000|EUR",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|deposit|-|2024-04-02|100000|EUR|-|1",
+          "line_from": 8,
+          "line_to": 8
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "state": "staged",
+      "type": "buy",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "date": "2024-04-10",
+      "ts_utc": "2024-04-10T07:12:00Z",
+      "ts_local": "2024-04-10T09:12:00",
+      "ts_precision": "minute",
+      "value_date": "2024-04-12",
+      "quantity": "5",
+      "price": "160.00",
+      "amount_eur": "-801.00",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "f1c3-58e2",
+      "semantic_key": "buy|DE0007164600|2024-04-10|-80100|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-04-10_kauf_sap.pdf",
+          "report_key": "pdf_document|f1c3-58e2",
+          "line_from": 9,
+          "line_to": 22
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "state": "staged",
+      "type": "dividend",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "date": "2024-05-15",
+      "ts_utc": "2024-05-14T22:00:00Z",
+      "ts_local": "2024-05-15T00:00:00",
+      "ts_precision": "day",
+      "value_date": "2024-05-15",
+      "quantity": "15",
+      "price": "2.20",
+      "amount_eur": "24.30",
+      "fees_eur": "0.00",
+      "tax_eur": "8.70",
+      "tax_detail": {
+        "kapitalertragssteuer": "8.25",
+        "solidaritaetszuschlag": "0.45"
+      },
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "5f2e-9a04",
+      "semantic_key": "dividend|DE0007164600|2024-05-15|2430|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-05-15_dividende_sap.pdf",
+          "report_key": "pdf_document|5f2e-9a04",
+          "line_from": 8,
+          "line_to": 20
+        },
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|dividend|DE0007164600|2024-05-15|2430|EUR|-|1",
+          "line_from": 9,
+          "line_to": 9
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "state": "staged",
+      "type": "dividend",
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "date": "2024-05-16",
+      "ts_utc": "2024-05-15T22:00:00Z",
+      "ts_local": "2024-05-16T00:00:00",
+      "ts_precision": "day",
+      "value_date": "2024-05-16",
+      "quantity": "5",
+      "price": "0.24",
+      "amount_eur": "0.94",
+      "fees_eur": "0.00",
+      "tax_eur": "0.17",
+      "tax_detail": {
+        "quellensteuer": "0.17"
+      },
+      "fx_rate": "1.0800",
+      "fx_source": "document",
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "3b7a-88ce",
+      "semantic_key": "dividend|US0378331005|2024-05-16|94|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-05-16_dividende_aapl.pdf",
+          "report_key": "pdf_document|3b7a-88ce",
+          "line_from": 8,
+          "line_to": 20
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "state": "staged",
+      "type": "split",
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "date": "2024-06-10",
+      "ts_utc": "2024-06-09T22:00:00Z",
+      "ts_local": "2024-06-10T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "amount_eur": null,
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": "20",
+      "origin": null,
+      "source_ref": "9c3f-51ad",
+      "semantic_key": "split|US67066G1040|2024-06-10|20",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-06-10_split_nvda.pdf",
+          "report_key": "pdf_document|9c3f-51ad",
+          "line_from": 8,
+          "line_to": 9
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "state": "staged",
+      "type": "sell",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "date": "2024-06-12",
+      "ts_utc": "2024-06-12T09:20:00Z",
+      "ts_local": "2024-06-12T11:20:00",
+      "ts_precision": "minute",
+      "value_date": "2024-06-14",
+      "quantity": "12",
+      "price": "175.00",
+      "amount_eur": "1999.41",
+      "fees_eur": "1.00",
+      "tax_eur": "99.59",
+      "tax_detail": {
+        "kapitalertragssteuer": "94.40",
+        "solidaritaetszuschlag": "5.19"
+      },
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "c2e8-7195",
+      "semantic_key": "sell|DE0007164600|2024-06-12|199941|EUR",
+      "sources": [
+        {
+          "kind": "pdf_document",
+          "file_name": "2024-06-12_verkauf_sap.pdf",
+          "report_key": "pdf_document|c2e8-7195",
+          "line_from": 9,
+          "line_to": 24
+        },
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|sell|DE0007164600|2024-06-12|199941|EUR|11:20|1",
+          "line_from": 10,
+          "line_to": 10
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "state": "staged",
+      "type": "transfer_in",
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "date": "2024-06-20",
+      "ts_utc": "2024-06-19T22:00:00Z",
+      "ts_local": "2024-06-20T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": "4",
+      "price": null,
+      "amount_eur": null,
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": "transfer",
+      "source_ref": "csv-2024-0010",
+      "semantic_key": "transfer_in|DE0008404005|2024-06-20|4",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|transfer_in|DE0008404005|2024-06-20|4|-|1",
+          "line_from": 11,
+          "line_to": 11
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "state": "staged",
+      "type": "interest",
+      "isin": null,
+      "name": null,
+      "date": "2024-07-01",
+      "ts_utc": "2024-06-30T22:00:00Z",
+      "ts_local": "2024-07-01T00:00:00",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "amount_eur": "3.12",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "fx_rate": null,
+      "fx_source": "none",
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "csv-2024-0011",
+      "semantic_key": "interest|-|2024-07-01|312|EUR",
+      "sources": [
+        {
+          "kind": "csv_export",
+          "file_name": "tr_transactions_2024.csv",
+          "report_key": "csv_export|interest|-|2024-07-01|312|EUR|-|1",
+          "line_from": 12,
+          "line_to": 12
+        }
+      ]
+    }
+  ],
+  "merged": [
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "source_kind": "csv_export",
+      "line_from": 3,
+      "line_to": 3,
+      "rule": "same_key",
+      "candidate_date": "2024-01-15",
+      "matched_date": "2024-01-15",
+      "transaction": {
+        "id": 1,
+        "type": "buy",
+        "isin": "DE0007164600",
+        "name": "SAP SE",
+        "date": "2024-01-15",
+        "amount_eur": "-1401.00",
+        "quantity": "10"
+      }
+    },
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "source_kind": "csv_export",
+      "line_from": 4,
+      "line_to": 4,
+      "rule": "same_key",
+      "candidate_date": "2024-02-01",
+      "matched_date": "2024-02-01",
+      "transaction": {
+        "id": 2,
+        "type": "buy",
+        "isin": "IE00B4L5Y983",
+        "name": "iShsIII-Core MSCI World U.ETF",
+        "date": "2024-02-01",
+        "amount_eur": "-200.00",
+        "quantity": "2.5"
+      }
+    },
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "source_kind": "csv_export",
+      "line_from": 7,
+      "line_to": 7,
+      "rule": "same_key",
+      "candidate_date": "2024-03-20",
+      "matched_date": "2024-03-20",
+      "transaction": {
+        "id": 3,
+        "type": "buy",
+        "isin": "US67066G1040",
+        "name": "NVIDIA Corp.",
+        "date": "2024-03-20",
+        "amount_eur": "-1701.00",
+        "quantity": "2"
+      }
+    },
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "source_kind": "csv_export",
+      "line_from": 9,
+      "line_to": 9,
+      "rule": "same_key",
+      "candidate_date": "2024-05-15",
+      "matched_date": "2024-05-15",
+      "transaction": {
+        "id": 5,
+        "type": "dividend",
+        "isin": "DE0007164600",
+        "name": "SAP SE",
+        "date": "2024-05-15",
+        "amount_eur": "24.30",
+        "quantity": "15"
+      }
+    },
+    {
+      "file_name": "tr_transactions_2024.csv",
+      "source_kind": "csv_export",
+      "line_from": 10,
+      "line_to": 10,
+      "rule": "same_key",
+      "candidate_date": "2024-06-12",
+      "matched_date": "2024-06-12",
+      "transaction": {
+        "id": 8,
+        "type": "sell",
+        "isin": "DE0007164600",
+        "name": "SAP SE",
+        "date": "2024-06-12",
+        "amount_eur": "1999.41",
+        "quantity": "12"
+      }
+    }
+  ],
+  "already_known": [],
+  "held_back": [],
+  "completed": [],
+  "review_new": [
+    {
+      "id": 1,
+      "kind": "unknown_layout",
+      "status": "open",
+      "message": "No parser recognises this document layout. Nothing was imported from it.",
+      "file_name": "unbekannt_kosteninformation.pdf",
+      "transaction": null,
+      "fields": {},
+      "created_at": "2024-12-31T11:00:00Z",
+      "resolved_at": null,
+      "resolution": null
+    },
+    {
+      "id": 2,
+      "kind": "missing_cost_basis",
+      "status": "open",
+      "message": "4 shares of Allianz SE (DE0008404005) were transferred in on 2024-06-20 without a cost basis. They count in your holdings and value, but their cost and any gain stay unknown until you enter the cost with: pg transfers set-cost --isin DE0008404005 --acquired YYYY-MM-DD --cost-eur AMOUNT",
+      "file_name": "tr_transactions_2024.csv",
+      "transaction": {
+        "id": 13,
+        "type": "transfer_in",
+        "isin": "DE0008404005",
+        "name": "Allianz SE",
+        "date": "2024-06-20",
+        "amount_eur": null,
+        "quantity": "4"
+      },
+      "fields": {
+        "booked_on": "2024-06-20",
+        "isin": "DE0008404005",
+        "quantity": "4"
+      },
+      "created_at": "2024-12-31T11:00:00Z",
+      "resolved_at": null,
+      "resolution": null
+    }
+  ],
+  "review_closed": [],
+  "holdings": [
+    {
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "before": "0",
+      "after": "3",
+      "change": "3"
+    },
+    {
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "before": "0",
+      "after": "4",
+      "change": "4"
+    },
+    {
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "before": "0",
+      "after": "5",
+      "change": "5"
+    },
+    {
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "before": "0",
+      "after": "5",
+      "change": "5"
+    },
+    {
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "before": "0",
+      "after": "20",
+      "change": "20"
+    }
+  ],
+  "confirmed": null
+}

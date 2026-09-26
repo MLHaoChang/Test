@@ -1,14 +1,16 @@
 """Main CLI entry point."""
 
 import os
-from dataclasses import dataclass
 from pathlib import Path
 
 import typer
 
 import playground
+from playground.cli import imports as import_commands
+from playground.cli import review as review_commands
+from playground.cli.context import AppContext
 from playground.config import Settings
-from playground.core.clock import Clock, InvalidClockSettingError, clock_from_settings, today_from_env
+from playground.core.clock import InvalidClockSettingError, clock_from_settings, today_from_env
 from playground.storage.db import open_registry
 from playground.storage.repos import get_or_create_portfolio
 from playground.storage.schema import ensure_schema
@@ -17,13 +19,7 @@ app = typer.Typer()
 
 DEFAULT_DATA_DIR = Path("./data")
 
-
-@dataclass
-class AppContext:
-    """Shared state built once in the top-level callback, and used by every command."""
-
-    settings: Settings
-    clock: Clock
+__all__ = ["AppContext", "app"]
 
 
 def version_callback(value: bool) -> None:
@@ -67,6 +63,10 @@ def init(ctx: typer.Context) -> None:
     with engine.begin() as conn:
         get_or_create_portfolio(conn, clock=app_ctx.clock)
     typer.echo(f"Portfolio ready at {app_ctx.settings.data_dir}")
+
+
+import_commands.register(app)
+review_commands.register(app)
 
 
 if __name__ == "__main__":

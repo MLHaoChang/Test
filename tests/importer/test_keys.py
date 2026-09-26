@@ -25,10 +25,9 @@ from playground.importer.keys import (
     report_keys,
     semantic_key,
 )
-from playground.importer.model import ParsedTransaction, SourceKind
+from playground.importer.model import ParsedTransaction, ReviewNeeded, SourceKind
 from playground.importer.tr.classify import classify
 from playground.importer.tr.csv_parser import parse_csv
-from playground.importer.tr.layouts.common import DocumentParser
 
 TEXT_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "tr" / "text"
 GOLDEN_INPUTS = Path(__file__).resolve().parents[1] / "fixtures" / "golden" / "inputs"
@@ -82,7 +81,7 @@ def candidate(
 def parse_text_fixture(relative: str) -> ParsedTransaction:
     text = (TEXT_DIR / relative).read_text(encoding="utf-8")
     parser = classify(text)
-    assert isinstance(parser, DocumentParser)
+    assert not isinstance(parser, ReviewNeeded)
     result = parser.parse(text)
     assert len(result.transactions) == 1
     return result.transactions[0]
@@ -152,7 +151,7 @@ def test_every_source_of_a_golden_trade_gives_the_same_key() -> None:
 def parse_text_fixture_all(relative: str) -> list[ParsedTransaction]:
     text = (TEXT_DIR / relative).read_text(encoding="utf-8")
     parser = classify(text)
-    assert isinstance(parser, DocumentParser)
+    assert not isinstance(parser, ReviewNeeded)
     return parser.parse(text).transactions
 
 

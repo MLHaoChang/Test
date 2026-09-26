@@ -12,11 +12,13 @@ parse model in one plain form, so it is defined once, here:
 """
 
 from collections.abc import Mapping
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
-from playground.core.dates import format_ts_utc
-from playground.importer.model import ParsedTransaction, ParseResult, ReviewNeeded
+from playground.core.dates import SourceTime, format_ts_utc
+from playground.core.types import TxnType
+from playground.importer.model import ParsedTransaction, ParseResult, ReviewNeeded, SourceKind
 
 
 def decimal_text(value: Decimal | None) -> str | None:
@@ -61,6 +63,48 @@ def transaction_to_dict(txn: ParsedTransaction) -> dict[str, Any]:
         "source_kind": txn.source_kind.value,
         "evidence": list(txn.evidence),
     }
+
+
+def transaction_from_dict(data: Mapping[str, Any]) -> ParsedTransaction:
+    """The inverse of `transaction_to_dict`: a candidate back from its JSON form (for example `fields_json`)."""
+    precision = data["ts_precision"]
+    if precision not in ("minute", "day"):
+        raise ValueError(f"Unknown time precision {precision!r}.")
+    fx_source = data["fx_source"]
+    if fx_source not in ("document", "ecb", "none"):
+        raise ValueError(f"Unknown FX source {fx_source!r}.")
+    evidence = data["evidence"]
+    return ParsedTransaction(
+        type=TxnType(data["type"]),
+        isin=data["isin"],
+        name=data["name"],
+        time=SourceTime(
+            ts_utc=datetime.fromisoformat(data["ts_utc"].replace("Z", "+00:00")),
+            ts_local=datetime.fromisoformat(data["ts_local"]),
+            source_tz=data["source_tz"],
+            precision=precision,
+        ),
+        value_date=date.fromisoformat(data["value_date"]) if data["value_date"] is not None else None,
+        quantity=_decimal_or_none(data["quantity"]),
+        price=_decimal_or_none(data["price"]),
+        currency=data["currency"],
+        amount=_decimal_or_none(data["amount"]),
+        amount_eur=_decimal_or_none(data["amount_eur"]),
+        fx_rate=_decimal_or_none(data["fx_rate"]),
+        fx_source=fx_source,
+        fees_eur=_decimal_or_none(data["fees_eur"]),
+        tax_eur=_decimal_or_none(data["tax_eur"]),
+        tax_detail={key: Decimal(value) for key, value in data["tax_detail"].items()},
+        split_new_quantity=_decimal_or_none(data["split_new_quantity"]),
+        origin=data["origin"],
+        source_ref=data["source_ref"],
+        source_kind=SourceKind(data["source_kind"]),
+        evidence=(int(evidence[0]), int(evidence[1])),
+    )
+
+
+def _decimal_or_none(text: str | None) -> Decimal | None:
+    return Decimal(text) if text is not None else None
 
 
 def review_to_dict(item: ReviewNeeded) -> dict[str, Any]:

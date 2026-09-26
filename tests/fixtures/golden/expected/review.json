@@ -1,0 +1,42 @@
+{
+  "status": "open",
+  "count": 2,
+  "items": [
+    {
+      "id": 1,
+      "kind": "unknown_layout",
+      "status": "open",
+      "message": "No parser recognises this document layout. Nothing was imported from it.",
+      "file_name": "unbekannt_kosteninformation.pdf",
+      "transaction": null,
+      "fields": {},
+      "created_at": "2024-12-31T11:00:00Z",
+      "resolved_at": null,
+      "resolution": null
+    },
+    {
+      "id": 2,
+      "kind": "missing_cost_basis",
+      "status": "open",
+      "message": "4 shares of Allianz SE (DE0008404005) were transferred in on 2024-06-20 without a cost basis. They count in your holdings and value, but their cost and any gain stay unknown until you enter the cost with: pg transfers set-cost --isin DE0008404005 --acquired YYYY-MM-DD --cost-eur AMOUNT",
+      "file_name": "tr_transactions_2024.csv",
+      "transaction": {
+        "id": 13,
+        "type": "transfer_in",
+        "isin": "DE0008404005",
+        "name": "Allianz SE",
+        "date": "2024-06-20",
+        "amount_eur": null,
+        "quantity": "4"
+      },
+      "fields": {
+        "booked_on": "2024-06-20",
+        "isin": "DE0008404005",
+        "quantity": "4"
+      },
+      "created_at": "2024-12-31T11:00:00Z",
+      "resolved_at": null,
+      "resolution": null
+    }
+  ]
+}

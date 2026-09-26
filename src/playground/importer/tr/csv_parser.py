@@ -48,10 +48,13 @@ class _RowProblem(Exception):
         self.message = message
 
 
-def parse_csv(data: bytes) -> ParseResult:
-    """Parse a Trade Republic transaction CSV export, as `stage_files` calls it for every CSV upload."""
+def parse_csv(data: bytes, profiles: Sequence[CsvProfile] = PROFILES) -> ParseResult:
+    """Parse a Trade Republic transaction CSV export, as `stage_files` calls it for every CSV upload.
+
+    `profiles` are the export generations to try, in order; a test passes its own list to add one.
+    """
     text = decode_csv_bytes(data)
-    for profile in PROFILES:
+    for profile in profiles:
         rows = _read_rows(text, profile.delimiter)
         if rows and tuple(rows[0]) == profile.header:
             return _parse_rows(profile, rows[1:], text)
