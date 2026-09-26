@@ -16,7 +16,7 @@ Then each field is taken from the source with the highest precedence that has it
 PDF document 3, CSV export 2, account statement 1).
 """
 
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -182,6 +182,21 @@ def test_rule_c_both_orders_of_trade_and_late_statement_line_give_the_same_ledge
     second.run(docs.trade("kauf_sap.pdf"))
 
     assert first.canonical() == second.canonical()
+
+
+@pytest.mark.parametrize(("days", "merges"), [(3, True), (4, False)])
+def test_rule_c_reaches_three_days_and_no_further(harness, docs, days: int, merges: bool) -> None:
+    harness.run(docs.trade("kauf_sap.pdf"))
+    harness.run(statement_buy(docs, date(2024, 1, 15) + timedelta(days=days)))
+
+    txns = harness.transactions()
+    if merges:
+        assert only(txns).kinds == ("pdf_document", "pdf_statement")
+        assert harness.items() == []
+    else:
+        assert sorted(txn.kinds for txn in txns) == [("pdf_document",), ("pdf_statement",)]
+        assert only(harness.items(kind="missing_field")).status == "open"
+    assert harness.holdings() == {SAP: Decimal("10")}
 
 
 def test_rule_c_any_other_near_date_match_is_held_back_as_a_possible_duplicate(harness, docs) -> None:
