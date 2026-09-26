@@ -3,13 +3,26 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from typer.testing import CliRunner
+
 import playground
+from playground.cli.main import app
 from playground.config import Settings
 
 
 def test_version_available() -> None:
     """Test that version is available."""
     assert playground.__version__ == "0.1.0"
+
+
+def test_cli_version_prints_version_and_no_real_orders_line() -> None:
+    """Test that `pg --version` prints the version and the no-real-orders line."""
+    runner = CliRunner()
+    result = runner.invoke(app, ["--version"])
+
+    assert result.exit_code == 0
+    assert f"pg {playground.__version__}" in result.stdout
+    assert "No real orders. Your portfolio is read-only." in result.stdout
 
 
 def test_settings_accepts_valid_keys() -> None:
