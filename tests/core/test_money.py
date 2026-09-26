@@ -76,24 +76,22 @@ class TestAllocate:
         assert pieces == [Decimal("100.00000000"), Decimal("0E-8")]
 
     def test_rejects_empty_weights(self) -> None:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="empty"):
             allocate(Decimal("100"), [])
 
     def test_rejects_negative_weight(self) -> None:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="negative"):
             allocate(Decimal("100"), [Decimal("1"), Decimal("-1")])
 
     def test_rejects_all_zero_weights(self) -> None:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="zero"):
             allocate(Decimal("100"), [Decimal("0"), Decimal("0")])
 
     @given(
         total_cents=st.integers(min_value=-10_000_000, max_value=10_000_000),
         weights=st.lists(st.integers(min_value=0, max_value=100_000), min_size=1, max_size=12),
     )
-    def test_property_sums_exactly_and_stays_close_to_exact_share(
-        self, total_cents: int, weights: list[int]
-    ) -> None:
+    def test_property_sums_exactly_and_stays_close_to_exact_share(self, total_cents: int, weights: list[int]) -> None:
         if sum(weights) == 0:
             weights = [*weights[:-1], 1]
         decimal_weights = [Decimal(w) for w in weights]

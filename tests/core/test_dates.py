@@ -1,6 +1,6 @@
 """Tests for date parsing and Europe/Berlin to UTC conversion (core/dates.py, plan 3.3, 5.1, 7.2)."""
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -45,19 +45,23 @@ class TestParseDeDate:
 
 
 class TestBerlinToUtc:
+    # Every `datetime(...)` passed INTO berlin_to_utc below is deliberately naive: that is
+    # exactly the "local time as printed in the document" contract this function converts.
+    # (# noqa: DTZ001 on each: ruff cannot tell a deliberate naive local time from a bug.)
+
     def test_winter_time_offset(self) -> None:
         # T2 in the golden portfolio: 2024-01-15 10:05 local, CET is UTC+1.
-        result = berlin_to_utc(datetime(2024, 1, 15, 10, 5))
-        assert result == datetime(2024, 1, 15, 9, 5, tzinfo=timezone.utc)
+        result = berlin_to_utc(datetime(2024, 1, 15, 10, 5))  # noqa: DTZ001
+        assert result == datetime(2024, 1, 15, 9, 5, tzinfo=UTC)
 
     def test_summer_time_offset(self) -> None:
         # T12 at 11:20 local is 09:20 UTC, spelled out explicitly in plan 3.3.
-        result = berlin_to_utc(datetime(2024, 6, 12, 11, 20))
-        assert result == datetime(2024, 6, 12, 9, 20, tzinfo=timezone.utc)
+        result = berlin_to_utc(datetime(2024, 6, 12, 11, 20))  # noqa: DTZ001
+        assert result == datetime(2024, 6, 12, 9, 20, tzinfo=UTC)
 
     def test_result_is_aware_utc(self) -> None:
-        result = berlin_to_utc(datetime(2024, 6, 12, 11, 20))
-        assert result.tzinfo is timezone.utc
+        result = berlin_to_utc(datetime(2024, 6, 12, 11, 20))  # noqa: DTZ001
+        assert result.tzinfo is UTC
 
     def test_rejects_aware_input(self) -> None:
         with pytest.raises(ValueError, match="naive"):
@@ -67,35 +71,35 @@ class TestBerlinToUtc:
         # EU clocks jump from 02:00 to 03:00 CEST on the last Sunday in March 2024 (31 March);
         # 02:30 that day never happened.
         with pytest.raises(NonExistentLocalTimeError):
-            berlin_to_utc(datetime(2024, 3, 31, 2, 30))
+            berlin_to_utc(datetime(2024, 3, 31, 2, 30))  # noqa: DTZ001
 
     def test_just_before_spring_forward_gap(self) -> None:
-        result = berlin_to_utc(datetime(2024, 3, 31, 1, 59))
-        assert result == datetime(2024, 3, 31, 0, 59, tzinfo=timezone.utc)
+        result = berlin_to_utc(datetime(2024, 3, 31, 1, 59))  # noqa: DTZ001
+        assert result == datetime(2024, 3, 31, 0, 59, tzinfo=UTC)
 
     def test_just_after_spring_forward_gap(self) -> None:
-        result = berlin_to_utc(datetime(2024, 3, 31, 3, 0))
-        assert result == datetime(2024, 3, 31, 1, 0, tzinfo=timezone.utc)
+        result = berlin_to_utc(datetime(2024, 3, 31, 3, 0))  # noqa: DTZ001
+        assert result == datetime(2024, 3, 31, 1, 0, tzinfo=UTC)
 
     def test_autumn_fallback_ambiguous_time_does_not_raise(self) -> None:
         # 2024-10-27: clocks fall back from 03:00 CEST to 02:00 CET, so 02:30 occurs twice.
         # This must not raise (only a non-existent time does).
-        berlin_to_utc(datetime(2024, 10, 27, 2, 30))
+        berlin_to_utc(datetime(2024, 10, 27, 2, 30))  # noqa: DTZ001
 
     def test_autumn_fallback_picks_first_occurrence(self) -> None:
         # The first occurrence is summer time (CEST, UTC+2), Python's fold=0 default.
-        result = berlin_to_utc(datetime(2024, 10, 27, 2, 30))
-        assert result == datetime(2024, 10, 27, 0, 30, tzinfo=timezone.utc)
+        result = berlin_to_utc(datetime(2024, 10, 27, 2, 30))  # noqa: DTZ001
+        assert result == datetime(2024, 10, 27, 0, 30, tzinfo=UTC)
 
 
 class TestFormatTsUtc:
     def test_formats_with_z_suffix(self) -> None:
-        dt = datetime(2024, 6, 12, 9, 20, 0, tzinfo=timezone.utc)
+        dt = datetime(2024, 6, 12, 9, 20, 0, tzinfo=UTC)
         assert format_ts_utc(dt) == "2024-06-12T09:20:00Z"
 
     def test_rejects_naive_datetime(self) -> None:
         with pytest.raises(ValueError, match="UTC"):
-            format_ts_utc(datetime(2024, 6, 12, 9, 20, 0))
+            format_ts_utc(datetime(2024, 6, 12, 9, 20, 0))  # noqa: DTZ001
 
     def test_rejects_non_utc_timezone(self) -> None:
         with pytest.raises(ValueError, match="UTC"):

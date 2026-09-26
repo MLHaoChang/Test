@@ -37,7 +37,7 @@ def test_ensure_schema_creates_every_table(tmp_path: Path) -> None:
     ensure_schema(engine)
 
     table_names = set(sa.inspect(engine).get_table_names())
-    assert EXPECTED_TABLES <= table_names
+    assert table_names >= EXPECTED_TABLES
 
 
 def test_ensure_schema_seeds_version_one(tmp_path: Path) -> None:
@@ -81,9 +81,7 @@ def test_instruments_isin_is_unique(tmp_path: Path) -> None:
 
     with engine.begin() as conn:
         conn.execute(
-            sa.insert(instruments).values(
-                isin="DE0007164600", name="SAP SE", type="stock", mapping_status="unmapped"
-            )
+            sa.insert(instruments).values(isin="DE0007164600", name="SAP SE", type="stock", mapping_status="unmapped")
         )
 
     with pytest.raises(sa.exc.IntegrityError), engine.begin() as conn:

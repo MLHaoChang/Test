@@ -1,6 +1,6 @@
 """Tests for the injectable clock (core/clock.py, plan 3.3, 5.1, 7.2)."""
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -18,12 +18,12 @@ class TestFixedClock:
     def test_now_utc_is_noon_berlin_in_winter(self) -> None:
         # 2024-12-31 is winter time (CET, UTC+1): 12:00 Berlin -> 11:00 UTC.
         clock = FixedClock(date(2024, 12, 31))
-        assert clock.now_utc() == datetime(2024, 12, 31, 11, 0, 0, tzinfo=timezone.utc)
+        assert clock.now_utc() == datetime(2024, 12, 31, 11, 0, 0, tzinfo=UTC)
 
     def test_now_utc_is_noon_berlin_in_summer(self) -> None:
         # 2024-06-12 is summer time (CEST, UTC+2): 12:00 Berlin -> 10:00 UTC.
         clock = FixedClock(date(2024, 6, 12))
-        assert clock.now_utc() == datetime(2024, 6, 12, 10, 0, 0, tzinfo=timezone.utc)
+        assert clock.now_utc() == datetime(2024, 6, 12, 10, 0, 0, tzinfo=UTC)
 
     def test_now_utc_is_aware(self) -> None:
         clock = FixedClock(date(2024, 12, 31))
@@ -35,7 +35,7 @@ class TestSystemClock:
         clock = SystemClock()
         now = clock.now_utc()
         assert now.tzinfo is not None
-        assert abs((datetime.now(timezone.utc) - now).total_seconds()) < 5
+        assert abs((datetime.now(UTC) - now).total_seconds()) < 5
 
     def test_today_returns_a_date(self) -> None:
         assert isinstance(SystemClock().today(), date)

@@ -1,7 +1,7 @@
 """Sanity tests for the shared parse model every parser package builds on (importer/model.py, plan 5.3.1)."""
 
 from dataclasses import FrozenInstanceError
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
@@ -13,8 +13,8 @@ from playground.importer.model import ParsedTransaction, ParseResult, ReviewKind
 
 def _sample_time() -> SourceTime:
     return SourceTime(
-        ts_utc=datetime(2024, 6, 12, 9, 20, tzinfo=timezone.utc),
-        ts_local=datetime(2024, 6, 12, 11, 20),
+        ts_utc=datetime(2024, 6, 12, 9, 20, tzinfo=UTC),
+        ts_local=datetime(2024, 6, 12, 11, 20),  # noqa: DTZ001 -- ts_local is the naive, offset-free document time (3.3)
         source_tz="Europe/Berlin",
         precision="minute",
     )
