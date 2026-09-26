@@ -203,6 +203,27 @@ def test_settlement_block_reads_the_fee_and_each_tax_line_by_name() -> None:
     assert [entry.category for entry in block.entries] == ["fee", "tax", "tax", "tax", "tax", "tax"]
 
 
+def test_settlement_block_reads_other_real_cost_lines_and_tax_refunds() -> None:
+    # Seen in real documents: a flat settlement fee, the French financial transaction tax (a cost
+    # of buying, so a fee here) and the "Optimierung" lines that refund tax through loss offsetting.
+    doc = DocText(
+        "ABRECHNUNG\nPOSITION BETRAG\nAbwicklungspauschale -1,00 EUR\nFrz. Finanztransaktionssteuer -3,00 EUR\n"
+        "Finanztransaktionssteuer -0,08 EUR\nKapitalertragsteuer Optimierung 4,56 EUR\n"
+        "Kapitalertragssteuer Optimierung 1,00 EUR\nSolidaritätszuschlag Optimierung 0,25 EUR\n"
+        "Kirchensteuer Optimierung 0,36 EUR\nGESAMT 100,00 EUR\n"
+    )
+    block = read_settlement_block(doc, GERMAN, start=0)
+    assert block is not None
+    assert block.unknown_entries == ()
+    assert block.fees_eur == Decimal("4.08")
+    assert block.tax_detail == {
+        "kapitalertragssteuer": Decimal("-5.56"),
+        "solidaritaetszuschlag": Decimal("-0.25"),
+        "kirchensteuer": Decimal("-0.36"),
+    }
+    assert block.tax_eur == Decimal("-6.17")
+
+
 def test_settlement_block_reads_the_english_labels() -> None:
     doc = DocText(
         "BILLING\nPOSITION AMOUNT\nExternal cost surcharge -1.00 EUR\nCapital Gains Tax -9.12 EUR\n"
@@ -236,7 +257,7 @@ def test_an_unknown_settlement_line_gives_unparsed_row_and_keeps_the_transaction
         T12,
         (
             "Solidaritätszuschlag -5,19 EUR\n",
-            "Solidaritätszuschlag -5,19 EUR\nKapitalertragsteuer Optimierung 4,56 EUR\n",
+            "Solidaritätszuschlag -5,19 EUR\nSonderposten 4,56 EUR\n",
         ),
         ("GESAMT 1.999,41 EUR", "GESAMT 2.003,97 EUR"),
         ("14.06.2024 1.999,41 EUR", "14.06.2024 2.003,97 EUR"),
@@ -251,7 +272,7 @@ def test_an_unknown_settlement_line_gives_unparsed_row_and_keeps_the_transaction
     assert item["kind"] == "unparsed_row"
     assert item["message"] == (
         "Line 21 of the settlement block (ABRECHNUNG) is not a known cost or tax: "
-        '"Kapitalertragsteuer Optimierung 4,56 EUR". Its amount is not counted as a fee or a tax.'
+        '"Sonderposten 4,56 EUR". Its amount is not counted as a fee or a tax.'
     )
     assert item["fields"]["line"] == "21"  # type: ignore[index]
 
@@ -364,6 +385,24 @@ def test_another_time_zone_gives_a_review() -> None:
     assert (
         item["message"] == "The trade time is given in the time zone America/New_York. Only Europe/Berlin is supported."
     )
+
+
+def test_german_documents_may_print_the_side_in_english() -> None:
+    # Real German documents from 2024 on print "Market-Order BUY am ..." and "SELL am ...".
+    buy = WERTPAPIERABRECHNUNG_2023.parse(variant(T02, ("Market-Order Kauf am", "Market-Order BUY am")))
+    assert buy.review == []
+    assert buy.transactions[0].type.value == "buy"
+    sell = WERTPAPIERABRECHNUNG_2023.parse(variant(T12, ("Market-Order Verkauf am", "Market-Order SELL am")))
+    assert sell.review == []
+    assert sell.transactions[0].type.value == "sell"
+
+
+def test_german_execution_line_without_comma_and_uhr() -> None:
+    # Real German documents from 2026 print "am 30.06.2026 um 22:54 (Europe/Berlin)."
+    text = variant(T02, ("am 15.01.2024, um 10:05 Uhr (Europe/Berlin)", "am 15.01.2024 um 10:05 (Europe/Berlin)"))
+    result = WERTPAPIERABRECHNUNG_2023.parse(text)
+    assert result.review == []
+    assert result.transactions[0].time.ts_utc == datetime(2024, 1, 15, 9, 5, tzinfo=UTC)
 
 
 def test_the_2019_layout_reads_times_without_a_zone_as_berlin_time() -> None:
@@ -500,6 +539,16 @@ def test_a_missing_part_gives_a_missing_field_review_and_no_transaction(line: st
     assert item["fields"]["missing"] == missing  # type: ignore[index]
     assert item["message"] == message
     assert item["extracted_text"] == without_line(T02, line)
+
+
+def test_a_page_break_between_blocks_changes_nothing() -> None:
+    # A form feed ends a line like a line feed, so line numbers and evidence stay the same.
+    one_page = WERTPAPIERABRECHNUNG_2023.parse(fixture(T02))
+    two_pages = WERTPAPIERABRECHNUNG_2023.parse(
+        variant(T02, ("GESAMT -1.401,00 EUR\nBUCHUNG\n", "GESAMT -1.401,00 EUR\fBUCHUNG\n"))
+    )
+    assert two_pages.review == []
+    assert two_pages.transactions == one_page.transactions
 
 
 def test_parse_without_the_layout_title_gives_a_review() -> None:
