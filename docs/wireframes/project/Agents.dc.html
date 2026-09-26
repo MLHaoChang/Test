@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agents and proposals</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.btn.danger{color:#7A1B10;border-color:#F3B9B3}
+.tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;border:1px solid;white-space:nowrap}
+.ok{background:#E8F3EC;color:#134D2B;border-color:#B7D9C3}
+.mid{background:#FFF7E6;color:#5C3D00;border-color:#F1D48A}
+.bad{background:#FCEBE9;color:#7A1B10;border-color:#F3B9B3}
+.op{background:#F3F1EA;color:#5C5C56;border-color:#D9D7D0}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+.note{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#EEF3FC;border:1px solid #B7CCF3;color:#123B8A;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:7px 8px;border-bottom:1px solid #D9D7D0}
+td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
+.agent{border:1px solid #D9D7D0;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;font-size:13px;cursor:pointer}
+.agent.sel{border-color:#1D5BD6;background:#F7F9FE}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.tog{width:32px;height:18px;border-radius:9px;background:#1D5BD6;position:relative;display:inline-block}
+.tog::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Portfolio.dc.html">Portfolio</a>
+    <a href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a href="Ideas.dc.html">Ideas</a>
+    <a class="on" href="Agents.dc.html">Agents</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <span class="callout">1</span>
+    <h1 class="h1">Agents: they watch, simulate and draft. You decide.</h1>
+    <span style="flex-grow: 1"></span>
+    <span style="font-size: 13px; display: inline-flex; align-items: center; gap: 8px"><span class="tog" aria-label="Telegram alerts on"></span>Telegram alerts for new proposals</span>
+    <a class="btn" href="Agents.dc.html">Proposal history (14)</a>
+  </div>
+
+  <div style="padding: 14px 24px 24px 24px; display: grid; grid-template-columns: 300px 1fr 300px; gap: 16px; flex-grow: 1; min-height: 0">
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="muted" style="font-size: 12px; font-weight: 600">Agents on your real portfolio (draft proposals only)</span>
+      <div class="agent"><div style="display: flex; align-items: center; gap: 6px"><b>Core agent</b><span class="tag ok">watching</span></div><span class="muted">Checks monthly. Rebalances back to target weights when a holding drifts more than 5 points. Next check: 1 Oct.</span></div>
+      <div class="agent sel"><div style="display: flex; align-items: center; gap: 6px"><b>Tactical sleeve agent</b><span class="tag mid">1 proposal waiting</span></div><span class="muted">Checks weekly. Trend filter plus momentum on the 15% sleeve. Proposal #14 drafted yesterday.</span></div>
+      <span class="muted" style="font-size: 12px; font-weight: 600; margin-top: 6px">Scenario agents (fake money, run forward from a start date)</span>
+      <div class="agent"><div style="display: flex; align-items: center; gap: 6px"><b>S1 Add ASML and TSMC</b><span class="tag ok">running</span></div><span class="muted">Started 1 Jun with 50,000 EUR virtual. Now 53,910 EUR. Real portfolio over the same time: +6.1%. <b style="color: #134D2B">S1 ahead by 1.7 pts.</b></span></div>
+      <div class="agent"><div style="display: flex; align-items: center; gap: 6px"><b>S3 Core only, trend filter</b><span class="tag ok">running</span></div><span class="muted">Started 1 Jun. Now 52,480 EUR. <b style="color: #7A1B10">Behind the real portfolio by 1.2 pts</b>, as expected in a rising market.</span></div>
+      <div class="agent"><div style="display: flex; align-items: center; gap: 6px"><b>Momentum top 20</b><span class="tag op">paused</span></div><span class="muted">Seed experiment. Paused since it failed validation on 12 Sep. <a href="Validation.dc.html">See why</a></span></div>
+      <a class="btn" href="ScenarioBuilder.dc.html" style="align-self: flex-start">New agent from a scenario</a>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px; min-height: 0">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">2</span><h2 class="h2">Proposal #14 from the tactical sleeve agent</h2><span class="muted" style="font-size: 12px">drafted Thu 25 Sep, 22:05 · expires if not decided in 7 days</span></div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.5"><b>In one sentence:</b> sell SAP inside the tactical sleeve and buy Schneider Electric, because SAP dropped out of the sleeve's momentum top list and Schneider entered it, and this keeps the sleeve inside your sector limits.</p>
+      <table>
+        <thead><tr><th>Trade</th><th>Amount</th><th>Reason</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag bad">SELL</span> SAP · 18 shares</td><td class="mono">≈ 4,180 EUR</td><td>12-month return fell to -9%, rank 412 of 600. Rule: leave when rank falls below 100.</td><td><a href="RunDetail.dc.html">rule and rank history</a></td></tr>
+          <tr><td><span class="tag ok">BUY</span> Schneider Electric · 17 shares</td><td class="mono">≈ 4,100 EUR</td><td>Rank 23 of 600, passes quality screen, industrials are under-held (7% against 11%).</td><td><a href="Ideas.dc.html">idea card</a> · <a href="ScenarioBuilder.dc.html">scenario test</a></td></tr>
+        </tbody>
+      </table>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px">
+        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
+          <b>Risk check against your limits</b>
+          <span><span class="tag ok">ok</span> Technology weight 41% → 38% (limit 35%, moving toward it)</span>
+          <span><span class="tag ok">ok</span> Largest position stays NVIDIA at 11.6% (limit 10%, unchanged, separate proposal)</span>
+          <span><span class="tag ok">ok</span> Core sleeve untouched</span>
+        </div>
+        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
+          <b>Costs and taxes, estimated</b>
+          <span>Trade Republic fees: 2 EUR · spreads: about 8 EUR</span>
+          <span>Realised gain on SAP: about -640 EUR (a loss, offsets other gains)</span>
+          <span>German tax effect: about +170 EUR saved <span class="info">i</span></span>
+        </div>
+      </div>
+      <div class="note"><span aria-hidden="true">i</span><span><b>This app never places orders.</b> Approve records your decision and gives you the two orders to type into Trade Republic. After the next import the app checks what you actually did and tracks the result under this proposal.</span></div>
+      <div style="display: flex; gap: 8px; margin-top: auto">
+        <button class="btn primary">Approve: I will place these orders</button>
+        <button class="btn">Edit amounts</button>
+        <button class="btn danger">Reject and say why</button>
+        <span style="flex-grow: 1"></span>
+        <a class="btn" href="Assistant.dc.html">Ask about it</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 8px"><span class="callout">3</span><h2 class="h2">What if you had followed?</h2></div>
+        <table>
+          <thead><tr><th>Proposal</th><th>You</th><th>Since</th></tr></thead>
+          <tbody>
+            <tr><td>#13 Trim NVIDIA to 10%</td><td class="muted">rejected</td><td class="mono" style="color: #7A1B10">-210 EUR</td></tr>
+            <tr><td>#12 Rebalance core</td><td class="muted">approved</td><td class="mono" style="color: #134D2B">+340 EUR</td></tr>
+            <tr><td>#11 Sell Novo Nordisk</td><td class="muted">rejected</td><td class="mono" style="color: #7A1B10">-1,150 EUR</td></tr>
+            <tr><td>#10 Buy Siemens Energy</td><td class="muted">edited, half size</td><td class="mono" style="color: #134D2B">+420 EUR</td></tr>
+          </tbody>
+        </table>
+        <span class="muted" style="font-size: 12px">Value of the proposal against what you did, to today. Small samples; the point is to notice patterns in your own decisions, not to keep score.</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+        <h2 class="h2">Agent rules, in words</h2>
+        <span>Every agent runs a rule you can read on its page. Rules only reach a real-portfolio agent after passing validation in the advanced lab.</span>
+        <a href="Validation.dc.html">How validation works</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

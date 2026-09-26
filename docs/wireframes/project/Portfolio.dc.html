@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Portfolio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.sel{background:#EEF3FC;border-color:#1D5BD6;color:#1D5BD6}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:7px 8px;border-bottom:1px solid #D9D7D0}
+td{padding:7px 8px;border-bottom:1px solid #EFEEE9}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.tag{font-size:11px;padding:2px 6px;border-radius:999px;background:#EFEEE9;color:#3F3F3B}
+.bar{height:8px;border-radius:999px;background:#EFEEE9;overflow:hidden}
+.bar span{display:block;height:100%;background:#6B6B66}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a class="on" href="Portfolio.dc.html">Portfolio</a>
+    <a href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a href="Ideas.dc.html">Ideas</a>
+    <a href="Agents.dc.html">Agents</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+    <span class="callout">4</span>
+    <h1 class="h1">Portfolio</h1>
+    <span class="muted" style="font-size: 13px">Imported from Trade Republic exports · last import 2026-09-20 · example values</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn sel">All</button><button class="btn">Core</button><button class="btn">Tactical</button>
+    <span style="width: 10px"></span>
+    <button class="btn">1M</button><button class="btn">3M</button><button class="btn sel">1Y</button><button class="btn">3Y</button><button class="btn">All</button>
+    <button class="btn" style="margin-left: 10px">Import export file</button>
+  </div>
+
+  <div style="padding: 14px 24px 0 24px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">Value</span><span class="mono" style="font-size: 18px; font-weight: 600">84,320 EUR</span></div>
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">Invested (cost basis) <span class="info">i</span></span><span class="mono" style="font-size: 18px; font-weight: 600">61,900 EUR</span></div>
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">Unrealised gain</span><span class="mono" style="font-size: 18px; font-weight: 600">+22,420 EUR</span></div>
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">Realised this year</span><span class="mono" style="font-size: 18px; font-weight: 600">+1,140 EUR</span></div>
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">Dividends this year</span><span class="mono" style="font-size: 18px; font-weight: 600">+620 EUR</span></div>
+    <div class="card" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="muted" style="font-size: 11px">1-year return <span class="info">i</span></span><span class="mono" style="font-size: 18px; font-weight: 600">+14.2%</span><span class="muted" style="font-size: 11px">World EUR +11.8% · S&amp;P 500 +16.0%</span></div>
+  </div>
+
+  <div style="padding: 14px 24px 0 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Value over time against benchmarks</h2><span class="muted" style="font-size: 12px">solid: portfolio · dashed: MSCI World EUR · dotted: S&amp;P 500 in EUR · deposits shown as steps</span></div>
+      <svg viewBox="0 0 700 200" width="100%" height="200" role="img" aria-label="Portfolio value against two benchmarks with a drawdown band, placeholder">
+        <line x1="40" y1="12" x2="40" y2="150" stroke="#D9D7D0"></line><line x1="40" y1="150" x2="690" y2="150" stroke="#D9D7D0"></line>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,130 110,124 180,132 250,104 320,110 390,88 460,92 530,74 600,66 690,58"></polyline>
+        <polyline fill="none" stroke="#6B6B66" stroke-width="2" stroke-dasharray="6 5" points="40,130 110,126 180,130 250,110 320,112 390,96 460,98 530,84 600,78 690,70"></polyline>
+        <polyline fill="none" stroke="#9A988F" stroke-width="2" stroke-dasharray="2 4" points="40,130 110,122 180,128 250,100 320,104 390,84 460,86 530,70 600,60 690,50"></polyline>
+        <text x="640" y="54" font-size="11" fill="#1C1C1A">portfolio</text><text x="620" y="82" font-size="11" fill="#6B6B66">World EUR</text><text x="650" y="44" font-size="11" fill="#9A988F">S&amp;P</text>
+        <polygon fill="#E8E7E1" points="40,170 110,172 180,190 250,176 320,180 390,172 460,178 530,172 600,170 690,170"></polygon>
+        <text x="4" y="192" font-size="10" fill="#6B6B66">-15%</text><text x="640" y="176" font-size="11" fill="#6B6B66">drawdown</text>
+        <text x="40" y="164" font-size="10" fill="#6B6B66">Sep 2025</text><text x="640" y="164" font-size="10" fill="#6B6B66">Sep 2026</text>
+      </svg>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">What helped, what hurt (1 year)</h2><span style="flex-grow: 1"></span><a href="Why.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Full explanation</a></div>
+      <table>
+        <thead><tr><th>Holding</th><th>Return</th><th>Contribution <span class="info">i</span></th></tr></thead>
+        <tbody>
+          <tr><td>NVIDIA</td><td class="mono">+48%</td><td class="mono" style="color: #134D2B">+3.9 pts</td></tr>
+          <tr><td>ASML</td><td class="mono">+31%</td><td class="mono" style="color: #134D2B">+1.7 pts</td></tr>
+          <tr><td>iShares MSCI World ETF</td><td class="mono">+12%</td><td class="mono" style="color: #134D2B">+3.4 pts</td></tr>
+          <tr><td>SAP</td><td class="mono">-9%</td><td class="mono" style="color: #7A1B10">-0.6 pts</td></tr>
+          <tr><td>Novo Nordisk</td><td class="mono">-22%</td><td class="mono" style="color: #7A1B10">-1.1 pts</td></tr>
+          <tr><td>Currency (USD weakened)</td><td class="mono">-4%</td><td class="mono" style="color: #7A1B10">-0.8 pts</td></tr>
+        </tbody>
+      </table>
+      <span class="muted" style="font-size: 12px">Contribution = weight times return, in points of the whole portfolio. The ETF contributed more than ASML with a lower return because it is a larger position.</span>
+    </div>
+  </div>
+
+  <div style="padding: 14px 24px 24px 24px; display: grid; grid-template-columns: 8fr 4fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Holdings</h2><span class="muted" style="font-size: 12px">14 positions · click a row for its history, news and scenarios</span></div>
+      <table>
+        <thead><tr><th>Name</th><th>Sleeve</th><th>Weight</th><th>Quantity</th><th>Cost</th><th>Price</th><th>Gain</th><th>1Y contribution</th><th>Sector</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>iShares MSCI World ETF <span class="muted mono" style="font-size: 11px">IE00B4L5Y983</span></td><td><span class="tag">core</span></td><td class="mono">28.4%</td><td class="mono">240</td><td class="mono">78.10</td><td class="mono">99.80</td><td class="mono">+27.8%</td><td class="mono">+3.4</td><td>Global</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td>Microsoft <span class="muted mono" style="font-size: 11px">US5949181045</span></td><td><span class="tag">core</span></td><td class="mono">7.4%</td><td class="mono">15</td><td class="mono">312.00</td><td class="mono">415.60</td><td class="mono">+33.2%</td><td class="mono">+1.2</td><td>Technology</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td>NVIDIA <span class="muted mono" style="font-size: 11px">US67066G1040</span></td><td><span class="tag">tactical</span></td><td class="mono">11.6%</td><td class="mono">80</td><td class="mono">71.20</td><td class="mono">122.40</td><td class="mono">+71.9%</td><td class="mono">+3.9</td><td>Technology</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td>ASML <span class="muted mono" style="font-size: 11px">NL0010273215</span></td><td><span class="tag">core</span></td><td class="mono">6.1%</td><td class="mono">8</td><td class="mono">590.00</td><td class="mono">642.00</td><td class="mono">+8.8%</td><td class="mono">+1.7</td><td>Technology</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td>SAP <span class="muted mono" style="font-size: 11px">DE0007164600</span></td><td><span class="tag">core</span></td><td class="mono">5.2%</td><td class="mono">22</td><td class="mono">178.00</td><td class="mono">199.00</td><td class="mono">+11.8%</td><td class="mono">-0.6</td><td>Technology</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td>Novo Nordisk <span class="muted mono" style="font-size: 11px">DK0062498333</span></td><td><span class="tag">core</span></td><td class="mono">3.8%</td><td class="mono">50</td><td class="mono">84.00</td><td class="mono">64.10</td><td class="mono">-23.7%</td><td class="mono">-1.1</td><td>Health care</td><td><a href="ScenarioBuilder.dc.html">Scenario</a></td></tr>
+          <tr><td class="muted">8 more positions</td><td></td><td class="mono muted">34.5%</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Risk against your limits</h2>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span>Technology</span><span class="mono">41% of 35% limit</span></span><div class="bar"><span style="width: 100%; background: #B7791F"></span></div></div>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span>Largest holding (NVIDIA)</span><span class="mono">11.6% of 10% limit</span></span><div class="bar"><span style="width: 100%; background: #B7791F"></span></div></div>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span>Top 5 holdings</span><span class="mono">58%</span></span><div class="bar"><span style="width: 58%"></span></div></div>
+        <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; display: flex; justify-content: space-between"><span>US dollar exposure</span><span class="mono">62%</span></span><div class="bar"><span style="width: 62%"></span></div></div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px"><span>Volatility (1Y)</span><span class="mono">13.8% (World 12.1%)</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px"><span>Worst fall (1Y)</span><span class="mono">-11.4% (World -9.2%)</span></div>
+        <div class="warn"><span aria-hidden="true">!</span><span>Two of your own limits are exceeded. The tactical agent's pending proposal addresses the NVIDIA weight. <a href="Agents.dc.html">Review</a></span></div>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Recommendations for this portfolio</h2>
+        <div style="font-size: 13px; display: flex; flex-direction: column; gap: 4px"><span><span class="tag" style="background: #EAF6EE; color: #134D2B">screen-backed</span> Reduce technology concentration; candidates from the quality screen in health care and industrials. <a href="Ideas.dc.html">See ideas</a></span></div>
+        <div style="font-size: 13px; display: flex; flex-direction: column; gap: 4px"><span><span class="tag" style="background: #FFF7E6; color: #5C3D00">opinion</span> Novo Nordisk: the thesis (obesity drugs) is intact but pricing pressure is rising; consider a scenario that halves the position. <a href="ScenarioBuilder.dc.html">Test it</a></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

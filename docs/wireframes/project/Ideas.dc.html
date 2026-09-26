@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ideas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.btn.sm{padding:3px 8px;font-size:12px}
+.tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;border:1px solid;white-space:nowrap}
+.screen{background:#EEF3FC;color:#1D5BD6;border-color:#B7CCF3}
+.op{background:#F3F1EA;color:#5C5C56;border-color:#D9D7D0}
+.ok{background:#E8F3EC;color:#134D2B;border-color:#B7D9C3}
+.mid{background:#FFF7E6;color:#5C3D00;border-color:#F1D48A}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:7px 8px;border-bottom:1px solid #D9D7D0}
+td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px}
+.box{width:14px;height:14px;border:1px solid #9A988F;border-radius:3px;display:inline-block;flex-shrink:0}
+.box.on{background:#1D5BD6;border-color:#1D5BD6}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.thumb{width:26px;height:24px;border:1px solid #D9D7D0;border-radius:6px;background:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Portfolio.dc.html">Portfolio</a>
+    <a href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a class="on" href="Ideas.dc.html">Ideas</a>
+    <a href="Agents.dc.html">Agents</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <span class="callout">5</span>
+    <h1 class="h1">Ideas: what could fit your portfolio</h1>
+    <span class="muted" style="font-size: 13px">Last market sweep: today 07:10 · 1,050 stocks (S&amp;P 500, DAX, EURO STOXX 600 subset) · 14 passed your screens</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn primary">Run a sweep now</button>
+  </div>
+
+  <div style="padding: 14px 24px 24px 24px; display: grid; grid-template-columns: 260px 1fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 8px"><h2 class="h2">Filters</h2><span class="muted" style="font-size: 11px">from your preference profile</span></div>
+        <span class="muted" style="font-size: 12px; font-weight: 600">Screens</span>
+        <label class="chk"><span class="box on"></span>Quality: high return on capital, low debt</label>
+        <label class="chk"><span class="box on"></span>Momentum: 12-month, skip last month</label>
+        <label class="chk"><span class="box"></span>Value: cheap on earnings and cash flow</label>
+        <label class="chk"><span class="box"></span>Dividend growers</label>
+        <span class="muted" style="font-size: 12px; font-weight: 600; margin-top: 4px">Fit with your portfolio</span>
+        <label class="chk"><span class="box on"></span>Would not breach a limit</label>
+        <label class="chk"><span class="box on"></span>Adds a sector you are under</label>
+        <label class="chk"><span class="box"></span>Only European listings</label>
+        <span class="muted" style="font-size: 12px; font-weight: 600; margin-top: 4px">Exclusions (always on)</span>
+        <span style="font-size: 12px">Tobacco · weapons · oil majors <a href="Assistant.dc.html">edit</a></span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px">
+        <h2 class="h2" style="font-size: 13px">Your feedback so far</h2>
+        <span>31 ideas rated: 12 up, 19 down.</span>
+        <span>Learned: you reject ideas above 50 times earnings, and prefer European listings for the tactical sleeve. <a href="Assistant.dc.html">Review what was learned</a></span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; min-height: 0">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="tag screen">Tier 1 · screen-backed</span><h2 class="h2">Passed your screens, tested against your portfolio</h2><span class="info">i</span></div>
+        <table>
+          <thead><tr><th>Stock</th><th>Sector</th><th>Why it passed</th><th>5-year test if added at 5% <span class="info">i</span></th><th>Fit</th><th>Actions</th><th>Rate</th></tr></thead>
+          <tbody>
+            <tr><td><b>Schneider Electric</b><br><span class="muted mono" style="font-size: 11px">FR0000121972</span></td><td>Industrials</td><td>Quality and momentum. Return on capital 18%, 12-month return +24%.</td><td class="mono" style="color: #134D2B">+0.6 pts a year, fall -1 pt deeper</td><td><span class="tag ok">under-held sector</span></td><td><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a> <a class="btn sm" href="Market.dc.html">Watch</a></td><td><span class="thumb">▲</span> <span class="thumb">▼</span></td></tr>
+            <tr><td><b>Alphabet</b><br><span class="muted mono" style="font-size: 11px">US02079K3059</span></td><td>Communication</td><td>Quality. Cheapest of the large US tech names on earnings.</td><td class="mono" style="color: #134D2B">+0.4 pts a year</td><td><span class="tag mid">tech to 46% of 35% limit</span></td><td><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a> <a class="btn sm" href="Market.dc.html">Watch</a></td><td><span class="thumb">▲</span> <span class="thumb">▼</span></td></tr>
+            <tr><td><b>Münchener Rück</b><br><span class="muted mono" style="font-size: 11px">DE0008430026</span></td><td>Financials</td><td>Quality and dividend growth. 20 years of rising payouts.</td><td class="mono">+0.1 pts a year, fall 2 pts shallower</td><td><span class="tag ok">under-held sector</span></td><td><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a> <a class="btn sm" href="Market.dc.html">Watch</a></td><td><span class="thumb">▲</span> <span class="thumb">▼</span></td></tr>
+            <tr><td><b>Vertex Pharmaceuticals</b><br><span class="muted mono" style="font-size: 11px">US92532F1003</span></td><td>Health care</td><td>Momentum. Sector is weak, this name is not.</td><td class="mono" style="color: #7A1B10">-0.2 pts a year</td><td><span class="tag ok">fits limits</span></td><td><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a> <a class="btn sm" href="Market.dc.html">Watch</a></td><td><span class="thumb">▲</span> <span class="thumb">▼</span></td></tr>
+          </tbody>
+        </table>
+        <span class="muted" style="font-size: 12px">Showing 4 of 14. The 5-year test is a scenario run that adds the stock at 5% of your real portfolio five years ago, costs included. It says how the past would have looked, not how the future will.</span>
+      </div>
+
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 10px"><span class="tag op">Tier 2 · assistant opinion</span><h2 class="h2">Ideas from news and filings, not from a screen</h2><span class="muted" style="font-size: 12px">each one says how sure the assistant is and where it read it</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px">
+          <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+            <div style="display: flex; align-items: center; gap: 6px"><b>Siemens Energy</b><span class="tag mid">confidence: medium</span></div>
+            <span>Grid-equipment order books at record levels in the last two quarterly reports; matches your "electrification" theme. Trades at 30 times earnings, above your usual comfort.</span>
+            <span class="muted" style="font-size: 12px">Read in: Q3 report (SEC-equivalent filing, 12 Aug), two Benzinga items.</span>
+            <div style="display: flex; gap: 6px"><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a><span class="thumb">▲</span><span class="thumb">▼</span></div>
+          </div>
+          <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+            <div style="display: flex; align-items: center; gap: 6px"><b>Novo Nordisk (add, not sell)</b><span class="tag op">confidence: low</span></div>
+            <span>Your worst holding. Shares now price in flat sales; the assistant reads the pipeline update as better than the headlines. Contrarian, and it would raise a position that already lost you 1.1 points.</span>
+            <span class="muted" style="font-size: 12px">Read in: capital markets day transcript (18 Sep), Finnhub headlines.</span>
+            <div style="display: flex; gap: 6px"><a class="btn sm" href="ScenarioBuilder.dc.html">Test as scenario</a><span class="thumb">▲</span><span class="thumb">▼</span></div>
+          </div>
+          <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+            <div style="display: flex; align-items: center; gap: 6px"><b>Trim NVIDIA to 10%</b><span class="tag mid">confidence: medium</span></div>
+            <span>Not a new stock: a housekeeping idea. Your own limit is 10%, the position is 11.6%. Selling 1.6 points realises a gain of about 900 EUR and roughly 240 EUR tax.</span>
+            <span class="muted" style="font-size: 12px">Based on: your preference profile and the holdings table. Also appears as a draft proposal on Agents.</span>
+            <div style="display: flex; gap: 6px"><a class="btn sm" href="Agents.dc.html">See proposal</a><span class="thumb">▲</span><span class="thumb">▼</span></div>
+          </div>
+        </div>
+        <div class="warn"><span aria-hidden="true">!</span><span>Ideas are starting points for your own research, not advice, and nothing here trades. Rating an idea with the arrows teaches the assistant what you like; it never buys anything.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

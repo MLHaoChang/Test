@@ -14,12 +14,11 @@ body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F
 a{color:#1D5BD6}a:hover{color:#1A4FB8}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
 .nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
-.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
 .nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
 .badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
 .sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
 .card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
-.ph{border:1px dashed #B8B6AE;border-radius:8px;background:repeating-linear-gradient(135deg,#F1F0EB 0 8px,#F7F6F2 8px 16px);display:flex;align-items:center;justify-content:center;color:#6B6B66;font-size:13px;text-align:center}
 .muted{color:#6B6B66}
 .h1{font-size:22px;font-weight:600;margin:0}
 .h2{font-size:15px;font-weight:600;margin:0}
@@ -28,141 +27,113 @@ a{color:#1D5BD6}a:hover{color:#1A4FB8}
 .btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
 .warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
 .ok{background:#EAF6EE;border-color:#A9D9B8;color:#134D2B}
-.bad{background:#FCEBE9;border-color:#F3B9B3;color:#7A1B10}
 table{border-collapse:collapse;width:100%;font-size:13px}
 th{text-align:left;font-weight:600;color:#6B6B66;padding:8px;border-bottom:1px solid #D9D7D0}
-td{padding:8px;border-bottom:1px solid #EFEEE9}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+td{padding:8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
 .toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#3F3F3B}
 .sw{width:34px;height:20px;border-radius:999px;background:#1D5BD6;position:relative;display:inline-block}
 .sw::after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.tile{border:1px solid #EFEEE9;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.tag{font-size:11px;padding:2px 6px;border-radius:999px;background:#EFEEE9;color:#3F3F3B}
 </style>
 </helmet>
 <div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
   <nav class="nav" aria-label="Main">
     <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
-    <span class="badge sim">SIMULATION · fake money</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
     <span style="width: 12px"></span>
     <a class="on" href="Main.dc.html">Home</a>
-    <a href="Runs.dc.html">Runs</a>
-    <a href="Compare.dc.html">Compare</a>
-    <a href="Sweep.dc.html">Sweeps</a>
-    <a href="Replay.dc.html">Replay</a>
-    <a href="Paper.dc.html">Paper</a>
-    <a href="Data.dc.html">Data</a>
+    <a href="Portfolio.dc.html">Portfolio</a>
+    <a href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a href="Ideas.dc.html">Ideas</a>
+    <a href="Agents.dc.html">Agents</a>
     <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
     <span style="flex-grow: 1"></span>
     <span class="toggle"><span class="sw" aria-hidden="true"></span>Explain mode on</span>
     <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0; margin-left: 8px">?</a>
   </nav>
 
-  <div style="padding: 20px 24px 0 24px; display: flex; align-items: baseline; gap: 12px">
-    <h1 class="h1">Good evening. US market opens in 2 h 10 min.</h1>
-    <span class="muted" style="font-size: 13px">Example values for layout</span>
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: baseline; gap: 14px">
+    <span class="callout">1</span>
+    <h1 class="h1">Your portfolio: <span class="mono">84,320 EUR</span></h1>
+    <span style="font-size: 15px">today <span class="mono" style="color: #134D2B; font-weight: 600">+0.6%</span> (+510 EUR) · MSCI World EUR today +0.4%</span>
+    <span class="muted" style="font-size: 13px">Last import 2026-09-20 · example values for layout</span>
+    <span style="flex-grow: 1"></span>
+    <span class="muted" style="font-size: 13px">US market opens in 2 h 10 min</span>
   </div>
 
-  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-    <div class="card" style="grid-column: span 2; display: flex; flex-direction: column; gap: 12px">
-      <div style="display: flex; align-items: center; gap: 10px">
-        <span class="callout">1</span>
-        <h2 class="h2">What to do next</h2>
-        <span class="muted" style="font-size: 12px">Suggestions come from the state of your experiments, not from the market</span>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
-          <span style="font-size: 13px; font-weight: 600">Sweep finished overnight</span>
-          <span class="muted" style="font-size: 13px">"SPY trend" tried 240 of 300 budgeted configurations. Best deflated Sharpe 0.71. Read the leaderboard before running more.</span>
-          <a href="Sweep.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Open leaderboard</a>
-        </div>
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
-          <span style="font-size: 13px; font-weight: 600">Two runs to compare</span>
-          <span class="muted" style="font-size: 13px">Momentum top 20 with 6- and 12-month lookbacks finished. Compare them before deciding which to validate.</span>
-          <a href="Compare.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Compare runs</a>
-        </div>
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
-          <span style="font-size: 13px; font-weight: 600">Data check needs a look</span>
-          <span class="muted" style="font-size: 13px">Minute bars for 3 symbols have gaps on 2026-09-24. Backtests over that day may be affected.</span>
-          <a href="Data.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Open data health</a>
-        </div>
-      </div>
-    </div>
-
+  <div style="padding: 14px 24px 0 24px; display: grid; grid-template-columns: 5fr 4fr 3fr; gap: 16px">
     <div class="card" style="display: flex; flex-direction: column; gap: 10px">
-      <h2 class="h2">Simulation status</h2>
-      <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Mode</span><span>Own machine, free data</span></div>
-      <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Data snapshot</span><span class="mono">snap-2026-09-25</span></div>
-      <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Realism profile</span><span>default (pessimistic)</span></div>
-      <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Live credentials</span><span style="color: #134D2B; font-weight: 600">none possible</span></div>
-      <div style="display: flex; justify-content: space-between; font-size: 13px"><span class="muted">Assistant budget</span><span class="mono">31 / 80 USD</span></div>
-    </div>
-  </div>
-
-  <div style="padding: 16px 24px 0 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-    <div class="card" style="grid-column: span 2; display: flex; flex-direction: column; gap: 10px">
-      <div style="display: flex; align-items: center; gap: 10px">
-        <span class="callout">2</span>
-        <h2 class="h2">Paper accounts</h2>
-        <span class="muted" style="font-size: 12px">Session 15:30 to 22:00 Berlin time · heartbeat every 30 s</span>
-        <span style="flex-grow: 1"></span>
-        <a href="Paper.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Open paper</a>
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Performance against benchmarks</h2><span style="flex-grow: 1"></span><a href="Portfolio.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Open portfolio</a></div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+        <div class="tile"><span class="muted" style="font-size: 11px">1 month</span><span class="mono" style="font-size: 15px; font-weight: 600">+2.1%</span><span class="muted" style="font-size: 11px">World EUR +1.7%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">1 year</span><span class="mono" style="font-size: 15px; font-weight: 600">+14.2%</span><span class="muted" style="font-size: 11px">World EUR +11.8%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">3 years</span><span class="mono" style="font-size: 15px; font-weight: 600">+38.5%</span><span class="muted" style="font-size: 11px">World EUR +41.0%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">Since start</span><span class="mono" style="font-size: 15px; font-weight: 600">+52.3%</span><span class="muted" style="font-size: 11px">World EUR +58.9%</span></div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 12px; font-weight: 600">A · champion</span>
-          <span class="mono" style="font-size: 16px">+1.8%</span>
-          <span class="muted" style="font-size: 11px"><span class="dot" style="background: #1E7B4F"></span> alive · 12 s ago</span>
-        </div>
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 12px; font-weight: 600">B · fast 10</span>
-          <span class="mono" style="font-size: 16px">+0.9%</span>
-          <span class="muted" style="font-size: 11px"><span class="dot" style="background: #1E7B4F"></span> alive · 12 s ago</span>
-        </div>
-        <div style="border: 1px solid #D9D7D0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 12px; font-weight: 600">C · slow 30</span>
-          <span class="mono" style="font-size: 16px">-0.4%</span>
-          <span class="muted" style="font-size: 11px"><span class="dot" style="background: #1E7B4F"></span> alive · 12 s ago</span>
-        </div>
-        <div style="border: 1px solid #F1D48A; background: #FFF7E6; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 12px; font-weight: 600">D · vol target</span>
-          <span class="mono" style="font-size: 16px">+0.2%</span>
-          <span style="font-size: 11px; color: #5C3D00"><span class="dot" style="background: #B7791F"></span> paused: daily loss limit</span>
-        </div>
-        <div style="border: 1px dashed #B8B6AE; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px; justify-content: center; align-items: center">
-          <span class="muted" style="font-size: 12px">Slot E free</span>
-          <button class="btn" style="font-size: 12px; padding: 4px 10px">Add challenger</button>
-        </div>
-      </div>
+      <svg viewBox="0 0 560 120" width="100%" height="120" role="img" aria-label="Twelve-month portfolio value against benchmark, placeholder">
+        <line x1="30" y1="10" x2="30" y2="100" stroke="#D9D7D0"></line><line x1="30" y1="100" x2="550" y2="100" stroke="#D9D7D0"></line>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="30,80 90,74 150,82 210,60 270,66 330,48 390,52 450,40 510,36 550,30"></polyline>
+        <polyline fill="none" stroke="#6B6B66" stroke-width="2" stroke-dasharray="6 5" points="30,80 90,76 150,80 210,66 270,68 330,56 390,58 450,48 510,44 550,40"></polyline>
+        <text x="500" y="26" font-size="11" fill="#1C1C1A">portfolio</text><text x="480" y="56" font-size="11" fill="#6B6B66">MSCI World EUR</text>
+        <text x="30" y="114" font-size="10" fill="#6B6B66">Sep 2025</text><text x="500" y="114" font-size="10" fill="#6B6B66">Sep 2026</text>
+      </svg>
+      <div style="display: flex; gap: 14px; font-size: 12px" class="muted"><span>Core sleeve 85% (71,700 EUR)</span><span>Tactical sleeve 15% (12,620 EUR)</span><span>Cash 3%</span><a href="Why.dc.html" style="margin-left: auto; font-weight: 600; text-decoration: none">Why this result</a></div>
     </div>
 
     <div class="card" style="display: flex; flex-direction: column; gap: 8px">
-      <h2 class="h2">Alerts</h2>
-      <div class="warn" style="font-size: 12px"><span aria-hidden="true">!</span><span>Account D paused at 17:42: daily loss reached 1.0% of equity. <a href="Paper.dc.html">Why</a></span></div>
-      <div class="warn ok" style="font-size: 12px"><span aria-hidden="true">✓</span><span>Nightly data checks passed for daily bars and option chains.</span></div>
-      <div class="warn" style="font-size: 12px"><span aria-hidden="true">!</span><span>Minute-bar gaps on 3 symbols (2026-09-24). <a href="Data.dc.html">Details</a></span></div>
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Market pulse</h2><span style="flex-grow: 1"></span><a href="Market.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">Open market</a></div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <div class="tile"><span class="muted" style="font-size: 11px">S&amp;P 500</span><span class="mono">6,412 · +0.5%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">MSCI World EUR</span><span class="mono">+0.4%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">DAX</span><span class="mono">19,880 · -0.2%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">EUR/USD</span><span class="mono">1.09 · +0.3%</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">VIX (fear gauge)</span><span class="mono">17.2 · calm</span></div>
+        <div class="tile"><span class="muted" style="font-size: 11px">US 10-year yield</span><span class="mono">4.12%</span></div>
+      </div>
+      <span class="muted" style="font-size: 12px">Sectors this week: energy +2.8%, technology +1.1%, utilities -1.4%. Breadth healthy: 62% of S&amp;P 500 names above their 200-day average.</span>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px; border-color: #1D5BD6">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">3</span><h2 class="h2">Awaiting your approval</h2></div>
+      <span style="font-size: 13px; font-weight: 600">Tactical agent, weekly proposal</span>
+      <span style="font-size: 13px">Trim NVIDIA by 2% of portfolio, add energy ETF (XLE) 2%. Reason: NVIDIA exceeds your 10% single-holding limit after its rise; energy leads the 3-month sector trend.</span>
+      <span class="muted" style="font-size: 12px">Risk check passed · estimated cost 6 EUR · expires Friday</span>
+      <div style="display: flex; gap: 8px"><a class="btn primary" href="Agents.dc.html" style="text-decoration: none; font-size: 13px; padding: 6px 12px">Review</a><button class="btn" style="font-size: 13px; padding: 6px 12px">Later</button></div>
     </div>
   </div>
 
-  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1">
-    <div class="card" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px">
-      <div style="display: flex; align-items: center; gap: 10px">
-        <h2 class="h2">Recent runs</h2>
-        <span style="flex-grow: 1"></span>
-        <a href="Runs.dc.html" style="font-size: 13px; text-decoration: none; font-weight: 600">All runs</a>
-      </div>
+  <div style="padding: 16px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 10px"><span class="callout">2</span><h2 class="h2">Live news for what you own and watch</h2><span class="muted" style="font-size: 12px">Updated every few minutes · English · sources: Benzinga via Alpaca, Finnhub</span><span style="flex-grow: 1"></span><span class="tag">Holdings</span><span class="tag">Watchlist</span><span class="tag" style="background: #fff; border: 1px solid #D9D7D0">Market</span></div>
       <table>
-        <thead><tr><th>Run</th><th>Strategy</th><th>Mode</th><th>Period</th><th>Deflated Sharpe</th><th>Max drawdown</th><th>Trials used</th><th>Gates</th></tr></thead>
         <tbody>
-          <tr><td class="mono">r-0142</td><td>SPY 10-month trend</td><td>backtest</td><td>2006 to 2026</td><td class="mono">0.62</td><td class="mono">-21.8%</td><td class="mono">14 / 300</td><td><span class="badge ok" style="border-color: #A9D9B8">6 of 8 pass</span></td></tr>
-          <tr><td class="mono">r-0141</td><td>Momentum top 20, 12 m</td><td>backtest</td><td>2010 to 2026</td><td class="mono">0.48</td><td class="mono">-33.1%</td><td class="mono">22 / 300</td><td><span class="badge" style="border-color: #F1D48A; background: #FFF7E6; color: #5C3D00">not run</span></td></tr>
-          <tr><td class="mono">r-0140</td><td>Momentum top 20, 6 m</td><td>backtest</td><td>2010 to 2026</td><td class="mono">0.41</td><td class="mono">-36.4%</td><td class="mono">22 / 300</td><td><span class="badge" style="border-color: #F1D48A; background: #FFF7E6; color: #5C3D00">not run</span></td></tr>
-          <tr><td class="mono">r-0139</td><td>SPY 10-month trend</td><td>replay</td><td>2020-03-16</td><td class="mono">n/a</td><td class="mono">-4.2%</td><td class="mono">14 / 300</td><td class="muted">replay</td></tr>
+          <tr><td class="mono muted" style="width: 54px">14:52</td><td><b>ASML raises 2027 outlook on AI demand for lithography</b><br><span class="muted" style="font-size: 12px">Why it matters: your largest European holding (6.1%); analysts had expected flat guidance. Source: Benzinga.</span></td><td style="width: 90px"><span class="tag">ASML</span></td></tr>
+          <tr><td class="mono muted">14:31</td><td><b>Fed officials signal patience on rate cuts</b><br><span class="muted" style="font-size: 12px">Why it matters: higher rates for longer weigh on your growth-heavy tactical sleeve. Source: Finnhub.</span></td><td><span class="tag">Macro</span></td></tr>
+          <tr><td class="mono muted">13:58</td><td><b>Microsoft to expand data-centre capacity in Europe</b><br><span class="muted" style="font-size: 12px">Why it matters: holding (7.4%); capital spending is the number to watch in the next report. Source: Benzinga.</span></td><td><span class="tag">MSFT</span></td></tr>
+          <tr><td class="mono muted">13:20</td><td><b>Oil rises 2% on inventory draw</b><br><span class="muted" style="font-size: 12px">Why it matters: supports the pending energy proposal above. Source: Finnhub.</span></td><td><span class="tag">XLE</span></td></tr>
         </tbody>
       </table>
+      <span class="muted" style="font-size: 12px">Headlines are not recommendations. Items that support or contradict a pending proposal are marked.</span>
     </div>
-    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
-      <h2 class="h2">Data health</h2>
-      <div class="ph" style="height: 96px">Coverage strip: daily bars 2000 to today, minute bars 2016 to today, option chains 2024 to today (placeholder)</div>
-      <span class="muted" style="font-size: 12px">Last quality check 03:10. 2 warnings. <a href="Data.dc.html">Open</a></span>
+
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">What to do next</h2>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+          <span><b>Review the agent's proposal</b> before Friday, or it expires unchanged.</span>
+          <span><b>Two scenarios finished:</b> "add ASML 5%" and "add Novo Nordisk 5%". <a href="ScenarioCompare.dc.html">Compare them</a>.</span>
+          <span><b>Import due in 6 days:</b> your last Trade Republic export is from 2026-09-20.</span>
+          <span><b>Monthly review on 1 October:</b> the core agent will publish its report.</span>
+        </div>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 class="h2">Alerts</h2>
+        <div class="warn"><span aria-hidden="true">!</span><span>Technology is 41% of your portfolio; your limit is 35%. <a href="Portfolio.dc.html">See risk</a></span></div>
+        <div class="warn ok"><span aria-hidden="true">✓</span><span>Nightly data checks passed. Prices current to yesterday's close; European names via Stooq.</span></div>
+      </div>
     </div>
   </div>
 </div>

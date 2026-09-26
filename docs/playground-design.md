@@ -439,6 +439,8 @@ Order rationale: daily stock strategies need only free data and the simplest fil
 
 ## 11. Decisions I need from you
 
+> **Update (same day, later):** the decisions below were taken in an interview, and a further review of the wireframes reframed the product around your real portfolio (imported from Trade Republic), performance against a benchmark, scenarios, agents that draft proposals for your approval, market news and ideas. The research lab described in this document is unchanged and sits behind an Advanced menu. The current decision record, screens, phases and costs are in [playground-spec.md](playground-spec.md), version 0.2.
+
 Answered on 26 September 2026 in a four-round interview; the decision record and the resulting specification are in [playground-spec.md](playground-spec.md), section 0. The questions are kept below for reference.
 
 1. **Interface.** A web dashboard you open in a browser (recommended: it makes comparing runs and watching paper trading easy), notebooks only, or a command-line tool with reports? [Assumed: web dashboard plus notebooks.]

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Why did it perform</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer}
+.btn.sel{background:#EEF3FC;border-color:#1D5BD6;color:#1D5BD6}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:7px 8px;border-bottom:1px solid #D9D7D0}
+td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a class="on" href="Portfolio.dc.html">Portfolio</a>
+    <a href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a href="Ideas.dc.html">Ideas</a>
+    <a href="Agents.dc.html">Agents</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <a href="Portfolio.dc.html" style="font-size: 13px; text-decoration: none">Portfolio</a><span class="muted">/</span>
+    <span class="callout">5</span>
+    <h1 class="h1">Why did my portfolio perform like this?</h1>
+    <span style="flex-grow: 1"></span>
+    <button class="btn">1Y</button><button class="btn sel">1Y vs World EUR</button><button class="btn">3Y</button><button class="btn">Since start</button>
+  </div>
+
+  <div style="padding: 14px 24px 0 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <h2 class="h2">In plain language</h2>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55">Over the last year your portfolio returned <b>14.2%</b> against <b>11.8%</b> for the MSCI World in euros, so you finished <b>2.4 points ahead</b>. Most of that came from <b>picking well inside technology</b> (NVIDIA and ASML beat their sector by a wide margin: about 1.9 points). Being <b>overweight technology</b> added about 0.9 points because the sector beat the market. The <b>weaker US dollar</b> took back 0.8 points on your US holdings. Novo Nordisk was the single worst decision at minus 1.1 points. Fees and spreads cost 0.2 points. Put simply: you won by holding two chip companies through a strong year, and you paid for it with more concentration than your own limits allow.</p>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>One year is a short window.</b> Two positions explain most of the result. Over three years the same portfolio trailed the benchmark by 2.5 points; see the 3Y view before drawing conclusions.</span></div>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">Where the 2.4 points came from</h2>
+      <svg viewBox="0 0 440 210" width="100%" height="210" role="img" aria-label="Waterfall of return contributions relative to the benchmark, placeholder">
+        <line x1="30" y1="110" x2="430" y2="110" stroke="#D9D7D0"></line>
+        <rect x="40" y="62" width="50" height="48" rx="4" fill="#6B6B66"></rect><text x="42" y="130" font-size="10" fill="#3F3F3B">selection</text><text x="46" y="56" font-size="10" fill="#1C1C1A">+1.9</text>
+        <rect x="110" y="40" width="50" height="22" rx="4" fill="#6B6B66"></rect><text x="108" y="130" font-size="10" fill="#3F3F3B">allocation</text><text x="118" y="34" font-size="10" fill="#1C1C1A">+0.9</text>
+        <rect x="180" y="40" width="50" height="20" rx="4" fill="#B8B6AE"></rect><text x="182" y="130" font-size="10" fill="#3F3F3B">currency</text><text x="192" y="74" font-size="10" fill="#1C1C1A">-0.8</text>
+        <rect x="250" y="60" width="50" height="5" rx="2" fill="#B8B6AE"></rect><text x="264" y="130" font-size="10" fill="#3F3F3B">fees</text><text x="262" y="80" font-size="10" fill="#1C1C1A">-0.2</text>
+        <rect x="320" y="65" width="50" height="17" rx="4" fill="#B8B6AE"></rect><text x="318" y="130" font-size="10" fill="#3F3F3B">other</text><text x="330" y="96" font-size="10" fill="#1C1C1A">+0.6</text>
+        <rect x="380" y="50" width="50" height="60" rx="4" fill="#1C1C1A"></rect><text x="386" y="130" font-size="10" fill="#3F3F3B">total</text><text x="390" y="44" font-size="10" fill="#1C1C1A">+2.4</text>
+        <text x="30" y="160" font-size="11" fill="#6B6B66">Selection: your stocks versus their sectors. Allocation: your sector weights versus the benchmark's.</text>
+        <text x="30" y="176" font-size="11" fill="#6B6B66">Currency: the euro value of foreign holdings. Hover any bar for the holdings behind it.</text>
+      </svg>
+    </div>
+  </div>
+
+  <div style="padding: 14px 24px 24px 24px; display: grid; grid-template-columns: 5fr 4fr 3fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">By holding</h2>
+      <table>
+        <thead><tr><th>Holding</th><th>Weight</th><th>Return</th><th>Sector return</th><th>Contribution <span class="info">i</span></th></tr></thead>
+        <tbody>
+          <tr><td>NVIDIA</td><td class="mono">10.2%</td><td class="mono">+48%</td><td class="mono">+22%</td><td class="mono" style="color: #134D2B">+3.9</td></tr>
+          <tr><td>iShares MSCI World ETF</td><td class="mono">28.9%</td><td class="mono">+12%</td><td class="mono">+12%</td><td class="mono" style="color: #134D2B">+3.4</td></tr>
+          <tr><td>ASML</td><td class="mono">5.6%</td><td class="mono">+31%</td><td class="mono">+22%</td><td class="mono" style="color: #134D2B">+1.7</td></tr>
+          <tr><td>Microsoft</td><td class="mono">7.1%</td><td class="mono">+17%</td><td class="mono">+22%</td><td class="mono" style="color: #134D2B">+1.2</td></tr>
+          <tr><td>SAP</td><td class="mono">6.0%</td><td class="mono">-9%</td><td class="mono">+22%</td><td class="mono" style="color: #7A1B10">-0.6</td></tr>
+          <tr><td>Novo Nordisk</td><td class="mono">5.1%</td><td class="mono">-22%</td><td class="mono">+4%</td><td class="mono" style="color: #7A1B10">-1.1</td></tr>
+        </tbody>
+      </table>
+      <span class="muted" style="font-size: 12px">Weights are averages over the year. Return against sector return shows whether the stock or the sector did the work.</span>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">By sector against the benchmark</h2>
+      <table>
+        <thead><tr><th>Sector</th><th>Your weight</th><th>World weight</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>Technology</td><td class="mono">41%</td><td class="mono">26%</td><td class="mono" style="color: #134D2B">+2.6</td></tr>
+          <tr><td>Health care</td><td class="mono">9%</td><td class="mono">11%</td><td class="mono" style="color: #7A1B10">-0.9</td></tr>
+          <tr><td>Financials</td><td class="mono">8%</td><td class="mono">16%</td><td class="mono" style="color: #7A1B10">-0.4</td></tr>
+          <tr><td>Energy</td><td class="mono">0%</td><td class="mono">4%</td><td class="mono" style="color: #7A1B10">-0.3</td></tr>
+          <tr><td>Other</td><td class="mono">42%</td><td class="mono">43%</td><td class="mono">+0.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">The events behind it</h2>
+      <div style="font-size: 13px; display: flex; flex-direction: column; gap: 8px">
+        <span><span class="mono muted">2025-11</span> NVIDIA quarterly results beat estimates by 12%; stock +18% in a week. <a href="Market.dc.html">Source</a></span>
+        <span><span class="mono muted">2026-02</span> Novo Nordisk cut its growth outlook on US pricing; stock -19% in two days. <a href="Market.dc.html">Source</a></span>
+        <span><span class="mono muted">2026-04</span> Euro strengthened from 1.03 to 1.09 against the dollar: the currency line. <a href="Market.dc.html">Source</a></span>
+      </div>
+      <a class="btn" href="Assistant.dc.html" style="text-decoration: none; align-self: flex-start; margin-top: auto">Ask the assistant a follow-up</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

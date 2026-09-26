@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scenarios: compare and explain</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F6F5F1;color:#1C1C1A}
+a{color:#1D5BD6}a:hover{color:#1A4FB8}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.nav{height:56px;display:flex;align-items:center;gap:6px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #D9D7D0;box-sizing:border-box}
+.nav a{color:#3F3F3B;text-decoration:none;font-size:14px;padding:6px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.nav a.on{background:#EEF3FC;color:#1D5BD6;font-weight:600}
+.badge{font-size:12px;font-weight:600;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid}
+.sim{background:#FCEBE9;color:#8A1F14;border-color:#F3B9B3}
+.card{background:#FFFFFF;border:1px solid #D9D7D0;border-radius:10px;padding:16px;box-sizing:border-box}
+.muted{color:#6B6B66}
+.h1{font-size:22px;font-weight:600;margin:0}
+.h2{font-size:15px;font-weight:600;margin:0}
+.callout{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #D9D7D0;background:#fff;color:#1C1C1A;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.sel{background:#EEF3FC;border-color:#1D5BD6;color:#1D5BD6}
+.btn.primary{background:#1D5BD6;border-color:#1D5BD6;color:#fff}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#FFF7E6;border:1px solid #F1D48A;color:#5C3D00;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;color:#6B6B66;padding:7px 8px;border-bottom:1px solid #D9D7D0}
+td{padding:7px 8px;border-bottom:1px solid #EFEEE9;vertical-align:top}
+.info{width:14px;height:14px;border-radius:50%;border:1px solid #9A988F;color:#6B6B66;font-size:10px;display:inline-flex;align-items:center;justify-content:center}
+.key{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 880px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1">
+  <nav class="nav" aria-label="Main">
+    <span style="font-weight: 600; font-size: 16px; margin-right: 6px">Playground</span>
+    <span class="badge sim">NO REAL ORDERS · portfolio read-only</span>
+    <span style="width: 12px"></span>
+    <a href="Main.dc.html">Home</a>
+    <a href="Portfolio.dc.html">Portfolio</a>
+    <a class="on" href="ScenarioBuilder.dc.html">Scenarios</a>
+    <a href="Market.dc.html">Market</a>
+    <a href="Ideas.dc.html">Ideas</a>
+    <a href="Agents.dc.html">Agents</a>
+    <a href="Assistant.dc.html">Assistant</a>
+    <a href="Runs.dc.html">Advanced <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></a>
+    <span style="flex-grow: 1"></span>
+    <a href="Tour.dc.html" aria-label="Help and tour" style="border: 1px solid #D9D7D0; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0">?</a>
+  </nav>
+
+  <div style="padding: 20px 24px 0 24px; display: flex; align-items: center; gap: 12px">
+    <a href="ScenarioBuilder.dc.html" style="font-size: 13px; text-decoration: none">Scenarios</a><span class="muted">/</span>
+    <span class="callout">3</span>
+    <h1 class="h1">How would my portfolio have evolved?</h1>
+    <span class="muted" style="font-size: 13px">3 scenarios against your real portfolio, 2021-09 to 2026-09, costs included</span>
+    <span style="flex-grow: 1"></span>
+    <button class="btn">1Y</button><button class="btn">3Y</button><button class="btn sel">5Y</button><button class="btn">Since start</button>
+  </div>
+
+  <div style="padding: 14px 24px 0 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 14px; font-size: 12px">
+        <h2 class="h2" style="margin-right: 6px">Value of 50,000 EUR over five years</h2>
+        <span><span class="key" style="background: #1C1C1A"></span>Real portfolio</span>
+        <span><span class="key" style="background: #1D5BD6"></span>S1 Add ASML and TSMC</span>
+        <span><span class="key" style="background: #C0392B"></span>S2 Swap SAP for Microsoft</span>
+        <span><span class="key" style="background: #6B6B66"></span>S3 Core only, trend filter</span>
+        <span><span class="key" style="background: #B8B6AE; height: 1px; border-top: 1px dashed #6B6B66"></span>MSCI World EUR</span>
+      </div>
+      <svg viewBox="0 0 760 250" width="100%" height="250" role="img" aria-label="Overlay of scenario value curves, placeholder">
+        <line x1="40" y1="215" x2="750" y2="215" stroke="#D9D7D0"></line>
+        <line x1="40" y1="20" x2="40" y2="215" stroke="#D9D7D0"></line>
+        <text x="8" y="215" font-size="10" fill="#6B6B66">50k</text><text x="8" y="120" font-size="10" fill="#6B6B66">75k</text><text x="8" y="26" font-size="10" fill="#6B6B66">100k</text>
+        <text x="40" y="232" font-size="10" fill="#6B6B66">2021</text><text x="180" y="232" font-size="10" fill="#6B6B66">2022</text><text x="320" y="232" font-size="10" fill="#6B6B66">2023</text><text x="460" y="232" font-size="10" fill="#6B6B66">2024</text><text x="600" y="232" font-size="10" fill="#6B6B66">2025</text><text x="720" y="232" font-size="10" fill="#6B6B66">2026</text>
+        <rect x="120" y="20" width="160" height="195" fill="#F3F1EA"></rect><text x="130" y="34" font-size="10" fill="#6B6B66">2022 drawdown</text>
+        <polyline fill="none" stroke="#B8B6AE" stroke-width="1.5" stroke-dasharray="4 3" points="40,215 120,200 200,225 280,218 360,196 440,178 520,160 600,150 680,132 750,124"></polyline>
+        <polyline fill="none" stroke="#1C1C1A" stroke-width="2" points="40,215 120,196 200,232 280,224 360,190 440,166 520,140 600,138 680,110 750,98"></polyline>
+        <polyline fill="none" stroke="#1D5BD6" stroke-width="2" points="40,215 120,192 200,238 280,228 360,180 440,150 520,112 600,116 680,80 750,62"></polyline>
+        <polyline fill="none" stroke="#C0392B" stroke-width="2" points="40,215 120,197 200,230 280,220 360,186 440,160 520,134 600,130 680,104 750,92"></polyline>
+        <polyline fill="none" stroke="#6B6B66" stroke-width="2" points="40,215 120,204 200,210 280,208 360,194 440,180 520,164 600,156 680,142 750,134"></polyline>
+        <circle cx="750" cy="62" r="3" fill="#1D5BD6"></circle><text x="700" y="58" font-size="10" fill="#1D5BD6">91.4k</text>
+        <circle cx="750" cy="98" r="3" fill="#1C1C1A"></circle><text x="700" y="94" font-size="10" fill="#1C1C1A">84.3k</text>
+        <circle cx="750" cy="134" r="3" fill="#6B6B66"></circle><text x="700" y="146" font-size="10" fill="#6B6B66">74.9k</text>
+      </svg>
+      <span class="muted" style="font-size: 12px">Shaded band: the 2022 drawdown. Hover any point for the value of every line on that day. Dashed line: the benchmark you chose in Settings.</span>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 class="h2">Side by side</h2>
+      <table>
+        <thead><tr><th></th><th>Real</th><th style="color: #1D5BD6">S1</th><th style="color: #C0392B">S2</th><th>S3</th><th>World</th></tr></thead>
+        <tbody>
+          <tr><td>End value (EUR)</td><td class="mono">84.3k</td><td class="mono">91.4k</td><td class="mono">85.6k</td><td class="mono">74.9k</td><td class="mono">77.2k</td></tr>
+          <tr><td>Return per year <span class="info">i</span></td><td class="mono">11.0%</td><td class="mono">12.8%</td><td class="mono">11.3%</td><td class="mono">8.4%</td><td class="mono">9.1%</td></tr>
+          <tr><td>Worst fall from a peak <span class="info">i</span></td><td class="mono">-27%</td><td class="mono" style="color: #7A1B10">-33%</td><td class="mono">-26%</td><td class="mono" style="color: #134D2B">-14%</td><td class="mono">-19%</td></tr>
+          <tr><td>Months to recover</td><td class="mono">16</td><td class="mono">19</td><td class="mono">15</td><td class="mono">9</td><td class="mono">14</td></tr>
+          <tr><td>Return for the risk taken <span class="info">i</span></td><td class="mono">0.62</td><td class="mono">0.64</td><td class="mono">0.66</td><td class="mono">0.71</td><td class="mono">0.61</td></tr>
+          <tr><td>Costs and taxes paid</td><td class="mono">0.4k</td><td class="mono">0.7k</td><td class="mono">1.9k</td><td class="mono">2.6k</td><td class="mono">-</td></tr>
+          <tr><td>Largest sector weight</td><td class="mono">41%</td><td class="mono" style="color: #7A1B10">49%</td><td class="mono">44%</td><td class="mono">28%</td><td class="mono">26%</td></tr>
+        </tbody>
+      </table>
+      <span class="muted" style="font-size: 12px">Hover the i for a one-line definition and a worked example on your own numbers.</span>
+    </div>
+  </div>
+
+  <div style="padding: 14px 24px 24px 24px; display: grid; grid-template-columns: 7fr 5fr; gap: 16px; flex-grow: 1; min-height: 0">
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 10px"><h2 class="h2">Why S1 won, and what it cost</h2><span class="muted" style="font-size: 12px">written by the assistant from the run data, sources linked</span></div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55">S1 ends 7,100 EUR ahead of your real portfolio, and almost all of it comes from <b>one decision: adding two chip makers before the 2023 to 2025 semiconductor cycle</b>. ASML and TSMC returned 3.1 times and 2.6 times over the period against 1.6 times for the world index <a href="RunDetail.dc.html">[1]</a>. The price was a <b>deeper fall in 2022</b> (minus 33% against minus 27%) and three more months to recover. S2 barely differs from the real portfolio: Microsoft and SAP moved together most of the time, so the swap mainly generated a <b>taxable gain of about 1,500 EUR</b> at the swap date <a href="RunDetail.dc.html">[2]</a>. S3 lost the least in 2022 because the trend filter sold in February, but it <b>missed the first four months of the 2023 recovery</b>, which is where the trend filter usually pays for itself over long periods and did not here <a href="Runs.dc.html">[3]</a>.</p>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>Hindsight warning.</b> You built S1 in 2026 knowing how chips did. A five-year test of a stock you already know went up is not evidence the rule that picked it works. Run the same rule on a period you did not look at, or let a scenario agent run it forward from today.</span></div>
+      <div class="warn"><span aria-hidden="true">!</span><span><b>Outside your limits.</b> S1 puts technology at 49% against your 35% sector limit, and TSMC at 12% against your 10% single-position limit. The comparison still runs; a proposal from it would be flagged.</span></div>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 10px">
+      <h2 class="h2">What you can do with a scenario</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px">
+        <div style="display: flex; gap: 10px; align-items: flex-start"><a class="btn primary" href="Agents.dc.html">Run S1 forward with an agent</a><span class="muted">An agent keeps trading S1 with fake money from today, so in six months you compare real results, not history.</span></div>
+        <div style="display: flex; gap: 10px; align-items: flex-start"><a class="btn" href="Agents.dc.html">Turn S1 into a proposal</a><span class="muted">Lists the real trades needed to move your portfolio toward S1, with costs and the tax effect, for your approval.</span></div>
+        <div style="display: flex; gap: 10px; align-items: flex-start"><a class="btn" href="Validation.dc.html">Check it is not luck</a><span class="muted">Opens the advanced validation tools for the rule behind S3.</span></div>
+        <div style="display: flex; gap: 10px; align-items: flex-start"><a class="btn" href="Assistant.dc.html">Ask a follow-up</a><span class="muted">"What if I had added only ASML?" creates S4 from this chat.</span></div>
+      </div>
+      <span class="muted" style="font-size: 12px; margin-top: auto">Nothing on this page moves real money. Proposals are executed by you in Trade Republic, then re-imported.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
