@@ -35,17 +35,27 @@ from playground.importer.tr.layouts.common import (
     read_position_block,
     read_settlement_block,
 )
+from playground.importer.tr.layouts.corporate_action import CORPORATE_ACTION
+from playground.importer.tr.layouts.dividende import DIVIDENDE
+from playground.importer.tr.layouts.kontoauszug_2023 import KONTOAUSZUG_2023
+from playground.importer.tr.layouts.kontoauszug_2024 import KONTOAUSZUG_2024
 from playground.importer.tr.layouts.settlement_en import SETTLEMENT_EN_2023
+from playground.importer.tr.layouts.split import SPLIT
+from playground.importer.tr.layouts.steuer import STEUER
 from playground.importer.tr.layouts.wertpapierabrechnung import (
     SPARPLAN,
     WERTPAPIERABRECHNUNG_2019,
     WERTPAPIERABRECHNUNG_2023,
 )
+from playground.importer.tr.layouts.zinsen import ZINSEN
 
 TEXT_DIR = Path(__file__).resolve().parents[2] / "fixtures" / "tr" / "text"
 T02 = "tr.wertpapierabrechnung.de.2023/golden_t02_kauf_sap"
 T12 = "tr.wertpapierabrechnung.de.2023/golden_t12_verkauf_sap"
 T03 = "tr.sparplan.de/golden_t03_sparplan_msciw"
+T09 = "tr.dividende.de/golden_t09_dividende_sap"
+T10 = "tr.dividende.de/golden_t10_dividende_aapl"
+T11 = "tr.split.de/golden_t11_split_nvda"
 
 # The invented personal data used in the fixtures. None of it may reach a parsed field.
 PERSONAL = (
@@ -609,17 +619,23 @@ def test_the_english_layout_messages_use_its_own_labels() -> None:
 # --- Parsed fields ------------------------------------------------------------------------
 
 
-def test_every_trade_fixture_gives_a_pdf_document_candidate_with_a_valid_isin(text_fixture: Path) -> None:
+def test_every_pdf_document_candidate_has_a_valid_isin_when_one_is_expected(text_fixture: Path) -> None:
+    # Every single-document layout (trade, dividend, tax, interest, split) books to the EUR cash
+    # account, so amount and amount_eur always agree. Unlike the WP3 trade layouts, a WP4 layout
+    # may have no ISIN at all (tax and interest notes are not always about one security) or an
+    # FX line (a foreign dividend, plan 6.2); an account statement (source_kind pdf_statement)
+    # is a different shape entirely (many lines per file) and is covered by its own tests instead.
     if text_fixture.parent.name == "unclassified":
         return
     parser = {p.parser_id: p for p in PARSERS}[text_fixture.parent.name]
     for txn in parser.parse(text_fixture.read_text(encoding="utf-8")).transactions:
-        assert txn.source_kind is SourceKind.PDF_DOCUMENT
-        assert txn.isin is not None
-        assert is_valid_isin(txn.isin)
+        if txn.source_kind is not SourceKind.PDF_DOCUMENT:
+            continue
+        if txn.isin is not None:
+            assert is_valid_isin(txn.isin)
         assert txn.currency == "EUR"
         assert txn.amount == txn.amount_eur
-        assert txn.fx_source == "none"
+        assert txn.fx_source in ("none", "document")
 
 
 def test_personal_data_is_never_copied_into_parsed_fields(text_fixture: Path) -> None:
@@ -650,3 +666,244 @@ def test_parsers_never_raise_when_a_document_is_cut_off(text_fixture: Path) -> N
     for end in range(len(lines)):
         for parser in PARSERS:
             assert isinstance(parser.parse("".join(lines[:end])), ParseResult)
+
+
+# --- WP4: dividend (tr.dividende.de) -------------------------------------------------------
+
+
+def test_dividend_paid_in_a_foreign_currency_uses_the_document_fx_line() -> None:
+    txn = DIVIDENDE.parse(fixture(T10)).transactions[0]
+    assert (txn.currency, txn.amount, txn.amount_eur) == ("EUR", Decimal("0.94"), Decimal("0.94"))
+    assert (txn.fx_rate, txn.fx_source) == (Decimal("1.0800"), "document")
+    assert (txn.quantity, txn.price) == (Decimal("5"), Decimal("0.24"))
+    assert txn.tax_detail == {"quellensteuer": Decimal("0.17")}
+
+
+def test_a_eur_dividend_has_no_fx_line() -> None:
+    txn = DIVIDENDE.parse(fixture(T09)).transactions[0]
+    assert (txn.fx_rate, txn.fx_source) == (None, "none")
+    assert txn.tax_detail == {"kapitalertragssteuer": Decimal("8.25"), "solidaritaetszuschlag": Decimal("0.45")}
+
+
+def test_a_foreign_dividend_without_a_conversion_line_is_a_missing_field() -> None:
+    text = without_line(T10, "Zwischensumme 1,0800 EUR/USD 1,11 EUR")
+    result = DIVIDENDE.parse(text)
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "missing_field"
+    assert item["fields"]["missing"] == "fx"  # type: ignore[index]
+    assert item["message"] == "The document shows the position in USD but has no EUR conversion line (Zwischensumme)."
+
+
+def test_dividend_invalid_isin_gives_a_review_and_no_transaction() -> None:
+    result = DIVIDENDE.parse(variant(T09, ("ISIN: DE0007164600", "ISIN: DE0007164601")))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "invalid_isin"
+    assert item["message"] == "The ISIN DE0007164601 in this document is not valid: its check digit does not match."
+
+
+def test_dividend_gross_and_tax_must_add_up_to_the_settlement_total() -> None:
+    text = variant(
+        T09,
+        ("GESAMT 24,30 EUR", "GESAMT 25,30 EUR"),
+        ("DE00000000000000000000 15.05.2024 24,30 EUR", "DE00000000000000000000 15.05.2024 25,30 EUR"),
+    )
+    result = DIVIDENDE.parse(text)
+    assert len(result.transactions) == 1
+    item = only_review(result)
+    assert item["kind"] == "amounts_do_not_add_up"
+    assert item["message"] == (
+        "The amounts in this document do not add up. The gross amount and the tax lines give 24.30 EUR, "
+        "but the settlement total (GESAMT) is 25.30 EUR."
+    )
+
+
+def test_dividend_without_a_booking_block_is_a_missing_field() -> None:
+    result = DIVIDENDE.parse(without_line(T09, "BUCHUNG"))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "missing_field"
+    assert item["fields"]["missing"] == "booking"  # type: ignore[index]
+
+
+def test_dividend_without_the_title_gives_a_review() -> None:
+    result = DIVIDENDE.parse("Hello\n")
+    item = only_review(result)
+    assert item["fields"] == {"missing": "title"}
+
+
+# --- WP4: tax correction and advance lump sum (tr.steuer.de) --------------------------------
+
+STEUERKORREKTUR = "tr.steuer.de/steuerkorrektur_erstattung"
+VORABPAUSCHALE = "tr.steuer.de/vorabpauschale_belastung"
+
+
+def test_a_positive_tax_note_entry_is_a_refund() -> None:
+    txn = STEUER.parse(fixture(STEUERKORREKTUR)).transactions[0]
+    assert txn.tax_detail == {"kapitalertragssteuer": Decimal("-1.10")}
+    assert txn.tax_eur == Decimal("-1.10")
+    assert txn.amount == Decimal("1.10")
+    assert txn.type.value == "tax"
+
+
+def test_a_negative_tax_note_has_two_tax_lines() -> None:
+    txn = STEUER.parse(fixture(VORABPAUSCHALE)).transactions[0]
+    assert txn.tax_detail == {"kapitalertragssteuer": Decimal("0.86"), "solidaritaetszuschlag": Decimal("0.04")}
+    assert txn.amount == Decimal("-0.90")
+
+
+def test_tax_note_has_no_quantity_or_price() -> None:
+    txn = STEUER.parse(fixture(STEUERKORREKTUR)).transactions[0]
+    assert (txn.quantity, txn.price) == (None, None)
+
+
+def test_tax_note_without_a_settlement_block_is_a_missing_field() -> None:
+    result = STEUER.parse(without_line(STEUERKORREKTUR, "ABRECHNUNG"))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "missing_field"
+    assert item["fields"]["missing"] == "settlement"  # type: ignore[index]
+
+
+def test_tax_note_without_an_isin_is_a_missing_field() -> None:
+    result = STEUER.parse(without_line(STEUERKORREKTUR, "ISIN: DE0007164600"))
+    item = only_review(result)
+    assert item["fields"]["missing"] == "isin"  # type: ignore[index]
+
+
+def test_tax_note_booking_must_match_the_settlement_total() -> None:
+    result = STEUER.parse(variant(STEUERKORREKTUR, ("20.05.2024 1,10 EUR", "20.05.2024 1,20 EUR")))
+    item = only_review(result)
+    assert item["kind"] == "amounts_do_not_add_up"
+
+
+# --- WP4: interest statement (tr.zinsen.de) -------------------------------------------------
+
+ZINSEN_MIT_STEUER = "tr.zinsen.de/zinsen_mit_steuer"
+ZINSEN_OHNE_STEUER = "tr.zinsen.de/zinsen_ohne_steuer"
+
+
+def test_interest_has_no_isin_name_quantity_or_price() -> None:
+    txn = ZINSEN.parse(fixture(ZINSEN_MIT_STEUER)).transactions[0]
+    assert (txn.isin, txn.name, txn.quantity, txn.price) == (None, None, None, None)
+    assert txn.type.value == "interest"
+
+
+def test_interest_with_no_tax_line_has_a_zero_known_tax() -> None:
+    txn = ZINSEN.parse(fixture(ZINSEN_OHNE_STEUER)).transactions[0]
+    assert txn.tax_eur == Decimal("0.00")
+    assert txn.tax_detail == {}
+    assert txn.amount == Decimal("0.45")
+
+
+def test_interest_gross_before_tax_is_checked_against_the_net_credit() -> None:
+    text = variant(ZINSEN_MIT_STEUER, ("GUTSCHRIFT VOR STEUERN 3,20 EUR", "GUTSCHRIFT VOR STEUERN 4,20 EUR"))
+    result = ZINSEN.parse(text)
+    assert len(result.transactions) == 1
+    item = only_review(result)
+    assert item["kind"] == "amounts_do_not_add_up"
+
+
+def test_interest_note_without_a_settlement_block_is_a_missing_field() -> None:
+    result = ZINSEN.parse(without_line(ZINSEN_OHNE_STEUER, "ABRECHNUNG"))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["fields"]["missing"] == "settlement"  # type: ignore[index]
+
+
+# --- WP4: split (tr.split.de) ---------------------------------------------------------------
+
+
+def test_split_records_only_the_new_total_and_no_booking_amount() -> None:
+    txn = SPLIT.parse(fixture(T11)).transactions[0]
+    assert txn.split_new_quantity == Decimal("20")
+    assert (txn.amount, txn.amount_eur, txn.quantity, txn.price, txn.value_date) == (None, None, None, None, None)
+    assert txn.type.value == "split"
+    assert txn.fees_eur == Decimal("0.00")
+    assert txn.tax_eur == Decimal("0.00")
+
+
+def test_split_without_the_entry_line_is_a_missing_field() -> None:
+    result = SPLIT.parse(without_line(T11, "1 Einbuchung NVIDIA Corp. 20 Stk. 0,00 EUR"))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["fields"]["missing"] == "split_entry"  # type: ignore[index]
+
+
+def test_split_without_an_isin_is_a_missing_field() -> None:
+    result = SPLIT.parse(without_line(T11, "ISIN: US67066G1040"))
+    item = only_review(result)
+    assert item["fields"]["missing"] == "isin"  # type: ignore[index]
+
+
+def test_split_invalid_isin_gives_a_review() -> None:
+    result = SPLIT.parse(variant(T11, ("ISIN: US67066G1040", "ISIN: US67066G1041")))
+    item = only_review(result)
+    assert item["kind"] == "invalid_isin"
+
+
+# --- WP4: corporate actions P0 does not convert (tr.corporate_action.de) -------------------
+
+
+@pytest.mark.parametrize("case", ["tr.corporate_action.de/umtausch", "tr.corporate_action.de/bezug"])
+def test_corporate_action_notices_give_no_transaction(case: str) -> None:
+    result = CORPORATE_ACTION.parse(fixture(case))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "corporate_action"
+
+
+def test_corporate_action_on_unrelated_text_says_so_and_copies_no_personal_data() -> None:
+    result = CORPORATE_ACTION.parse(fixture(T02))
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["kind"] == "missing_field"
+
+
+# --- WP4: account statements (tr.kontoauszug.de.2023, tr.kontoauszug.de.2024) --------------
+
+KONTOAUSZUG_2023_Q1 = "tr.kontoauszug.de.2023/kontoauszug_2023_q1"
+KONTOAUSZUG_2024_H1 = "tr.kontoauszug.de.2024/golden_h1_statement"
+
+
+def test_statement_candidates_never_carry_fees_taxes_quantity_or_price() -> None:
+    # Plan 6.3: "They add no information beyond date, type, ISIN and amount."
+    for parser, case in ((KONTOAUSZUG_2023, KONTOAUSZUG_2023_Q1), (KONTOAUSZUG_2024, KONTOAUSZUG_2024_H1)):
+        for txn in parser.parse(fixture(case)).transactions:
+            assert txn.fees_eur is None
+            assert txn.tax_eur is None
+            assert txn.quantity is None
+            assert txn.price is None
+            assert txn.source_ref is None
+            assert txn.source_kind is SourceKind.PDF_STATEMENT
+
+
+def test_kontoauszug_2023_uses_the_booking_day_for_the_time_and_the_value_date_separately() -> None:
+    # Plan 5.3.4: statement lines key on BUCHUNGSTAG; WERTSTELLUNG is kept only as value_date.
+    txn = KONTOAUSZUG_2023.parse(fixture(KONTOAUSZUG_2023_Q1)).transactions[1]
+    assert txn.time.ts_local.date().isoformat() == "2023-01-16"
+    assert txn.value_date is not None
+    assert txn.value_date.isoformat() == "2023-01-18"
+
+
+def test_an_unrecognised_statement_row_does_not_stop_later_rows_from_importing() -> None:
+    result = KONTOAUSZUG_2023.parse(fixture(KONTOAUSZUG_2023_Q1))
+    assert len(result.transactions) == 3
+    item = only_review(result)
+    assert item["kind"] == "unparsed_row"
+
+
+def test_statement_layouts_are_mutually_exclusive() -> None:
+    text_2023 = fixture(KONTOAUSZUG_2023_Q1)
+    text_2024 = fixture(KONTOAUSZUG_2024_H1)
+    assert KONTOAUSZUG_2023.detect(text_2023)
+    assert not KONTOAUSZUG_2024.detect(text_2023)
+    assert KONTOAUSZUG_2024.detect(text_2024)
+    assert not KONTOAUSZUG_2023.detect(text_2024)
+
+
+def test_kontoauszug_2024_reads_german_month_names_and_isin_with_name() -> None:
+    txn = KONTOAUSZUG_2024.parse(fixture(KONTOAUSZUG_2024_H1)).transactions[1]
+    assert (txn.isin, txn.name) == ("DE0007164600", "SAP SE")
+    assert txn.time.ts_local.date().isoformat() == "2024-01-15"

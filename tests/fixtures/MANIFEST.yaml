@@ -80,6 +80,80 @@ files:
     imitates: tr.settlement.en.2023
     description: Limit order sell in summer time with a fractional quantity and English tax lines.
 
+  # Dividend and fund distribution (DIVIDENDE, AUSSCHÜTTUNG).
+  - path: tr/text/tr.dividende.de/golden_t09_dividende_sap.txt
+    synthetic: true
+    imitates: tr.dividende.de
+    description: Golden portfolio T9, dividend of 15 SAP at 2.20 with capital gains tax and solidarity surcharge.
+  - path: tr/text/tr.dividende.de/golden_t10_dividende_aapl.txt
+    synthetic: true
+    imitates: tr.dividende.de
+    description: Golden portfolio T10, USD dividend of 5 Apple at 0.24 converted at 1.0800 EUR/USD with US withholding tax.
+  - path: tr/text/tr.dividende.de/ausschuettung_msciw_no_tax.txt
+    synthetic: true
+    imitates: tr.dividende.de
+    description: Fund distribution (AUSSCHÜTTUNG title) with no tax withheld and no settlement block.
+
+  # Tax correction and advance lump sum (STEUERKORREKTUR, VORABPAUSCHALE).
+  - path: tr/text/tr.steuer.de/steuerkorrektur_erstattung.txt
+    synthetic: true
+    imitates: tr.steuer.de
+    description: Tax correction with a positive total (a refund credited to the account).
+  - path: tr/text/tr.steuer.de/vorabpauschale_belastung.txt
+    synthetic: true
+    imitates: tr.steuer.de
+    description: Advance lump sum tax with a negative total (a debit) and two tax lines.
+
+  # Interest statement (ABRECHNUNG ZINSEN).
+  - path: tr/text/tr.zinsen.de/zinsen_mit_steuer.txt
+    synthetic: true
+    imitates: tr.zinsen.de
+    description: Interest credited with capital gains tax withheld, gross and net both shown.
+  - path: tr/text/tr.zinsen.de/zinsen_ohne_steuer.txt
+    synthetic: true
+    imitates: tr.zinsen.de
+    description: Interest credited with no tax withheld and no gross line.
+
+  # Split (SPLIT).
+  - path: tr/text/tr.split.de/golden_t11_split_nvda.txt
+    synthetic: true
+    imitates: tr.split.de
+    description: Golden portfolio T11, NVIDIA split; the document shows only the new total of 20 shares.
+  - path: tr/text/tr.split.de/split_msciw.txt
+    synthetic: true
+    imitates: tr.split.de
+    description: Split of a second instrument, to check the layout is not tied to one ISIN.
+
+  # Account statement, 2023 layout (KONTOAUSZUG, two-line entries).
+  - path: tr/text/tr.kontoauszug.de.2023/kontoauszug_2023_q1.txt
+    synthetic: true
+    imitates: tr.kontoauszug.de.2023
+    description: A deposit, a buy and a dividend, plus one unrecognised row type (negative case, unparsed_row).
+  - path: tr/text/tr.kontoauszug.de.2023/kontoauszug_2023_q3.txt
+    synthetic: true
+    imitates: tr.kontoauszug.de.2023
+    description: A savings-plan buy, interest, a sell and a withdrawal.
+
+  # Account statement, 2024 layout (UMSATZÜBERSICHT, TYP column, "€" amounts).
+  - path: tr/text/tr.kontoauszug.de.2024/golden_h1_statement.txt
+    synthetic: true
+    imitates: tr.kontoauszug.de.2024
+    description: Golden portfolio H1 statement, the 11 lines that match T1 to T10 and T12 (plan 1.2).
+  - path: tr/text/tr.kontoauszug.de.2024/kontoauszug_2024_q4.txt
+    synthetic: true
+    imitates: tr.kontoauszug.de.2024
+    description: Interest and a withdrawal, plus one unrecognised row type (negative case, unparsed_row).
+
+  # Corporate actions P0 recognises but does not convert (exchange, subscription; plan 5.3.5).
+  - path: tr/text/tr.corporate_action.de/umtausch.txt
+    synthetic: true
+    imitates: a Trade Republic exchange notice (UMTAUSCH)
+    description: Negative case. Must give the corporate_action review kind, no transaction.
+  - path: tr/text/tr.corporate_action.de/bezug.txt
+    synthetic: true
+    imitates: a Trade Republic subscription rights notice (BEZUG)
+    description: Negative case. Must give the corporate_action review kind, no transaction.
+
   # Documents no single parser may claim.
   - path: tr/text/unclassified/unknown_cost_information.txt
     synthetic: true

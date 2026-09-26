@@ -41,6 +41,13 @@ def test_euro_sign_umlauts_and_sharp_s_survive_the_pdf_layer(make_pdfs: ModuleTy
     assert extract_text(make_pdfs.render_pdf(text, "special characters")) == text
 
 
+def test_german_month_names_and_the_euro_sign_survive_the_pdf_layer(make_pdfs: ModuleType) -> None:
+    # WP4 done-when (plan 9): "'€' and German month names survive the PDF layer" -- the 2024
+    # account statement layout prints dates like "01 Apr. 2024" and amounts like "1.401,00 €".
+    text = "01 Apr. 2024 Kauf DE0007164600 SAP SE - 1.401,00 € 3.599,00 €\n3 Dez. 2024 Zinsen 1,05 € - 500,00 €\n"
+    assert extract_text(make_pdfs.render_pdf(text, "statement characters")) == text
+
+
 def test_pages_are_joined_with_a_form_feed(make_pdfs: ModuleType) -> None:
     text = "SEITE 1 von 2\nerste Seite\fSEITE 2 von 2\nzweite Seite\n"
     assert extract_text(make_pdfs.render_pdf(text, "two pages")) == text

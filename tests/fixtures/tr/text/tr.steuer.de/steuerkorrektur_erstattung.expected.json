@@ -1,0 +1,36 @@
+{
+  "parser_id": "tr.steuer.de",
+  "parser_version": 1,
+  "doc_type": "tax_notice",
+  "transactions": [
+    {
+      "type": "tax",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "ts_utc": "2024-05-19T22:00:00Z",
+      "ts_local": "2024-05-20T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-05-20",
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": "1.10",
+      "amount_eur": "1.10",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "-1.10",
+      "tax_detail": {
+        "kapitalertragssteuer": "-1.10"
+      },
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "6d4b-12fa",
+      "source_kind": "pdf_document",
+      "evidence": [7, 15]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

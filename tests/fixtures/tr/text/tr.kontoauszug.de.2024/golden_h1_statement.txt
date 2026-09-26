@@ -1,0 +1,20 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 30.06.2024
+12345 Musterstadt DEPOT 0000001111
+UMSATZÜBERSICHT
+ZEITRAUM 01 Jan. 2024 - 30 Jun. 2024
+DATUM TYP BESCHREIBUNG EINGANG AUSGANG SALDO
+02 Jan. 2024 Einzahlung Bareinzahlung 5.000,00 € - 5.000,00 €
+15 Jan. 2024 Kauf DE0007164600 SAP SE - 1.401,00 € 3.599,00 €
+01 Feb. 2024 Sparplan IE00B4L5Y983 iShsIII-Core MSCI World U.ETF - 200,00 € 3.399,00 €
+01 Mär. 2024 Sparplan IE00B4L5Y983 iShsIII-Core MSCI World U.ETF - 210,00 € 3.189,00 €
+12 Mär. 2024 Kauf US0378331005 Apple Inc. - 801,00 € 2.388,00 €
+20 Mär. 2024 Kauf US67066G1040 NVIDIA Corp. - 1.701,00 € 687,00 €
+02 Apr. 2024 Einzahlung Bareinzahlung 1.000,00 € - 1.687,00 €
+10 Apr. 2024 Kauf DE0007164600 SAP SE - 801,00 € 886,00 €
+15 Mai 2024 Dividende DE0007164600 SAP SE 24,30 € - 910,30 €
+16 Mai 2024 Dividende US0378331005 Apple Inc. 0,94 € - 911,24 €
+12 Jun. 2024 Verkauf DE0007164600 SAP SE 1.999,41 € - 2.910,65 €
+Diese Aufstellung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

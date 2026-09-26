@@ -1,0 +1,17 @@
+{
+  "parser_id": "tr.corporate_action.de",
+  "parser_version": 1,
+  "doc_type": "corporate_action_notice",
+  "transactions": [],
+  "review": [
+    {
+      "kind": "corporate_action",
+      "message": "This document describes a corporate action (an exchange or a subscription) that P0 does not turn into a transaction. Review it by hand; nothing was imported from it.",
+      "fields": {
+        "title": "UMTAUSCH"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN\nJana Beispiel SEITE 1 von 1\nAhornweg 7 DATUM 03.09.2024\n12345 Musterstadt REFERENZ 8b21-4e9f\nDEPOT 0000001111\nUMTAUSCH\nEs hat eine Kapitalmaßnahme (Umtausch) für eine Ihrer Positionen stattgefunden.\nDetails erhalten Sie in Ihrem Postfach in der App.\nDiese Mitteilung wird maschinell erstellt und trägt keine Unterschrift.\nTrade Republic Bank GmbH www.traderepublic.com\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

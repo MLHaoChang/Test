@@ -1,0 +1,34 @@
+{
+  "parser_id": "tr.dividende.de",
+  "parser_version": 1,
+  "doc_type": "dividend_note",
+  "transactions": [
+    {
+      "type": "dividend",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "ts_utc": "2024-09-29T22:00:00Z",
+      "ts_local": "2024-09-30T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-09-30",
+      "quantity": "5",
+      "price": "0.10",
+      "currency": "EUR",
+      "amount": "0.50",
+      "amount_eur": "0.50",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "a4e1-7c60",
+      "source_kind": "pdf_document",
+      "evidence": [8, 15]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

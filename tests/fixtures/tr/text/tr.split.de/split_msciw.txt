@@ -1,0 +1,11 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 15.08.2024
+54321 Beispielheim REFERENZ 4d8e-70c2
+DEPOT 0000002222
+SPLIT
+NR. BUCHUNG WERTPAPIER BETRAG
+1 Einbuchung iShsIII-Core MSCI World U.ETF 50 Stk. 0,00 EUR
+ISIN: IE00B4L5Y983
+Diese Mitteilung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

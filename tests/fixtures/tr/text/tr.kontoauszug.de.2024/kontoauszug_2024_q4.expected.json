@@ -1,0 +1,41 @@
+{
+  "parser_id": "tr.kontoauszug.de.2024",
+  "parser_version": 1,
+  "doc_type": "account_statement",
+  "transactions": [
+    {
+      "type": "interest", "isin": null, "name": null,
+      "ts_utc": "2024-09-30T22:00:00Z", "ts_local": "2024-10-01T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "1.05", "amount_eur": "1.05",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [8, 8]
+    },
+    {
+      "type": "withdrawal", "isin": null, "name": null,
+      "ts_utc": "2024-11-14T23:00:00Z", "ts_local": "2024-11-15T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-200.00", "amount_eur": "-200.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [9, 9]
+    }
+  ],
+  "review": [
+    {
+      "kind": "unparsed_row",
+      "message": "Line 10 of the account statement is not a known row type: \"3 Dez. 2024 Gebühr Depotgebühr - 4,99 € 295,01 €\". Nothing was imported from it.",
+      "fields": {
+        "date": "3 Dez. 2024",
+        "line": "10",
+        "line_text": "3 Dez. 2024 Gebühr Depotgebühr - 4,99 € 295,01 €",
+        "typ": "Gebühr"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN\nTom Probe SEITE 1 von 1\nBirkenallee 12 DATUM 31.12.2024\n54321 Beispielheim DEPOT 0000002222\nUMSATZÜBERSICHT\nZEITRAUM 01 Okt. 2024 - 31 Dez. 2024\nDATUM TYP BESCHREIBUNG EINGANG AUSGANG SALDO\n01 Okt. 2024 Zinsen Kontozinsen 1,05 € - 500,00 €\n15 Nov. 2024 Auszahlung Barauszahlung - 200,00 € 300,00 €\n3 Dez. 2024 Gebühr Depotgebühr - 4,99 € 295,01 €\nDiese Aufstellung wird maschinell erstellt und trägt keine Unterschrift.\nTrade Republic Bank GmbH www.traderepublic.com\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

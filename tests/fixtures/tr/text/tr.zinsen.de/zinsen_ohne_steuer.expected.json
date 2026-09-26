@@ -1,0 +1,34 @@
+{
+  "parser_id": "tr.zinsen.de",
+  "parser_version": 1,
+  "doc_type": "interest_statement",
+  "transactions": [
+    {
+      "type": "interest",
+      "isin": null,
+      "name": null,
+      "ts_utc": "2024-09-30T22:00:00Z",
+      "ts_local": "2024-10-01T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-10-01",
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": "0.45",
+      "amount_eur": "0.45",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "77c0-95ea",
+      "source_kind": "pdf_document",
+      "evidence": [7, 13]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

@@ -1,0 +1,17 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 30.09.2023
+54321 Beispielheim DEPOT 0000002222
+KONTOAUSZUG
+KONTOAUSZUG NR. 3/2023 ZEITRAUM 01.07.2023 - 30.09.2023
+BUCHUNGSTAG / WERTSTELLUNG BUCHUNGSTEXT BETRAG IN EUR
+Ausführung Sparplan Kauf IE00B4L5Y983 iShsIII-Core MSCI World U.ETF -100,00
+03.07.2023 / 05.07.2023
+Zinsertrag 1,42
+31.07.2023 / 31.07.2023
+Ausführung Handel Direktkauf Verkauf DE0007164600 SAP SE 555,00
+14.09.2023 / 18.09.2023
+Barauszahlung -300,00
+20.09.2023 / 20.09.2023
+Diese Aufstellung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

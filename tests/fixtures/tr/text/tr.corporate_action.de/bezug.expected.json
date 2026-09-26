@@ -1,0 +1,17 @@
+{
+  "parser_id": "tr.corporate_action.de",
+  "parser_version": 1,
+  "doc_type": "corporate_action_notice",
+  "transactions": [],
+  "review": [
+    {
+      "kind": "corporate_action",
+      "message": "This document describes a corporate action (an exchange or a subscription) that P0 does not turn into a transaction. Review it by hand; nothing was imported from it.",
+      "fields": {
+        "title": "BEZUG"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN\nTom Probe SEITE 1 von 1\nBirkenallee 12 DATUM 12.11.2024\n54321 Beispielheim REFERENZ f01a-6d3c\nDEPOT 0000002222\nBEZUG\nEs hat eine Kapitalmaßnahme (Bezugsrechte) für eine Ihrer Positionen stattgefunden.\nDetails erhalten Sie in Ihrem Postfach in der App.\nDiese Mitteilung wird maschinell erstellt und trägt keine Unterschrift.\nTrade Republic Bank GmbH www.traderepublic.com\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

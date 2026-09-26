@@ -1,0 +1,34 @@
+{
+  "parser_id": "tr.split.de",
+  "parser_version": 1,
+  "doc_type": "split_notice",
+  "transactions": [
+    {
+      "type": "split",
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "ts_utc": "2024-06-09T22:00:00Z",
+      "ts_local": "2024-06-10T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": null,
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": null,
+      "amount_eur": null,
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": "20",
+      "origin": null,
+      "source_ref": "9c3f-51ad",
+      "source_kind": "pdf_document",
+      "evidence": [8, 9]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

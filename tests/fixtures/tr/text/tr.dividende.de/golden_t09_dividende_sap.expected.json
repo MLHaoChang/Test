@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.dividende.de",
+  "parser_version": 1,
+  "doc_type": "dividend_note",
+  "transactions": [
+    {
+      "type": "dividend",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "ts_utc": "2024-05-14T22:00:00Z",
+      "ts_local": "2024-05-15T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-05-15",
+      "quantity": "15",
+      "price": "2.20",
+      "currency": "EUR",
+      "amount": "24.30",
+      "amount_eur": "24.30",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "8.70",
+      "tax_detail": {
+        "kapitalertragssteuer": "8.25",
+        "solidaritaetszuschlag": "0.45"
+      },
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "5f2e-9a04",
+      "source_kind": "pdf_document",
+      "evidence": [8, 20]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

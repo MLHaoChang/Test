@@ -75,7 +75,65 @@ def test_every_parser_has_at_least_two_cases() -> None:
 
 def test_every_case_with_an_order_or_execution_number_has_it_in_source_ref(text_fixture: Path) -> None:
     # Plan 6.2: every case that prints an order, execution or reference number carries it in source_ref.
+    # An account statement (source_kind pdf_statement, WP4) lists many transactions per file and
+    # carries no per-line reference number; its report key is ordinal-based instead (plan 5.3.4).
     text = text_fixture.read_text(encoding="utf-8")
     for transaction in outcome_to_dict(text)["transactions"]:
+        if transaction["source_kind"] == "pdf_statement":
+            assert transaction["source_ref"] is None, f"{text_fixture.name}: a statement line has a source_ref"
+            continue
         assert transaction["source_ref"], f"{text_fixture.name} has no source_ref"
         assert transaction["source_ref"] in text
+
+
+# --- WP4: the golden H1 account statement (plan 1.2, 6.2, 6.3) ----------------------------
+
+
+def test_golden_h1_statement_gives_eleven_statement_candidates_dated_as_in_the_golden_portfolio() -> None:
+    # Plan 1.2: "Each line of the H1 statement carries the same date as the matching PDF or CSV
+    # entry ... so every line matches exactly." T11 (the split) and T13/T14 (after 30 June, or
+    # never reported by a statement) are not in this file; only T1 to T10 and T12 are.
+    text = (TEXT_DIR / "tr.kontoauszug.de.2024" / "golden_h1_statement.txt").read_text(encoding="utf-8")
+    transactions = outcome_to_dict(text)["transactions"]
+    assert len(transactions) == 11
+    assert all(txn["source_kind"] == "pdf_statement" for txn in transactions)
+    assert all(txn["source_ref"] is None for txn in transactions)
+    assert [txn["ts_local"][:10] for txn in transactions] == [
+        "2024-01-02",
+        "2024-01-15",
+        "2024-02-01",
+        "2024-03-01",
+        "2024-03-12",
+        "2024-03-20",
+        "2024-04-02",
+        "2024-04-10",
+        "2024-05-15",
+        "2024-05-16",
+        "2024-06-12",
+    ]
+    assert [txn["type"] for txn in transactions] == [
+        "deposit",
+        "buy",
+        "buy",
+        "buy",
+        "buy",
+        "buy",
+        "deposit",
+        "buy",
+        "dividend",
+        "dividend",
+        "sell",
+    ]
+    assert [txn["amount_eur"] for txn in transactions] == [
+        "5000.00",
+        "-1401.00",
+        "-200.00",
+        "-210.00",
+        "-801.00",
+        "-1701.00",
+        "1000.00",
+        "-801.00",
+        "24.30",
+        "0.94",
+        "1999.41",
+    ]

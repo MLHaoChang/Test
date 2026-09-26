@@ -1,0 +1,11 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 10.06.2024
+12345 Musterstadt REFERENZ 9c3f-51ad
+DEPOT 0000001111
+SPLIT
+NR. BUCHUNG WERTPAPIER BETRAG
+1 Einbuchung NVIDIA Corp. 20 Stk. 0,00 EUR
+ISIN: US67066G1040
+Diese Mitteilung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

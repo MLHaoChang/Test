@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.steuer.de",
+  "parser_version": 1,
+  "doc_type": "tax_notice",
+  "transactions": [
+    {
+      "type": "tax",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "ts_utc": "2024-01-03T23:00:00Z",
+      "ts_local": "2024-01-04T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-01-04",
+      "quantity": null,
+      "price": null,
+      "currency": "EUR",
+      "amount": "-0.90",
+      "amount_eur": "-0.90",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.90",
+      "tax_detail": {
+        "kapitalertragssteuer": "0.86",
+        "solidaritaetszuschlag": "0.04"
+      },
+      "split_new_quantity": null,
+      "origin": null,
+      "source_ref": "0e7d-44c1",
+      "source_kind": "pdf_document",
+      "evidence": [7, 16]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

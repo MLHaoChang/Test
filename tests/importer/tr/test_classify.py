@@ -98,6 +98,13 @@ def test_parser_registry_is_well_formed() -> None:
         "tr.wertpapierabrechnung.de.2023",
         "tr.sparplan.de",
         "tr.settlement.en.2023",
+        "tr.dividende.de",
+        "tr.steuer.de",
+        "tr.zinsen.de",
+        "tr.split.de",
+        "tr.kontoauszug.de.2023",
+        "tr.kontoauszug.de.2024",
+        "tr.corporate_action.de",
     }
     for parser in PARSERS:
         assert parser.version >= 1

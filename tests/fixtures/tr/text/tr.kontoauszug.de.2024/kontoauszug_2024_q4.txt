@@ -1,0 +1,12 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 31.12.2024
+54321 Beispielheim DEPOT 0000002222
+UMSATZÜBERSICHT
+ZEITRAUM 01 Okt. 2024 - 31 Dez. 2024
+DATUM TYP BESCHREIBUNG EINGANG AUSGANG SALDO
+01 Okt. 2024 Zinsen Kontozinsen 1,05 € - 500,00 €
+15 Nov. 2024 Auszahlung Barauszahlung - 200,00 € 300,00 €
+3 Dez. 2024 Gebühr Depotgebühr - 4,99 € 295,01 €
+Diese Aufstellung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

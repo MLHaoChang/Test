@@ -1,0 +1,23 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 15.05.2024
+12345 Musterstadt REFERENZ 5f2e-9a04
+DEPOT 0000001111
+DIVIDENDE
+POSITION ANZAHL ERTRÄGNIS BETRAG
+SAP SE 15 Stk. 2,20 EUR 33,00 EUR
+Inhaber-Aktien o.N.
+ISIN: DE0007164600
+Ex-Tag 14.05.2024
+GESAMT 33,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Kapitalertragssteuer -8,25 EUR
+Solidaritätszuschlag -0,45 EUR
+GESAMT 24,30 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 15.05.2024 24,30 EUR
+SAP SE Inhaber-Aktien o.N. in Girosammelverwahrung in Deutschland.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

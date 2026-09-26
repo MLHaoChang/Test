@@ -1,0 +1,119 @@
+{
+  "parser_id": "tr.kontoauszug.de.2024",
+  "parser_version": 1,
+  "doc_type": "account_statement",
+  "transactions": [
+    {
+      "type": "deposit", "isin": null, "name": null,
+      "ts_utc": "2024-01-01T23:00:00Z", "ts_local": "2024-01-02T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "5000.00", "amount_eur": "5000.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [8, 8]
+    },
+    {
+      "type": "buy", "isin": "DE0007164600", "name": "SAP SE",
+      "ts_utc": "2024-01-14T23:00:00Z", "ts_local": "2024-01-15T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-1401.00", "amount_eur": "-1401.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "order", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [9, 9]
+    },
+    {
+      "type": "buy", "isin": "IE00B4L5Y983", "name": "iShsIII-Core MSCI World U.ETF",
+      "ts_utc": "2024-01-31T23:00:00Z", "ts_local": "2024-02-01T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-200.00", "amount_eur": "-200.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "savings_plan", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [10, 10]
+    },
+    {
+      "type": "buy", "isin": "IE00B4L5Y983", "name": "iShsIII-Core MSCI World U.ETF",
+      "ts_utc": "2024-02-29T23:00:00Z", "ts_local": "2024-03-01T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-210.00", "amount_eur": "-210.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "savings_plan", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [11, 11]
+    },
+    {
+      "type": "buy", "isin": "US0378331005", "name": "Apple Inc.",
+      "ts_utc": "2024-03-11T23:00:00Z", "ts_local": "2024-03-12T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-801.00", "amount_eur": "-801.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "order", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [12, 12]
+    },
+    {
+      "type": "buy", "isin": "US67066G1040", "name": "NVIDIA Corp.",
+      "ts_utc": "2024-03-19T23:00:00Z", "ts_local": "2024-03-20T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-1701.00", "amount_eur": "-1701.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "order", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [13, 13]
+    },
+    {
+      "type": "deposit", "isin": null, "name": null,
+      "ts_utc": "2024-04-01T22:00:00Z", "ts_local": "2024-04-02T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "1000.00", "amount_eur": "1000.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [14, 14]
+    },
+    {
+      "type": "buy", "isin": "DE0007164600", "name": "SAP SE",
+      "ts_utc": "2024-04-09T22:00:00Z", "ts_local": "2024-04-10T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "-801.00", "amount_eur": "-801.00",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "order", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [15, 15]
+    },
+    {
+      "type": "dividend", "isin": "DE0007164600", "name": "SAP SE",
+      "ts_utc": "2024-05-14T22:00:00Z", "ts_local": "2024-05-15T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "24.30", "amount_eur": "24.30",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [16, 16]
+    },
+    {
+      "type": "dividend", "isin": "US0378331005", "name": "Apple Inc.",
+      "ts_utc": "2024-05-15T22:00:00Z", "ts_local": "2024-05-16T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "0.94", "amount_eur": "0.94",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": null, "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [17, 17]
+    },
+    {
+      "type": "sell", "isin": "DE0007164600", "name": "SAP SE",
+      "ts_utc": "2024-06-11T22:00:00Z", "ts_local": "2024-06-12T00:00:00",
+      "source_tz": "Europe/Berlin", "ts_precision": "day", "value_date": null,
+      "quantity": null, "price": null, "currency": "EUR",
+      "amount": "1999.41", "amount_eur": "1999.41",
+      "fx_rate": null, "fx_source": "none", "fees_eur": null, "tax_eur": null, "tax_detail": {},
+      "split_new_quantity": null, "origin": "order", "source_ref": null,
+      "source_kind": "pdf_statement", "evidence": [18, 18]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}
