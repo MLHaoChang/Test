@@ -204,6 +204,54 @@ def test_review_commands(data_dir: str) -> None:
     assert unknown_item.exit_code == 1
 
 
+def test_review_export_writes_the_extracted_text_and_can_anonymise(data_dir: str, tmp_path: Path) -> None:
+    assert pg(data_dir, "import", str(UNKNOWN)).exit_code == 0
+    item = json.loads(pg(data_dir, "review", "list", "--json").stdout)["items"][0]
+    assert item["kind"] == "unknown_layout"
+
+    raw_out = tmp_path / "raw.txt"
+    raw = pg(data_dir, "review", "export", str(item["id"]), "--out", str(raw_out))
+    assert raw.exit_code == 0, raw.output
+    assert "written to" in raw.stdout
+    raw_text = raw_out.read_text(encoding="utf-8")
+    assert "KOSTENINFORMATION" in raw_text
+    assert "Jana Beispiel" in raw_text  # not anonymised: the name is still there
+
+    masked_out = tmp_path / "masked.txt"
+    masked = pg(data_dir, "review", "export", str(item["id"]), "--out", str(masked_out), "--anonymise")
+    assert masked.exit_code == 0, masked.output
+    assert "Anonymised text" in masked.stdout
+    masked_text = masked_out.read_text(encoding="utf-8")
+    assert "KOSTENINFORMATION" in masked_text  # the document's own wording survives
+    assert "Jana Beispiel" not in masked_text
+    assert "Ahornweg" not in masked_text
+    assert "Musterstadt" not in masked_text
+    assert "DEPOT 0000001111" not in masked_text
+
+    unknown_item = pg(data_dir, "review", "export", "999", "--out", str(tmp_path / "nope.txt"))
+    assert unknown_item.exit_code == 1
+
+
+def test_review_export_refuses_an_item_with_no_extracted_text(data_dir: str, tmp_path: Path) -> None:
+    # missing_cost_basis is raised by the pipeline, not a parser, so it has no extracted text
+    # (plan 5.3.5): only a document- or row-level item, such as unknown_layout, has one.
+    transfer_csv = tmp_path / "depotuebertrag.csv"
+    transfer_csv.write_text(
+        "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n"
+        "20.06.2024;;Depotübertrag eingehend;DE0008404005;Allianz SE;4;;;;;EUR;;t-1\n",
+        encoding="utf-8",
+    )
+    assert pg(data_dir, "import", str(transfer_csv)).exit_code == 0
+    assert pg(data_dir, "accept", "latest").exit_code == 0
+    item = json.loads(pg(data_dir, "review", "list", "--status", "all", "--json").stdout)["items"][0]
+    assert item["kind"] == "missing_cost_basis"
+
+    result = pg(data_dir, "review", "export", str(item["id"]), "--out", str(tmp_path / "out.txt"))
+
+    assert result.exit_code == 1
+    assert "no extracted text" in result.output
+
+
 def test_transactions_lists_every_transaction_with_its_sources(data_dir: str) -> None:
     assert pg(data_dir, "import", str(T2), str(CSV)).exit_code == 0
     assert pg(data_dir, "accept", "latest").exit_code == 0
@@ -241,6 +289,7 @@ def test_status_shows_the_portfolio_the_queue_and_the_staged_batch(data_dir: str
         ["discard", "--help"],
         ["review", "--help"],
         ["review", "resolve", "--help"],
+        ["review", "export", "--help"],
         ["transactions", "--help"],
         ["status", "--help"],
     ],

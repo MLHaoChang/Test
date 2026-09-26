@@ -79,7 +79,7 @@ class GoldenRun:
 
 @pytest.fixture(scope="module")
 def golden(tmp_path_factory: pytest.TempPathFactory) -> GoldenRun:
-    """Steps 4 to 13 of plan 7.6, run once for this module."""
+    """Steps 4 to 15, then 25, of plan 7.6, run once for this module."""
     run = GoldenRun(tmp_path_factory.mktemp("golden") / "data")
     run.pg("init")
     run.pg_json("import1", "import", *map(str, ROUND_ONE))
@@ -90,10 +90,14 @@ def golden(tmp_path_factory: pytest.TempPathFactory) -> GoldenRun:
     run.pg("accept", "latest")
     run.pg_json("transactions2", "transactions")
     run.pg_json("review", "review", "list")
+    # WP8, step 15: enter the cost basis of the ALV transfer in, which closes missing_cost_basis
+    # and rebuilds the lots; step 25 then reads them back.
+    run.pg("transfers", "set-cost", "--isin", ALV, "--acquired", "2020-03-02", "--cost-eur", "800.00")
+    run.pg_json("lots", "lots")
     return run
 
 
-@pytest.mark.parametrize("name", ["import1", "reconcile", "import2", "review"])
+@pytest.mark.parametrize("name", ["import1", "reconcile", "import2", "review", "lots"])
 def test_the_output_matches_its_golden_file(golden: GoldenRun, update_goldens: bool, name: str) -> None:
     path = EXPECTED / f"{name}.json"
     actual = golden.outputs[name]
@@ -497,10 +501,91 @@ def test_the_review_queue_holds_the_unknown_layout_and_the_missing_cost_basis(go
     assert cost["transaction"]["isin"] == ALV
 
 
+# --- WP8: cost basis and lots ------------------------------------------------------------------
+
+
+def test_set_cost_resolves_the_missing_cost_basis_review_item(golden: GoldenRun) -> None:
+    items = json.loads(golden.pg("review", "list", "--status", "all", "--json").stdout)["items"]
+    cost = next(item for item in items if item["kind"] == "missing_cost_basis")
+    assert cost["status"] == "resolved"
+    assert cost["resolution"] == {"how": "cost entered"}
+    assert cost["transaction"]["isin"] == ALV
+    # The unknown layout is untouched: it stays open until a parser reads it.
+    assert next(item for item in items if item["kind"] == "unknown_layout")["status"] == "open"
+
+
+def _lots_by_isin(golden: GoldenRun) -> dict[str, list[dict[str, Any]]]:
+    by_isin: dict[str, list[dict[str, Any]]] = {}
+    for lot in golden.outputs["lots"]["lots"]:
+        by_isin.setdefault(lot["isin"], []).append(lot)
+    return by_isin
+
+
+def test_lots_match_the_hand_computed_figures(golden: GoldenRun) -> None:
+    # Plan 1.2: "Open lots on 2024-12-31: SAP 3 shares, cost 480.60 (opened 2024-04-10); MSCIW
+    # 2.5 at 200.00 and 2.5 at 210.00; AAPL 5 at 801.00; NVDA 20 at 1,701.00 (opened 2024-03-20,
+    # quantity scaled by the 10-for-1 split, cost unchanged); ALV 4 at 800.00 (acquired
+    # 2020-03-02, cost typed in by the user). Total open cost basis 4,192.60." Plus the exhausted
+    # SAP lot T2 sold in full: 7 lot rows in all (accept1 already asserts this count).
+    by_isin = _lots_by_isin(golden)
+    assert sum(len(lots) for lots in by_isin.values()) == 7
+
+    sap_first, sap_second = sorted(by_isin[SAP], key=lambda lot: lot["booked_ts"])
+    assert (sap_first["quantity_open"], sap_first["cost_eur_open"]) == ("0", "0.00")
+    assert (sap_second["quantity_open"], sap_second["cost_eur_open"]) == ("3", "480.60")
+    assert sap_second["booked_ts"].startswith("2024-04-10")
+
+    assert {lot["cost_eur_initial"] for lot in by_isin[MSCIW]} == {"200.00", "210.00"}
+    assert all(lot["quantity_open"] == "2.5" for lot in by_isin[MSCIW])
+    assert all(lot["cost_eur_open"] == lot["cost_eur_initial"] for lot in by_isin[MSCIW])
+
+    (aapl,) = by_isin[AAPL]
+    assert (aapl["quantity_open"], aapl["cost_eur_open"]) == ("5", "801.00")
+
+    (nvda,) = by_isin[NVDA]
+    assert (nvda["quantity_initial"], nvda["quantity_open"]) == ("20", "20")
+    assert (nvda["cost_eur_initial"], nvda["cost_eur_open"]) == ("1701.00", "1701.00")
+    assert nvda["opened_ts"].startswith("2024-03-20")  # the split moves quantity, never the date
+
+    (alv,) = by_isin[ALV]
+    assert alv["origin"] == "transfer_in"
+    assert alv["cost_missing"] is False
+    assert (alv["quantity_initial"], alv["quantity_open"]) == ("4", "4")
+    assert (alv["cost_eur_initial"], alv["cost_eur_open"]) == ("800.00", "800.00")
+    # 2020-03-02 00:00 Berlin time (winter, CET = UTC+1) is 23:00 UTC the day before.
+    assert alv["opened_ts"] == "2020-03-01T23:00:00Z"
+
+    total_open_cost = sum((Decimal(lot["cost_eur_open"]) for lots in by_isin.values() for lot in lots), Decimal(0))
+    assert total_open_cost == Decimal("4192.60")
+
+
+def test_disposals_match_the_hand_computed_fifo_split(golden: GoldenRun) -> None:
+    # Plan 1.2: "lot T2 (10 shares, cost 1,401.00) is consumed fully; lot T8 (5 shares, cost
+    # 801.00) gives 2 shares at 801.00 x 2 / 5 = 320.40. Consumed cost 1,721.40. Proceeds after
+    # fee 2,099.00. Realised gain 377.60 (before tax). Proceeds are split across the two
+    # disposals by quantity: 1,749.16666667 and 349.83333333."
+    disposals = golden.outputs["lots"]["disposals"]
+    assert len(disposals) == 2
+    assert {disposal["isin"] for disposal in disposals} == {SAP}
+    assert {disposal["kind"] for disposal in disposals} == {"sell"}
+    assert {disposal["transaction"]["id"] for disposal in disposals} == {disposals[0]["transaction"]["id"]}
+
+    full, partial = sorted(disposals, key=lambda disposal: -Decimal(disposal["quantity"]))
+    assert (full["quantity"], full["cost_eur"]) == ("10", "1401.00")
+    assert (full["proceeds_eur"], full["realised_eur"]) == ("1749.16666667", "348.16666667")
+    assert (partial["quantity"], partial["cost_eur"]) == ("2", "320.40")
+    assert (partial["proceeds_eur"], partial["realised_eur"]) == ("349.83333333", "29.43333333")
+
+    consumed_cost = Decimal(full["cost_eur"]) + Decimal(partial["cost_eur"])
+    proceeds_before_tax = Decimal(full["proceeds_eur"]) + Decimal(partial["proceeds_eur"])
+    realised = Decimal(full["realised_eur"]) + Decimal(partial["realised_eur"])
+    assert (consumed_cost, proceeds_before_tax, realised) == (Decimal("1721.40"), Decimal("2099.00"), Decimal("377.60"))
+
+
 def test_status_reminds_you_to_import_again_after_34_days(golden: GoldenRun) -> None:
     status = json.loads(golden.pg("status", "--json", today="2025-02-03").stdout)
     assert status["last_import_at"] == "2024-12-31T11:00:00Z"
     assert status["reminder"]["due"] is True
     assert status["reminder"]["days_since_last_import"] == 34
-    # WP8's `pg transfers set-cost` closes the missing cost basis; until then both items are open.
-    assert status["open_review_items"] == 2
+    # `pg transfers set-cost` (above) closed the missing cost basis; the unknown layout is still open.
+    assert status["open_review_items"] == 1
