@@ -37,4 +37,9 @@ if [[ "$check_all_pythons" == "true" ]]; then
     UV_PROJECT_ENVIRONMENT=.venv-py311 uv run --python 3.11 pytest -q -x
 fi
 
+if [[ -d web/node_modules ]]; then
+    echo "=== Web typecheck and tests ==="
+    (cd web && npm run typecheck && npm test -- --run)
+fi
+
 echo "=== All checks passed ==="
