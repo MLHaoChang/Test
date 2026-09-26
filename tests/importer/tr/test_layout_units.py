@@ -169,6 +169,42 @@ def test_english_quantity_with_pcs_and_dot_decimals() -> None:
     assert block.isin == "US0378331005"
 
 
+def test_the_position_is_read_in_another_currency_only_when_allowed() -> None:
+    # A dividend note (WP4) prints its position in the paying currency; the trade layouts only allow EUR.
+    doc = DocText(
+        "POSITION ANZAHL ERTRÄGNIS BETRAG\nApple Inc. 5 Stk. 0,24 USD 1,20 USD\nISIN: US0378331005\nGESAMT 1,20 USD\n"
+    )
+    headers = ("POSITION ANZAHL ERTRÄGNIS BETRAG",)
+    block = read_position_block(doc, GERMAN, headers, start=0, currencies=("USD", "EUR"))
+    assert (block.price, block.amount, block.total, block.currency) == (
+        Decimal("0.24"),
+        Decimal("1.20"),
+        Decimal("1.20"),
+        "USD",
+    )
+    with pytest.raises(LayoutProblem) as problem:
+        read_position_block(doc, GERMAN, headers, start=0)
+    assert problem.value.missing == "position"
+
+
+def test_a_position_total_in_another_currency_is_not_the_position_total() -> None:
+    doc = DocText(
+        "POSITION ANZAHL PREIS BETRAG\nSAP SE 1 Stk. 1,00 EUR 1,00 EUR\nISIN: DE0007164600\nGESAMT 1,00 USD\n"
+    )
+    with pytest.raises(LayoutProblem) as problem:
+        read_position_block(doc, GERMAN, ("POSITION ANZAHL PREIS BETRAG",), start=0)
+    assert problem.value.missing == "position_total"
+
+
+def test_a_trade_in_another_currency_is_not_read() -> None:
+    text = variant(T02, ("SAP SE 10 Stk. 140,00 EUR 1.400,00 EUR", "SAP SE 10 Stk. 140,00 USD 1.400,00 USD"))
+    result = WERTPAPIERABRECHNUNG_2023.parse(text)
+    assert result.transactions == []
+    item = only_review(result)
+    assert item["fields"]["missing"] == "position"  # type: ignore[index]
+    assert item["message"] == "The position line with quantity, price and amount in EUR was not found."
+
+
 def test_a_german_layout_never_reads_english_numbers() -> None:
     # The layout decides the locale; "140.00" is not a German number, so nothing is guessed.
     text = variant(T02, ("SAP SE 10 Stk. 140,00 EUR 1.400,00 EUR", "SAP SE 10 Stk. 140.00 EUR 1,400.00 EUR"))

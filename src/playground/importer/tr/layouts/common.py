@@ -69,6 +69,7 @@ _NUMBER = r"\d[\d.,]*"
 _SIGNED_NUMBER = r"[+-]?\d[\d.,]*"
 _DATE = r"\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2}"
 _DOTTED_DATE = r"\d{2}\.\d{2}\.\d{4}"
+_CURRENCY = r"[A-Z]{3}"
 _ISIN_LINE = re.compile(r"(?:ISIN: ?)?(?P<isin>[A-Z]{2}[A-Z0-9]{9}[0-9])")
 _FX_LINE = re.compile(
     rf"Zwischensumme (?P<rate>{_NUMBER}) EUR/(?P<currency>[A-Z]{{3}}) (?P<amount>{_SIGNED_NUMBER}) EUR"
@@ -186,8 +187,11 @@ class Vocabulary:
         unit = re.escape(self.unit)
         dates = "|".join(re.escape(column) for column in self.booking_date_columns)
         patterns = {
-            "position_line": rf"(?P<name>.+) (?P<quantity>{_NUMBER}) {unit} (?P<price>{_NUMBER}) EUR (?P<amount>{_NUMBER}) EUR",
-            "total_line": rf"{re.escape(self.total_label)} (?P<amount>{_SIGNED_NUMBER}) EUR",
+            "position_line": (
+                rf"(?P<name>.+) (?P<quantity>{_NUMBER}) {unit} (?P<price>{_NUMBER}) (?P<price_currency>{_CURRENCY}) "
+                rf"(?P<amount>{_NUMBER}) (?P<currency>{_CURRENCY})"
+            ),
+            "total_line": rf"{re.escape(self.total_label)} (?P<amount>{_SIGNED_NUMBER}) (?P<currency>{_CURRENCY})",
             "settlement_entry": rf"(?P<label>\D.*?) (?P<amount>{_SIGNED_NUMBER}) EUR",
             "booking_columns_line": (
                 rf"{re.escape(self.booking_columns)} (?P<label>{dates}) {re.escape(self.booking_amount_column)}"
@@ -370,12 +374,17 @@ def _half_unit(value: Decimal) -> Decimal:
 
 @dataclass(frozen=True)
 class PositionBlock:
-    """The position: the line with name, quantity, price and amount, the ISIN line and the position total."""
+    """The position: the line with name, quantity, price and amount, the ISIN line and the position total.
+
+    `currency` is the currency of the price, the amount and the total: EUR for a trade, the
+    paying currency for a dividend note.
+    """
 
     name: str
     quantity: Decimal
     price: Decimal
     amount: Decimal
+    currency: str
     isin: str
     total: Decimal
     line_index: int
@@ -389,23 +398,31 @@ def read_position_block(
     *,
     start: int,
     stop: int | None = None,
+    currencies: Iterable[str] = ("EUR",),
     fields: dict[str, str] | None = None,
 ) -> PositionBlock:
     """Read the position whose column line (one of `headers`) is the first in `[start, stop)`.
 
-    Fills `fields` with what it has read, so a review result can show it. Raises `LayoutProblem`
-    when the position line, the ISIN line or the position total is missing.
+    The price, the amount and the position total must all be in one of `currencies`, the same
+    for all three. Fills `fields` with what it has read, so a review result can show it. Raises
+    `LayoutProblem` when the position line, the ISIN line or the position total is missing.
     """
     read = fields if fields is not None else {}
+    allowed = tuple(currencies)
     header_index = doc.find(headers, start, stop)
     position_index = header_index + 1 if header_index is not None else len(doc.lines)
     match = vocabulary.position_line.fullmatch(doc.lines[position_index]) if position_index < len(doc.lines) else None
-    if match is None:
+    if (
+        match is None
+        or match.group("currency") not in allowed
+        or match.group("price_currency") != match.group("currency")
+    ):
         raise LayoutProblem(
             ReviewKind.MISSING_FIELD,
-            "The position line with quantity, price and amount in EUR was not found.",
+            f"The position line with quantity, price and amount in {' or '.join(allowed)} was not found.",
             missing="position",
         )
+    currency = match.group("currency")
     number = position_index + 1
     quantity = parse_number(match.group("quantity"), vocabulary.locale, number, missing="position")
     price = parse_number(match.group("price"), vocabulary.locale, number, missing="position")
@@ -422,7 +439,7 @@ def read_position_block(
 
     found = doc.search(vocabulary.total_line, isin_index + 1, isin_index + 1 + TOTAL_WINDOW)
     heading = doc.find((vocabulary.settlement_heading, vocabulary.booking_heading), isin_index + 1)
-    if found is None or (heading is not None and heading < found[0]):
+    if found is None or (heading is not None and heading < found[0]) or found[1].group("currency") != currency:
         raise LayoutProblem(
             ReviewKind.MISSING_FIELD,
             f"The position total ({vocabulary.total_label}) was not found.",
@@ -436,6 +453,7 @@ def read_position_block(
         quantity=quantity,
         price=price,
         amount=amount,
+        currency=currency,
         isin=isin,
         total=total,
         line_index=position_index,
@@ -515,8 +533,10 @@ def read_settlement_block(
 ) -> SettlementBlock | None:
     """Read the settlement block whose heading is the first in `[start, stop)`, or `None` if there is none.
 
-    Raises `LayoutProblem` when the block has no total line before the booking block or the end
-    of the text: the document is probably cut off.
+    The entries and the total are EUR amounts, as in every trade confirmation. A line in another
+    currency, or any other line that is not "<label> <amount> EUR", is an unknown entry without
+    an amount. Raises `LayoutProblem` when the block has no EUR total line before the booking
+    block or the end of the text: the document is probably cut off.
     """
     heading_index = doc.find(vocabulary.settlement_heading, start, stop)
     if heading_index is None:
@@ -529,7 +549,7 @@ def read_settlement_block(
     while index < len(doc.lines) and doc.lines[index] != vocabulary.booking_heading:
         line = doc.lines[index]
         total = vocabulary.total_line.fullmatch(line)
-        if total is not None:
+        if total is not None and total.group("currency") == "EUR":
             amount = parse_number(total.group("amount"), vocabulary.locale, index + 1, missing="settlement_total")
             return SettlementBlock(entries=tuple(entries), total=amount, total_index=index)
         entries.append(_settlement_entry(vocabulary, line, index + 1))
