@@ -2,7 +2,9 @@
 
 - A resolution while a batch is staged: an item of the staged batch changes only that item and
   its transaction (accept checks the rest); an item of the accepted data applies at once and
-  leaves the staged batch alone.
+  leaves the staged batch alone. A merge of accepted data is refused until the batch is accepted
+  or discarded: only then can it see the reports the batch attached, and a transaction holds at
+  most one report of each kind of file.
 - A damaged PDF is recorded as failed with an item, and is classified again on the next import.
 - The same bytes twice in one batch: the second copy is a duplicate file.
 - An instrument first known from a manual row (which names no instrument) is named by its ISIN
@@ -10,7 +12,7 @@
 - Discarding a batch removes the instruments only it had brought.
 - The files are kept in `uploads/` once the stage is stored, so a failed import leaves no copy.
 - No row takes a key and occurrence another row still holds: not a new row of a stage while a
-  stored transaction moves in memory, and not a merge while a batch is staged.
+  stored transaction moves in memory, and not a merge that waited for a staged batch.
 """
 
 import hashlib
@@ -21,8 +23,10 @@ from pathlib import Path
 import pytest
 import sqlalchemy as sa
 
+from playground.importer import review
 from playground.importer.keys import content_hash
 from playground.importer.pipeline import InputFile
+from playground.importer.review import ReviewError
 from playground.storage.schema import instruments
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
@@ -117,6 +121,88 @@ def test_a_resolution_of_accepted_data_while_a_batch_is_staged_leaves_the_staged
     assert harness.holdings() == {VWRL: Decimal("5"), SAP: Decimal("10")}
 
 
+def csv_row_and_held_trade(harness, docs):
+    """The CSV row of 15 January, accepted, and a trade confirmation of 16 January held back as a
+    possible duplicate of it. Returns the item."""
+    harness.run(docs.csv("export.csv", [T2_ROW]))
+    harness.run(docs.trade("kauf_16_januar.pdf", day=date(2024, 1, 16), execution="aaaa-0016"))
+    return only(harness.items(kind="possible_duplicate"))
+
+
+def test_a_merge_of_accepted_data_is_refused_while_a_batch_is_staged_so_accept_does_what_the_diff_showed(
+    harness, docs
+) -> None:
+    item = csv_row_and_held_trade(harness, docs)
+    # The staged trade confirmation of 15 January reports the CSV row's purchase (rule b). So the
+    # one of 16 January is a purchase of its own: accept closes the item and counts 20 shares.
+    staged = harness.stage(docs.trade("kauf_15_januar.pdf", execution="aaaa-0015"))
+    diff = harness.diff(staged.batch_id)
+    assert [closed["id"] for closed in diff.summary["review_closed"]] == [item.id]
+    after = {change.isin: change.after for change in diff.holdings}
+    assert after == {SAP: Decimal("20")}
+    before = harness.canonical()
+
+    # The item is still open (a stage only lists closures), but a merge now would give the CSV
+    # row's transaction the staged document too: two trade confirmations for one purchase.
+    with pytest.raises(ReviewError, match=f"Import batch {staged.batch_id} is staged") as refused:
+        harness.resolve(item.id, "merge")
+
+    assert f'"pg accept {staged.batch_id}" or "pg discard {staged.batch_id}"' in str(refused.value)
+    assert harness.canonical() == before
+    assert only(harness.items(kind="possible_duplicate")).status == "open"
+    harness.accept()
+    txns = harness.transactions()
+    assert sorted(txn.kinds for txn in txns) == [("csv_export", "pdf_document"), ("pdf_document",)]
+    assert sorted(txn.source_ref for txn in txns) == ["aaaa-0015", "aaaa-0016"]
+    assert {txn.state for txn in txns} == {"accepted"}
+    assert harness.holdings() == after
+    closed = only(harness.items(kind="possible_duplicate"))
+    assert closed.status == "resolved"
+    assert closed.resolution == {"how": "superseded", "by": "kauf_15_januar.pdf"}
+
+
+def test_a_merge_refused_while_a_batch_is_staged_goes_ahead_once_the_batch_is_discarded(harness, docs) -> None:
+    item = csv_row_and_held_trade(harness, docs)
+    harness.stage(docs.trade("kauf_15_januar.pdf", execution="aaaa-0015"))
+    with pytest.raises(ReviewError, match="is staged"):
+        harness.resolve(item.id, "merge")
+
+    harness.discard()
+    harness.resolve(item.id, "merge")
+
+    txn = only(harness.transactions())
+    assert txn.kinds == ("csv_export", "pdf_document")
+    assert txn.source_ref == "aaaa-0016"
+    assert txn.state == "accepted"
+    assert harness.holdings() == {SAP: Decimal("10")}
+
+
+def test_a_resolution_of_accepted_data_whose_check_would_merge_is_refused_while_a_batch_is_staged(
+    harness, docs, monkeypatch
+) -> None:
+    # Only --merge changes a transaction, so the check after any other resolution finds nothing
+    # to merge. This check is made to merge, to show the resolution is then refused instead of
+    # merging without the staged batch's reports in view.
+    harness.run(amounts_off(docs))
+    held_item = only(harness.items())
+    staged = harness.stage(docs.csv("export.csv", [T2_ROW]))
+    real_check = review.evaluate
+
+    def check_that_merges(ws, cause, **options):
+        plan = real_check(ws, cause, **options)
+        plan.merges.append((held_item.transaction_id, held_item.transaction_id))
+        return plan
+
+    monkeypatch.setattr(review, "evaluate", check_that_merges)
+    before = harness.canonical()
+
+    with pytest.raises(ReviewError, match=f"Import batch {staged.batch_id} is staged"):
+        harness.resolve(held_item.id, "use-parsed")
+
+    assert harness.canonical() == before
+    assert only(harness.items(kind="amounts_do_not_add_up")).status == "open"
+
+
 def test_a_damaged_pdf_is_failed_with_an_item_and_is_classified_again_later(harness) -> None:
     damaged = InputFile(name="kaputt.pdf", data=b"%PDF-1.4\n" + b"\x00" * 64)
 
@@ -188,21 +274,25 @@ def test_a_new_row_never_takes_the_key_and_occurrence_a_stored_row_still_holds(h
     assert harness.holdings() == {SAP: Decimal("20")}
 
 
-def test_a_merge_while_a_batch_is_staged_never_takes_the_occurrence_of_a_staged_row(harness, docs) -> None:
+def test_a_merge_that_waited_for_a_staged_batch_never_takes_the_occurrence_of_its_row(harness, docs) -> None:
     # A CSV row of 14 January, then two identical trades of 16 January, each a possible duplicate of it.
     harness.run(docs.csv("export.csv", [T2_ROW.replace("15.01.2024", "14.01.2024")]))
     harness.run(docs.trade("kauf_16_januar_1.pdf", day=date(2024, 1, 16), execution="aaaa-0001"))
     first = only(harness.items(kind="possible_duplicate"))
     harness.run(docs.trade("kauf_16_januar_2.pdf", day=date(2024, 1, 16), execution="aaaa-0002"))
     # A third one is staged: it takes occurrence 3 of the key of 16 January.
-    harness.stage(docs.trade("kauf_16_januar_3.pdf", day=date(2024, 1, 16), execution="aaaa-0003"))
+    staged = harness.stage(docs.trade("kauf_16_januar_3.pdf", day=date(2024, 1, 16), execution="aaaa-0003"))
+    before = harness.canonical()
 
-    # The merge gives the CSV row's transaction the key of 16 January. The staged row keeps
-    # occurrence 3 until accept, so the merged transaction cannot take it.
+    # The merge would give the CSV row's transaction the key of 16 January. It waits for accept.
+    with pytest.raises(ReviewError, match=f"Import batch {staged.batch_id} is staged"):
+        harness.resolve(first.id, "merge")
+    assert harness.canonical() == before
+    assert_keys_hold(harness)
+
+    harness.accept()
     harness.resolve(first.id, "merge")
 
-    assert_keys_hold(harness)
-    harness.accept()
     txns = harness.transactions()
     assert [txn.day for txn in txns] == ["2024-01-16"] * 3
     assert {txn.state for txn in txns} == {"accepted"}

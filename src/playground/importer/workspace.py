@@ -233,7 +233,8 @@ class Workspace:
         """Load the portfolio: every transaction and source of a batch that is not discarded.
 
         `exclude_batch` leaves one batch out, with its sources and the items it raised: a
-        resolution while a batch is staged works on the accepted data only.
+        resolution while a batch is staged works on the accepted data only. It makes no merge,
+        because the reports left out still count for the one-to-one rule (`review.py`).
 
         Two writes leave some rows as they are, and a row keeps its key and occurrence until it
         is written again, so no other row may take them (`next_occurrence`): the rows of

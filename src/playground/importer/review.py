@@ -40,6 +40,13 @@ match is gone becomes a transaction of its own; one that stays open names its ne
 as they are now. The other kinds stay open until you resolve or dismiss them. A dismissed item
 stays dismissed; its `dedupe_key` stops it from coming back. An item superseded automatically
 opens again if its problem comes back.
+
+**While a batch is staged.** Settling an item of the staged batch changes only that item and its
+transaction; accept checks the rest. Settling an item of the accepted data applies at once, on
+the accepted data only, so it must not merge: a file of the staged batch may already report one
+of the two transactions, and a transaction holds at most one report of each kind of file (plan
+5.3.4, rule b). So `--merge` of accepted data, and any resolution whose check would merge, is
+refused until you accept or discard the batch.
 """
 
 from collections.abc import Iterable, Iterator, Mapping
@@ -538,7 +545,11 @@ def resolve_item(
     conn: Connection, item_id: int, *, how: Decision | str, clock: Clock, into: int | None = None
 ) -> dict[str, Any]:
     """Settle an open item: `merge` or `keep-both` for a possible duplicate, `use-parsed` to keep a held
-    transaction as parsed. `into` names the transaction to merge into when there is more than one."""
+    transaction as parsed. `into` names the transaction to merge into when there is more than one.
+
+    While a batch is staged, `merge` of an item of the accepted data is refused until you accept or
+    discard that batch (see the module docstring).
+    """
     if how not in ("merge", "keep-both", "use-parsed"):
         raise ReviewError(f"Unknown resolution {how!r}. Use merge, keep-both or use-parsed.")
     return _settle(conn, item_id, clock=clock, how=how, into=into)
@@ -555,8 +566,12 @@ def _settle(
     _check_allowed(full, item, how)
     txn = full.txns.get(item.txn_key) if item.txn_key is not None else None
     in_staged = staged is not None and (item.batch_id == staged or (txn is not None and txn.batch_id == staged))
+    if staged is not None and not in_staged and how == "merge":
+        raise ReviewError(_waits_for_batch(item, staged, asked=True))
 
     # An item of the staged batch: only the item and its transaction change now; accept checks the rest.
+    # An item of the accepted data: the check sees the accepted data only, without the staged reports,
+    # so it must not merge (see the module docstring).
     ws = full if in_staged else Workspace.load(conn, portfolio_id, exclude_batch=staged)
     item = ws.items[item_id]
     txn = ws.txns.get(item.txn_key) if item.txn_key is not None else None
@@ -571,10 +586,26 @@ def _settle(
         persist.apply_item_decision(conn, ws, plan, now=now)
     else:
         checked = evaluate(ws, Cause(batch_id=None, text=f"review item {item_id}"), now=now)
+        if staged is not None and checked.merges:
+            raise ReviewError(_waits_for_batch(item, staged, asked=False))
         checked.changed_items.append(item)
         checked.merges[:0] = plan.merges
         persist.apply_plan(conn, ws, checked, now=now)
     return item_record(ws, item, repos.instrument_names(conn))
+
+
+def _waits_for_batch(item: Item, staged: int, *, asked: bool) -> str:
+    """Why a resolution of accepted data that merges is refused while batch `staged` waits."""
+    what = (
+        f"so review item {item.id} cannot be merged now"
+        if asked
+        else f"and settling review item {item.id} now would also merge two transactions"
+    )
+    return (
+        f"Import batch {staged} is staged and not accepted yet, {what}. A file of that batch may already report "
+        "one of the two transactions, and a transaction holds at most one report of each kind of file. "
+        f'Run "pg accept {staged}" or "pg discard {staged}" first, then settle the item if it is still open.'
+    )
 
 
 def _portfolio_of_item(conn: Connection, item_id: int) -> int:
