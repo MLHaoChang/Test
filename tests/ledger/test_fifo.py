@@ -341,6 +341,20 @@ class TestSell:
         assert taken(book) == [(1, D("2"), D("320.40"))]
         assert lot.cost_eur_initial == D("480.60") + D("320.40")
 
+    def test_each_partial_sell_takes_the_cost_of_the_shares_it_sells(self) -> None:
+        # 10 shares for 1,000.00: every share carries 100.00, however many sales take a part.
+        book = build_lots(
+            [
+                buy(1, SAP, berlin(2024, 1, 10, 10, 0), "10", "-1000.00"),
+                sell(2, SAP, berlin(2024, 2, 1, 10, 0), "2", "240.00"),
+                sell(3, SAP, berlin(2024, 3, 1, 10, 0), "3", "390.00"),
+                sell(4, SAP, berlin(2024, 4, 2, 10, 0), "5", "700.00"),
+            ]
+        )
+
+        assert taken(book) == [(1, D("2"), D("200.00")), (1, D("3"), D("300.00")), (1, D("5"), D("500.00"))]
+        assert (book.lots[0].quantity_open, book.lots[0].cost_eur_open) == (D("0"), D("0.00"))
+
     def test_a_sell_uses_up_the_oldest_acquisition_first(self) -> None:
         book = build_lots(
             [
@@ -600,6 +614,21 @@ class TestSplit:
         assert younger.quantity_open == D("1.5000005")
         assert older.quantity_open + younger.quantity_open == D("2")
 
+    def test_a_split_that_would_round_a_lot_to_nothing_is_unclear(self) -> None:
+        # 0.000001 shares after a 1-for-1000 reverse split are 0.000000001, which 8 decimals
+        # cannot hold. The lot would vanish, so the split is not applied.
+        book = build_lots(
+            [
+                buy(1, NVDA, berlin(2024, 1, 10, 10, 0), "0.000001", "-0.01"),
+                buy(2, NVDA, berlin(2024, 1, 20, 10, 0), "1000", "-5000.00"),
+                split(3, NVDA, berlin(2024, 6, 10), "1.000001"),
+            ]
+        )
+
+        assert [lot.quantity_open for lot in book.lots] == [D("0.000001"), D("1000")]
+        assert book.splits == []
+        assert issues(book) == [("split_unclear", 3, NVDA)]
+
     def test_a_split_is_applied_before_a_trade_at_the_same_moment(self) -> None:
         # The split and a savings plan of the same day both sit at 00:00 Berlin time. The split
         # sees only the 2 shares held before it (ratio 10); the purchase comes after it.
@@ -763,8 +792,8 @@ class TestOversell:
         assert "12 shares" in message
         assert "10" in message
         assert SAP in message
-        assert "—" not in message  # no em dash
-        assert "–" not in message  # no en dash
+        assert "\u2014" not in message  # no em dash
+        assert "\u2013" not in message  # no en dash
 
 
 class TestOrder:

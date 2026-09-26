@@ -1,10 +1,11 @@
 """Property tests for the FIFO lot book (ledger/fifo.py, plan 5.5, 7.2), 500 examples each.
 
 Hypothesis draws random histories of purchases, sales, splits, transfers in (with and without
-the cost you enter) and out, and cash-only transactions over three ISINs. Many transactions
-share a booking day, and some share the exact moment (a row without a time of day sits at 00:00
-Berlin time), so the ordering rules are exercised too. The history reaches the ledger in a
-random order, and its transaction ids do not follow time.
+the cost you enter) and out, and cash-only transactions over three ISINs. Most histories open
+with a few purchases in the month before, so there is something to sell and split. Many
+transactions share a booking day, and some share the exact moment (a row without a time of day
+sits at 00:00 Berlin time), so the ordering rules are exercised too. The history reaches the
+ledger in a random order, and its transaction ids do not follow time.
 
 Splits are drawn so that their outcome is known in advance: when shares are held, the new total
 is the holding times a clean ratio (sometimes with the old quantity stated as well), so the
@@ -18,7 +19,8 @@ walk. The properties are the ones plan 7.2 lists:
 
 - open quantity per ISIN = purchases + transfers in - sales - transfers out, split-scaled;
 - no lot ever goes negative;
-- initial cost = open cost + consumed cost, for every lot;
+- initial cost = open cost + consumed cost, for every lot, and each disposal carries the lot's
+  cost per share;
 - realised gain = proceeds - consumed cost;
 - disposals always use the oldest open lot first among the lots booked by then;
 - a sale never uses a lot booked after it;
@@ -30,7 +32,7 @@ plus the holdings, open cost and quantity timeline as of every booking day.
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
 from fractions import Fraction
 from itertools import pairwise
 from math import prod
@@ -131,6 +133,14 @@ slots = st.builds(
     st.integers(min_value=0, max_value=LAST_DAY_OFFSET),
     st.sampled_from(TIMES_OF_DAY),
 )
+# Purchases and transfers in during the month before, so most histories hold something to sell.
+opening_slots = st.builds(
+    make_slot,
+    st.sampled_from((TxnType.BUY, TxnType.BUY, TxnType.TRANSFER_IN)),
+    st.sampled_from(ISINS),
+    st.integers(min_value=-30, max_value=-1),
+    st.sampled_from(TIMES_OF_DAY),
+)
 
 
 @dataclass
@@ -178,8 +188,17 @@ def draw_txn(draw: st.DrawFn, txn_id: int, slot: Slot, held: Held) -> LedgerTxn:
         return make(TxnType.BUY, quantity=quantity, amount_eur=-(money(quantity * price) + fee), fees_eur=fee)
 
     if slot.txn_type in _DISPOSALS:
-        # Sometimes exactly what is held, so positions close; otherwise any size, so some oversell.
-        quantity = now if now > 0 and draw(st.booleans()) else draw(quantities)
+        # All of the holding (a position closes), part of it (in tenths), or any size (which
+        # may oversell).
+        tenths_below = int((now * 10).to_integral_value(rounding=ROUND_CEILING)) - 1
+        choices = ["any", *(["all"] if now > 0 else []), *(["part"] if tenths_below >= 1 else [])]
+        choice = draw(st.sampled_from(choices))
+        if choice == "all":
+            quantity = now
+        elif choice == "part":
+            quantity = Decimal(draw(st.integers(min_value=1, max_value=tenths_below))) / 10
+        else:
+            quantity = draw(quantities)
         held.quantity[isin] = max(now - quantity, ZERO)
         if slot.txn_type is TxnType.TRANSFER_OUT:
             return make(TxnType.TRANSFER_OUT, quantity=quantity)
@@ -216,7 +235,7 @@ def draw_txn(draw: st.DrawFn, txn_id: int, slot: Slot, held: Held) -> LedgerTxn:
 
 @st.composite
 def histories(draw: st.DrawFn) -> list[LedgerTxn]:
-    history_slots = draw(st.lists(slots, min_size=1, max_size=30))
+    history_slots = draw(st.lists(opening_slots, max_size=6)) + draw(st.lists(slots, min_size=1, max_size=30))
     ids = draw(st.permutations(range(1, len(history_slots) + 1)))
     # Amounts are drawn in ledger order, so a split's new total and a sale of "everything held"
     # can depend on what is held at that point.
@@ -402,6 +421,19 @@ def test_every_lot_keeps_its_cost_and_quantity_accounted_for(txns: list[LedgerTx
             start=Fraction(0),
         )
         assert Fraction(lot.quantity_initial) == Fraction(lot.quantity_open) + scaled_used
+
+        # Every use carries the lot's cost per share: its shares, in today's share basis, times
+        # the lot's initial cost per initial share. Each use rounds to 8 decimals, so the
+        # difference can grow by at most half a unit of the 8th decimal per earlier use.
+        if lot.cost_eur_initial is None:
+            continue
+        for d in used:
+            assert d.cost_eur is not None
+            shares_today = Fraction(d.quantity) * prod(
+                s.ratio for s in splits_on_lot if rank[s.txn_id] > rank[d.txn_id]
+            )
+            fair_cost = Fraction(lot.cost_eur_initial) * shares_today / Fraction(lot.quantity_initial)
+            assert abs(Fraction(d.cost_eur) - fair_cost) <= Fraction(TINY) * (len(used) + 1)
 
 
 @PROPERTY_SETTINGS
