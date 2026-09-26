@@ -46,6 +46,10 @@ SPECIAL_TARGETS: dict[str, tuple[str, ...]] = {
     "tr.wertpapierabrechnung.de.2023/golden_t08_kauf_sap.txt": ("golden/inputs/pdf/2024-04-10_kauf_sap.pdf",),
     "tr.wertpapierabrechnung.de.2023/golden_t12_verkauf_sap.txt": ("golden/inputs/pdf/2024-06-12_verkauf_sap.pdf",),
     "unclassified/unknown_cost_information.txt": ("golden/inputs/pdf/unbekannt_kosteninformation.pdf",),
+    "tr.dividende.de/golden_t09_dividende_sap.txt": ("golden/inputs/pdf/2024-05-15_dividende_sap.pdf",),
+    "tr.dividende.de/golden_t10_dividende_aapl.txt": ("golden/inputs/pdf/2024-05-16_dividende_aapl.pdf",),
+    "tr.split.de/golden_t11_split_nvda.txt": ("golden/inputs/pdf/2024-06-10_split_nvda.pdf",),
+    "tr.kontoauszug.de.2024/golden_h1_statement.txt": ("golden/inputs/statement/kontoauszug_2024_h1.pdf",),
     "tr.sparplan.de/same_day_a.txt": (
         "idempotency/same_day_savings_plans/same_day_a.pdf",
         "idempotency/same_day_savings_plans/same_day_a_copy.pdf",

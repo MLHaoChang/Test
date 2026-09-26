@@ -215,6 +215,83 @@ files:
     imitates: tr.wertpapierabrechnung.de.2019 and tr.wertpapierabrechnung.de.2023 in one file
     generated_from: tr/text/unclassified/two_layouts_mixed.txt
     description: PDF of the negative text fixture, two pages.
+  - path: tr/pdf/tr.dividende.de/ausschuettung_msciw_no_tax.pdf
+    synthetic: true
+    imitates: tr.dividende.de
+    generated_from: tr/text/tr.dividende.de/ausschuettung_msciw_no_tax.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.steuer.de/steuerkorrektur_erstattung.pdf
+    synthetic: true
+    imitates: tr.steuer.de
+    generated_from: tr/text/tr.steuer.de/steuerkorrektur_erstattung.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.steuer.de/vorabpauschale_belastung.pdf
+    synthetic: true
+    imitates: tr.steuer.de
+    generated_from: tr/text/tr.steuer.de/vorabpauschale_belastung.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.zinsen.de/zinsen_mit_steuer.pdf
+    synthetic: true
+    imitates: tr.zinsen.de
+    generated_from: tr/text/tr.zinsen.de/zinsen_mit_steuer.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.zinsen.de/zinsen_ohne_steuer.pdf
+    synthetic: true
+    imitates: tr.zinsen.de
+    generated_from: tr/text/tr.zinsen.de/zinsen_ohne_steuer.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.split.de/split_msciw.pdf
+    synthetic: true
+    imitates: tr.split.de
+    generated_from: tr/text/tr.split.de/split_msciw.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.kontoauszug.de.2023/kontoauszug_2023_q1.pdf
+    synthetic: true
+    imitates: tr.kontoauszug.de.2023
+    generated_from: tr/text/tr.kontoauszug.de.2023/kontoauszug_2023_q1.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.kontoauszug.de.2023/kontoauszug_2023_q3.pdf
+    synthetic: true
+    imitates: tr.kontoauszug.de.2023
+    generated_from: tr/text/tr.kontoauszug.de.2023/kontoauszug_2023_q3.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.kontoauszug.de.2024/kontoauszug_2024_q4.pdf
+    synthetic: true
+    imitates: tr.kontoauszug.de.2024
+    generated_from: tr/text/tr.kontoauszug.de.2024/kontoauszug_2024_q4.txt
+    description: PDF of the text fixture.
+  - path: tr/pdf/tr.corporate_action.de/umtausch.pdf
+    synthetic: true
+    imitates: a Trade Republic exchange notice (UMTAUSCH)
+    generated_from: tr/text/tr.corporate_action.de/umtausch.txt
+    description: PDF of the negative text fixture.
+  - path: tr/pdf/tr.corporate_action.de/bezug.pdf
+    synthetic: true
+    imitates: a Trade Republic subscription rights notice (BEZUG)
+    generated_from: tr/text/tr.corporate_action.de/bezug.txt
+    description: PDF of the negative text fixture.
+
+  # Golden portfolio inputs (plan 1.2), round 1 (WP4: T9, T10, T11 and the H1 statement).
+  - path: golden/inputs/pdf/2024-05-15_dividende_sap.pdf
+    synthetic: true
+    imitates: tr.dividende.de
+    generated_from: tr/text/tr.dividende.de/golden_t09_dividende_sap.txt
+    description: Golden portfolio T9, the SAP dividend of 15 May 2024.
+  - path: golden/inputs/pdf/2024-05-16_dividende_aapl.pdf
+    synthetic: true
+    imitates: tr.dividende.de
+    generated_from: tr/text/tr.dividende.de/golden_t10_dividende_aapl.txt
+    description: Golden portfolio T10, the Apple USD dividend of 16 May 2024.
+  - path: golden/inputs/pdf/2024-06-10_split_nvda.pdf
+    synthetic: true
+    imitates: tr.split.de
+    generated_from: tr/text/tr.split.de/golden_t11_split_nvda.txt
+    description: Golden portfolio T11, the NVIDIA split of 10 June 2024.
+  - path: golden/inputs/statement/kontoauszug_2024_h1.pdf
+    synthetic: true
+    imitates: tr.kontoauszug.de.2024
+    generated_from: tr/text/tr.kontoauszug.de.2024/golden_h1_statement.txt
+    description: The H1 account statement, imported in round 2; its 11 lines match T1 to T10 and T12.
 
   # Golden portfolio inputs (plan 1.2), round 1. See golden/README.md.
   - path: golden/inputs/pdf/2024-01-15_kauf_sap.pdf

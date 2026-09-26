@@ -1,0 +1,89 @@
+%PDF-1.3
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/Contents 7 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 6 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+4 0 obj
+<<
+/PageMode /UseNone /Pages 6 0 R /Type /Catalog
+>>
+endobj
+5 0 obj
+<<
+/Author (Synthetic test fixture \(playground\)) /CreationDate (D:20000101000000+00'00') /Creator (tests/fixtures/tr/make_pdfs.py) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (vorabpauschale_belastung) /Trapped /False
+>>
+endobj
+6 0 obj
+<<
+/Count 1 /Kids [ 3 0 R ] /Type /Pages
+>>
+endobj
+7 0 obj
+<<
+/Length 1284
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 50 791.8898 Tm (TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN) Tj T* ET
+BT 1 0 0 1 50 780.8898 Tm (Jana Beispiel SEITE 1 von 1) Tj T* ET
+BT 1 0 0 1 50 769.8898 Tm (Ahornweg 7 DATUM 04.01.2024) Tj T* ET
+BT 1 0 0 1 50 758.8898 Tm (12345 Musterstadt REFERENZ 0e7d-44c1) Tj T* ET
+BT 1 0 0 1 50 747.8898 Tm (DEPOT 0000001111) Tj T* ET
+BT 1 0 0 1 50 736.8898 Tm (VORABPAUSCHALE) Tj T* ET
+BT 1 0 0 1 50 725.8898 Tm (iShsIII-Core MSCI World U.ETF) Tj T* ET
+BT 1 0 0 1 50 714.8898 Tm (ISIN: IE00B4L5Y983) Tj T* ET
+BT 1 0 0 1 50 703.8898 Tm (ABRECHNUNG) Tj T* ET
+BT 1 0 0 1 50 692.8898 Tm (POSITION BETRAG) Tj T* ET
+BT 1 0 0 1 50 681.8898 Tm (Kapitalertragssteuer -0,86 EUR) Tj T* ET
+BT 1 0 0 1 50 670.8898 Tm (Solidarit\344tszuschlag -0,04 EUR) Tj T* ET
+BT 1 0 0 1 50 659.8898 Tm (GESAMT -0,90 EUR) Tj T* ET
+BT 1 0 0 1 50 648.8898 Tm (BUCHUNG) Tj T* ET
+BT 1 0 0 1 50 637.8898 Tm (VERRECHNUNGSKONTO WERTSTELLUNG BETRAG) Tj T* ET
+BT 1 0 0 1 50 626.8898 Tm (DE00000000000000000000 04.01.2024 -0,90 EUR) Tj T* ET
+BT 1 0 0 1 50 615.8898 Tm (Diese Abrechnung wird maschinell erstellt und tr\344gt keine Unterschrift.) Tj T* ET
+BT 1 0 0 1 50 604.8898 Tm (Trade Republic Bank GmbH www.traderepublic.com) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000061 00000 n 
+0000000092 00000 n 
+0000000199 00000 n 
+0000000402 00000 n 
+0000000470 00000 n 
+0000000796 00000 n 
+0000000855 00000 n 
+trailer
+<<
+/ID 
+[<8044ab065123f1b489e4999a8b79221b><8044ab065123f1b489e4999a8b79221b>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 5 0 R
+/Root 4 0 R
+/Size 8
+>>
+startxref
+2190
+%%EOF

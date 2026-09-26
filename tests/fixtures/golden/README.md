@@ -69,8 +69,10 @@ The PDF documents are written by `tests/fixtures/tr/make_pdfs.py` from text fixt
 | `inputs/pdf/2024-04-10_kauf_sap.pdf` | T8 | `tr.wertpapierabrechnung.de.2023` | `tr.wertpapierabrechnung.de.2023/golden_t08_kauf_sap.txt` | WP3 |
 | `inputs/pdf/2024-06-12_verkauf_sap.pdf` | T12 | `tr.wertpapierabrechnung.de.2023` | `tr.wertpapierabrechnung.de.2023/golden_t12_verkauf_sap.txt` | WP3 |
 | `inputs/pdf/unbekannt_kosteninformation.pdf` | none (unknown layout) | none | `unclassified/unknown_cost_information.txt` | WP3 |
-| `inputs/pdf/` dividend and split documents | T9, T10, T11 | `tr.dividende.de`, `tr.split.de` | `golden_t09_...`, `golden_t10_...`, `golden_t11_...` | WP4 |
-| `inputs/statement/kontoauszug_2024_h1.pdf` | the H1 account statement | `tr.kontoauszug.de.2024` | | WP4 |
+| `inputs/pdf/2024-05-15_dividende_sap.pdf` | T9 | `tr.dividende.de` | `tr.dividende.de/golden_t09_dividende_sap.txt` | WP4 |
+| `inputs/pdf/2024-05-16_dividende_aapl.pdf` | T10 | `tr.dividende.de` | `tr.dividende.de/golden_t10_dividende_aapl.txt` | WP4 |
+| `inputs/pdf/2024-06-10_split_nvda.pdf` | T11 | `tr.split.de` | `tr.split.de/golden_t11_split_nvda.txt` | WP4 |
+| `inputs/statement/kontoauszug_2024_h1.pdf` | the H1 account statement (11 lines, matching T1 to T10 and T12) | `tr.kontoauszug.de.2024` | `tr.kontoauszug.de.2024/golden_h1_statement.txt` | WP4 |
 | `inputs/tr_transactions_2024.csv`, `inputs/confirmed_holdings_2024-12-31.csv` | the CSV export and your confirmed holdings | `tr_csv_synthetic_v1` | | WP5 |
 | `inputs/instrument_mapping.csv`, `inputs/manual_prices_allianz.csv` | the instrument mapping and the manual Allianz prices | | | WP9 |
 
