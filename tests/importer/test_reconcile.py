@@ -177,6 +177,45 @@ def test_the_stored_diff_lists_what_staging_found(harness, docs) -> None:
     assert data["batch"]["status"] == "staged"
 
 
+def test_the_text_of_a_staged_batch_says_its_lists_are_from_the_stage_and_its_holdings_from_now(harness, docs) -> None:
+    summary = harness.stage(docs.trade("kauf_sap.pdf", booking="-1402.00"))  # held back: amounts do not add up
+    harness.resolve(only(harness.items(kind="amounts_do_not_add_up")).id, "use-parsed")
+
+    diff = harness.diff(summary.batch_id)
+    text = render_diff_text(diff)
+
+    # The stored lists still show the purchase held back; the holdings, computed now, count it.
+    assert diff.counts["held_back"] == 1
+    assert holdings_table(diff) == {SAP: ("0", "10")}
+    assert (
+        "The lists above show what the stage found. A review item settled since then can make them out of date." in text
+    )
+    assert "The holdings below are computed now and show what accept will do." in text
+    harness.accept()
+    assert "The lists above show what the stage found." not in render_diff_text(harness.diff(summary.batch_id))
+
+
+def test_the_text_names_a_near_date_match_in_plain_words(harness, docs) -> None:
+    harness.run(docs.trade("kauf_sap.pdf"), docs.csv("export.csv", ["02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;r-1"]))
+    summary = harness.stage(
+        docs.statement(
+            "kontoauszug.pdf",
+            [
+                docs.statement_row(date(2024, 1, 3), "Einzahlung", "5000.00"),
+                docs.statement_row(date(2024, 1, 17), "Kauf", "-1401.00", isin=SAP),
+            ],
+        )
+    )
+
+    text = render_diff_text(harness.diff(summary.batch_id))
+
+    assert "Note: kontoauszug.pdf dates a deposit on 2024-01-03, matched to the one on 2024-01-02." in text
+    assert (
+        "Note: kontoauszug.pdf dates a purchase of SAP SE (DE0007164600) on 2024-01-17, "
+        "matched to the one on 2024-01-15."
+    ) in text
+
+
 # --- Comparing with your confirmed holdings ---------------------------------------------------
 
 
@@ -213,6 +252,21 @@ def test_each_confirmed_row_is_compared_on_its_own_day(harness, docs) -> None:
 
     nvda = only([row for row in comparison["rows"] if row["isin"] == NVDA])
     assert (nvda["as_of"], nvda["computed"], nvda["status"]) == ("2024-05-31", "2", "match")
+
+
+def test_an_isin_confirmed_on_two_days_gives_a_row_for_each_day(harness, docs) -> None:
+    summary = harness.stage(*docs.golden_round_one())
+    confirmed = [
+        ConfirmedHolding(isin=NVDA, quantity=Decimal("20"), as_of=date(2024, 12, 31)),
+        ConfirmedHolding(isin=NVDA, quantity=Decimal("2"), as_of=date(2024, 5, 31)),
+    ]
+
+    comparison = harness.diff(summary.batch_id, confirmed=confirmed, as_of=date(2024, 12, 31)).to_dict()["confirmed"]
+
+    nvda = [(row["as_of"], row["computed"], row["status"]) for row in comparison["rows"] if row["isin"] == NVDA]
+    assert nvda == [("2024-05-31", "2", "match"), ("2024-12-31", "20", "match")]
+    # The four other ISINs held are missing from your list.
+    assert comparison["message"] == "2 of 6 match"
 
 
 # --- Accept and discard -----------------------------------------------------------------------

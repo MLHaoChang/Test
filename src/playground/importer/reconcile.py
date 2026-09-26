@@ -1,15 +1,21 @@
 """The reconciliation diff of an import batch (plan 5.3.6, AC6).
 
-`build_diff` returns what a stage found, as stored with the batch, and adds:
+`build_diff` returns what a stage found, as stored with the batch when it was staged, and adds:
 
 - the **holdings** of every ISIN before (the accepted transactions only) and after (the accepted
   ones plus the staged ones, held-back ones left out) as of a day, computed with the ledger's
   lot book, so splits and transfers in count;
-- when you give your **confirmed holdings** (the quantities the Trade Republic app shows), the
-  comparison per ISIN: the computed quantity after the import, yours, the difference (computed
-  minus yours), and `match`, `mismatch`, `missing_in_import` (you hold it, the import does not
-  show it) or `missing_in_confirmed` (the import shows it, your list does not). Each of your rows
-  is compared on its own day.
+- when you give your **confirmed holdings** (the quantities the Trade Republic app shows), a
+  comparison row for each of your rows and for each ISIN held that your list does not name: the
+  computed quantity after the import, yours, the difference (computed minus yours), and `match`,
+  `mismatch`, `missing_in_import` (you hold it, the import does not show it) or
+  `missing_in_confirmed` (the import shows it, your list does not). Each of your rows is compared
+  on its own day, so an ISIN you list on two days gives a row for each.
+
+The stored lists (the files, the transactions, the review items and their counts) are not
+computed again: a review item settled while the batch is staged can make them out of date. The
+holdings are computed on every call, so for a staged batch they show what accept will do, and
+the text says so.
 
 For a batch accepted earlier, before and after are the portfolio as it is now, without and with
 that batch's transactions: the registry keeps no history, so later imports and resolutions count
@@ -30,10 +36,11 @@ from sqlalchemy import Connection
 
 from playground.core.clock import Clock
 from playground.core.dates import format_ts_utc
+from playground.core.types import TxnType
 from playground.importer.confirmed_csv import ConfirmedHolding
 from playground.importer.keys import quantity_text
 from playground.importer.pipeline import BatchNotFoundError, reparsed_by, transaction_record
-from playground.importer.review import evaluate, ledger_txn
+from playground.importer.review import TYPE_LABELS, evaluate, ledger_txn
 from playground.importer.workspace import Cause, Workspace
 from playground.ledger.fifo import LedgerTxn, LotBook, build_lots
 from playground.storage import repos
@@ -96,7 +103,8 @@ class ConfirmedRow:
 
 @dataclass(frozen=True)
 class ConfirmedComparison:
-    """The computed holdings against the ones you confirmed, one row per ISIN, sorted by ISIN."""
+    """The computed holdings against the ones you confirmed, sorted by ISIN and day: a row for each
+    of your rows, and one for each ISIN held that your list does not name."""
 
     rows: tuple[ConfirmedRow, ...]
 
@@ -185,8 +193,11 @@ def build_diff(
 def compare_confirmed(
     book: LotBook, confirmed: Sequence[ConfirmedHolding], as_of: date, names: Mapping[str, str]
 ) -> ConfirmedComparison:
-    """Compare your holdings with `book`, each of your rows on its own day; the rest on `as_of`."""
-    rows: dict[str, ConfirmedRow] = {}
+    """Compare your holdings with `book`, each of your rows on its own day; the rest on `as_of`.
+
+    Every row you give is compared, so an ISIN you list on two days gives two rows.
+    """
+    rows: list[ConfirmedRow] = []
     for holding in confirmed:
         computed = book.holdings(holding.as_of).get(holding.isin, _ZERO)
         if computed == holding.quantity:
@@ -195,25 +206,30 @@ def compare_confirmed(
             status = "missing_in_import"
         else:
             status = "mismatch"
-        rows[holding.isin] = ConfirmedRow(
-            isin=holding.isin,
-            name=names.get(holding.isin),
-            as_of=holding.as_of,
-            computed=computed,
-            confirmed=holding.quantity,
-            status=status,
-        )
-    for isin, quantity in book.holdings(as_of).items():
-        if isin not in rows:
-            rows[isin] = ConfirmedRow(
-                isin=isin,
-                name=names.get(isin),
-                as_of=as_of,
-                computed=quantity,
-                confirmed=_ZERO,
-                status="missing_in_confirmed",
+        rows.append(
+            ConfirmedRow(
+                isin=holding.isin,
+                name=names.get(holding.isin),
+                as_of=holding.as_of,
+                computed=computed,
+                confirmed=holding.quantity,
+                status=status,
             )
-    return ConfirmedComparison(rows=tuple(rows[isin] for isin in sorted(rows)))
+        )
+    listed = {holding.isin for holding in confirmed}
+    for isin, quantity in book.holdings(as_of).items():
+        if isin not in listed:
+            rows.append(
+                ConfirmedRow(
+                    isin=isin,
+                    name=names.get(isin),
+                    as_of=as_of,
+                    computed=quantity,
+                    confirmed=_ZERO,
+                    status="missing_in_confirmed",
+                )
+            )
+    return ConfirmedComparison(rows=tuple(sorted(rows, key=lambda row: (row.isin, row.as_of))))
 
 
 def _books(conn: Connection, batch: Any, clock: Clock) -> tuple[LotBook, LotBook]:
@@ -309,9 +325,8 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
         lines.append(f"  {counts['completed']} held back before and completed by this import")
     for entry in data["already_known"] + data["merged"]:
         if entry["candidate_date"] != entry["matched_date"]:
-            txn = entry["transaction"] or {}
             lines.append(
-                f"  Note: {entry['file_name']} dates a {txn.get('type')} of {txn.get('isin')} on {entry['candidate_date']}, "
+                f"  Note: {entry['file_name']} dates {_what(entry['transaction'])} on {entry['candidate_date']}, "
                 f"matched to the one on {entry['matched_date']}."
             )
     lines.append(
@@ -323,6 +338,11 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
     for item in data["review_closed"]:
         resolution = item.get("resolution") or {}
         lines.append(f"  - closes {item['kind']}: {resolution.get('how')} by {resolution.get('by')}")
+    if batch["status"] == "staged":
+        lines.append(
+            "The lists above show what the stage found. A review item settled since then can make them out of date."
+        )
+        lines.append("The holdings below are computed now and show what accept will do.")
     if batch["status"] == "accepted":
         lines.append(f"Holdings on {data['as_of']} (without this batch -> with it, as your portfolio is now):")
     else:
@@ -347,6 +367,19 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
             f'into your portfolio copy, or "pg discard {batch["id"]}" to drop them.'
         )
     return "\n".join(lines)
+
+
+def _what(txn: Mapping[str, Any] | None) -> str:
+    """How the near-date note names a transaction: "a purchase of SAP SE (DE0007164600)", "a deposit"."""
+    if not txn:
+        return "a transaction"
+    label = TYPE_LABELS[TxnType(txn["type"])]
+    article = "an" if label[0] in "aeiou" else "a"
+    isin = txn.get("isin")
+    if not isin:
+        return f"{article} {label}"
+    name = txn.get("name")
+    return f"{article} {label} of {name} ({isin})" if name and name != isin else f"{article} {label} of {isin}"
 
 
 def _count(number: int, noun: str) -> str:
