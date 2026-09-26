@@ -1,0 +1,26 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 20.03.2024
+12345 Musterstadt ORDER 0e5f-c812
+AUSFÜHRUNG 83ab-d4c6
+DEPOT 0000001111
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Market-Order Kauf am 20.03.2024, um 15:45 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL PREIS BETRAG
+NVIDIA Corp. 2 Stk. 850,00 EUR 1.700,00 EUR
+Registered Shares DL-,001
+ISIN: US67066G1040
+GESAMT 1.700,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+GESAMT -1.701,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 22.03.2024 -1.701,00 EUR
+NVIDIA Corp. Registered Shares DL-,001 in Wertpapierrechnung in den USA.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com
+ABRE / 20.03.2024 / 70000388 / 83ab-d4c6

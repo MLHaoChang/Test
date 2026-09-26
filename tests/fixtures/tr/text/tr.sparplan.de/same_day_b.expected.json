@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.sparplan.de",
+  "parser_version": 1,
+  "doc_type": "savings_plan_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "IE00BK5BQT80",
+      "name": "Vanguard FTSE All-World U.ETF",
+      "ts_utc": "2024-09-01T22:00:00Z",
+      "ts_local": "2024-09-02T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-09-04",
+      "quantity": "0.4798",
+      "price": "104.20",
+      "currency": "EUR",
+      "amount": "-50.00",
+      "amount_eur": "-50.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "savings_plan",
+      "source_ref": "c9d4-86b3",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        18
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

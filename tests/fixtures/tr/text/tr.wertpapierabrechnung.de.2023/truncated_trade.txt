@@ -1,0 +1,18 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Tom Probe SEITE 1 von 2
+Birkenallee 12 DATUM 16.10.2023
+54321 Beispielheim ORDER a8e1-5c09
+AUSFÜHRUNG 4b73-f2d6
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Market-Order Kauf am 16.10.2023, um 13:37 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL PREIS BETRAG
+Allianz SE 2 Stk. 225,40 EUR 450,80 EUR
+vink.Namens-Aktien o.N.
+ISIN: DE0008404005
+GESAMT 450,80 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR

@@ -1,0 +1,25 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 04.12.2023
+54321 Beispielheim ORDER 8c14-b2f0
+AUSFÜHRUNG 5e9d-0a73
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Limit-Order Kauf am 04.12.2023, um 16:17 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL PREIS BETRAG
+Nel ASA 1.000 Stk. 0,94 EUR 940,00 EUR
+Navne-Aksjer NK -,20
+ISIN: NO0010081235
+GESAMT 940,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+GESAMT -941,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 06.12.2023 -941,00 EUR
+Nel ASA Navne-Aksjer NK -,20 in Wertpapierrechnung in Norwegen.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

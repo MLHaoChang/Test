@@ -1,0 +1,27 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 12.11.2019
+54321 Beispielheim ORDER 3f8a-0c21
+AUSFÜHRUNG 9e47-b6d5
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Market-Order Kauf am 12.11.2019, um 15:16 Uhr an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL KURS BETRAG
+Allianz SE 3 Stk. 198,50 EUR 595,50 EUR
+vink.Namens-Aktien o.N.
+DE0008404005
+GESAMT 595,50 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+GESAMT -596,50 EUR
+BUCHUNG
+VERRECHNUNGSKONTO VALUTA BETRAG
+DE00000000000000000000 14.11.2019 -596,50 EUR
+Allianz SE vink.Namens-Aktien o.N. in Girosammelverwahrung.
+Lagerland: Deutschland
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com
+ABRE / 12.11.2019 / 30000412 / 9e47-b6d5

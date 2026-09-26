@@ -1,0 +1,27 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 05.03.2024
+54321 Beispielheim ORDER d36f-19a4
+AUSFÜHRUNG 27c0-e85b
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Stop-Market-Order Verkauf am 05.03.2024, um 19:00 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL PREIS BETRAG
+Deutsche Telekom AG 25 Stk. 21,48 EUR 537,00 EUR
+Namens-Aktien o.N.
+ISIN: DE0005557508
+GESAMT 537,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+Kapitalertragsteuer 0,00 EUR
+Solidaritätszuschlag 0,00 EUR
+GESAMT 536,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00 0000 0000 0000 0000 00 2024-03-07 536,00 EUR
+Deutsche Telekom AG Namens-Aktien o.N. in Girosammelverwahrung in Deutschland.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

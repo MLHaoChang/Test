@@ -1,0 +1,40 @@
+{
+  "parser_id": "tr.settlement.en.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "sell",
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "ts_utc": "2023-07-17T14:05:00Z",
+      "ts_local": "2023-07-17T16:05:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2023-07-19",
+      "quantity": "1.234567",
+      "price": "172.40",
+      "currency": "EUR",
+      "amount": "202.22",
+      "amount_eur": "202.22",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "9.62",
+      "tax_detail": {
+        "kapitalertragssteuer": "9.12",
+        "solidaritaetszuschlag": "0.50"
+      },
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "b40f-926d",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        24
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

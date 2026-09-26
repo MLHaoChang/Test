@@ -1,0 +1,26 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 10.04.2024
+12345 Musterstadt ORDER 6b90-2f7d
+AUSFÜHRUNG f1c3-58e2
+DEPOT 0000001111
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Limit-Order Kauf am 10.04.2024, um 09:12 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL PREIS BETRAG
+SAP SE 5 Stk. 160,00 EUR 800,00 EUR
+Inhaber-Aktien o.N.
+ISIN: DE0007164600
+GESAMT 800,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+GESAMT -801,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 12.04.2024 -801,00 EUR
+SAP SE Inhaber-Aktien o.N. in Girosammelverwahrung in Deutschland.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com
+ABRE / 10.04.2024 / 70000517 / f1c3-58e2

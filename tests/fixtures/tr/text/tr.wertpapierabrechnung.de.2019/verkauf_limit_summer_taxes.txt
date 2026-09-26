@@ -1,0 +1,29 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 17.06.2019
+54321 Beispielheim ORDER 71b5-e39c
+AUSFÜHRUNG 0da2-4f68
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG
+ÜBERSICHT
+Limit-Order Verkauf am 17.06.2019, um 17:50 Uhr an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL KURS BETRAG
+Deutsche Post AG 40 Stk. 29,80 EUR 1.192,00 EUR
+Namens-Aktien o.N.
+DE0005552004
+GESAMT 1.192,00 EUR
+ABRECHNUNG
+POSITION BETRAG
+Fremdkostenzuschlag -1,00 EUR
+Kapitalertragssteuer -28,20 EUR
+Solidaritätszuschlag -1,55 EUR
+Kirchensteuer -2,54 EUR
+GESAMT 1.158,71 EUR
+BUCHUNG
+VERRECHNUNGSKONTO VALUTA BETRAG
+DE00000000000000000000 19.06.2019 1.158,71 EUR
+Deutsche Post AG Namens-Aktien o.N. in Girosammelverwahrung.
+Lagerland: Deutschland
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

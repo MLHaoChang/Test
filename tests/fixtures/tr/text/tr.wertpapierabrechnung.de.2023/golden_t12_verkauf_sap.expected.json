@@ -1,0 +1,40 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "sell",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "ts_utc": "2024-06-12T09:20:00Z",
+      "ts_local": "2024-06-12T11:20:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2024-06-14",
+      "quantity": "12",
+      "price": "175.00",
+      "currency": "EUR",
+      "amount": "1999.41",
+      "amount_eur": "1999.41",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "99.59",
+      "tax_detail": {
+        "kapitalertragssteuer": "94.40",
+        "solidaritaetszuschlag": "5.19"
+      },
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "c2e8-7195",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        24
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

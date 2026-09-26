@@ -1,0 +1,21 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 02.09.2024
+12345 Musterstadt AUSFÜHRUNG c9d4-86b3
+SPARPLAN 4b2d-a0e8
+DEPOT 0000001111
+WERTPAPIERABRECHNUNG SPARPLAN
+ÜBERSICHT
+Sparplanausführung am 02.09.2024 an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL DURCHSCHNITTSKURS BETRAG
+Vanguard FTSE All-World U.ETF 0,4798 Stk. 104,20 EUR 50,00 EUR
+Registered Shares USD Acc. o.N.
+ISIN: IE00BK5BQT80
+GESAMT 50,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 04.09.2024 -50,00 EUR
+Vanguard FTSE All-World U.ETF Registered Shares USD Acc. o.N. in Wertpapierrechnung in Irland.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

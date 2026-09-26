@@ -1,0 +1,61 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "IE00BK5BQT80",
+      "name": "Vanguard FTSE All-World U.ETF",
+      "ts_utc": "2024-05-08T12:02:00Z",
+      "ts_local": "2024-05-08T14:02:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2024-05-10",
+      "quantity": "5",
+      "price": "104.20",
+      "currency": "EUR",
+      "amount": "-523.00",
+      "amount_eur": "-523.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "9a05-3d7b",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        22
+      ]
+    }
+  ],
+  "review": [
+    {
+      "kind": "amounts_do_not_add_up",
+      "message": "The amounts in this document do not add up. The position amount and the costs and taxes give -522.00 EUR, but the settlement total (GESAMT) is -523.00 EUR.",
+      "fields": {
+        "booking_amount": "-523.00",
+        "document_date": "2024-05-08",
+        "executed_at": "2024-05-08T14:02:00",
+        "expected_total": "-522.00",
+        "fees_eur": "1.00",
+        "isin": "IE00BK5BQT80",
+        "name": "Vanguard FTSE All-World U.ETF",
+        "position_amount": "521.00",
+        "position_total": "521.00",
+        "price": "104.20",
+        "quantity": "5",
+        "source_ref": "9a05-3d7b",
+        "tax_eur": "0.00",
+        "total": "-523.00",
+        "type": "buy",
+        "value_date": "2024-05-10"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN\nTom Probe SEITE 1 von 1\nBirkenallee 12 DATUM 08.05.2024\n54321 Beispielheim ORDER 1f6c-8e24\nAUSFÜHRUNG 9a05-3d7b\nDEPOT 0000002222\nWERTPAPIERABRECHNUNG\nÜBERSICHT\nMarket-Order Kauf am 08.05.2024, um 14:02 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.\nHandelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.\nPOSITION ANZAHL PREIS BETRAG\nVanguard FTSE All-World U.ETF 5 Stk. 104,20 EUR 521,00 EUR\nRegistered Shares USD Acc. o.N.\nISIN: IE00BK5BQT80\nGESAMT 521,00 EUR\nABRECHNUNG\nPOSITION BETRAG\nFremdkostenzuschlag -1,00 EUR\nGESAMT -523,00 EUR\nBUCHUNG\nVERRECHNUNGSKONTO WERTSTELLUNG BETRAG\nDE00000000000000000000 10.05.2024 -523,00 EUR\nVanguard FTSE All-World U.ETF Registered Shares USD Acc. o.N. in Wertpapierrechnung in Irland.\nDiese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.\nTrade Republic Bank GmbH www.traderepublic.com\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

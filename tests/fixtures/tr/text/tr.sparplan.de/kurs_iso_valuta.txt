@@ -1,0 +1,23 @@
+TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN
+Tom Probe SEITE 1 von 1
+Birkenallee 12 DATUM 18.11.2019
+54321 Beispielheim AUSFÜHRUNG e4b8-6c12
+SPARPLAN 7d31-0f9a
+DEPOT 0000002222
+WERTPAPIERABRECHNUNG SPARPLAN
+ÜBERSICHT
+Sparplanausführung am 18.11.2019 an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL KURS BETRAG
+Vanguard FTSE All-World U.ETF 0,6102 Stk. 81,94 EUR 50,00 EUR
+Registered Shares USD Acc. o.N.
+IE00BK5BQT80
+GESAMT 50,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO VALUTA BETRAG
+DE00000000000000000000 2019-11-20 -50,00 EUR
+Vanguard FTSE All-World U.ETF Registered Shares USD Acc. o.N. in Wertpapierrechnung.
+Lagerland: Irland
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com
+ABRE / 2019-11-18 / 30000977 / e4b8-6c12

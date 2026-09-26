@@ -1,0 +1,17 @@
+{
+  "parser_id": null,
+  "parser_version": null,
+  "doc_type": null,
+  "transactions": [],
+  "review": [
+    {
+      "kind": "ambiguous_layout",
+      "message": "More than one parser recognises this document (tr.wertpapierabrechnung.de.2019, tr.wertpapierabrechnung.de.2023). Nothing was imported from it.",
+      "fields": {
+        "parsers": "tr.wertpapierabrechnung.de.2019, tr.wertpapierabrechnung.de.2023"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH KASTANIENALLEE 32 10435 BERLIN\nTom Probe SEITE 1 von 1\nBirkenallee 12 DATUM 21.11.2019\n54321 Beispielheim ORDER 2e7b-9d01\nAUSFÜHRUNG 6f4c-a358\nDEPOT 0000002222\nWERTPAPIERABRECHNUNG\nÜBERSICHT\nMarket-Order Kauf am 21.11.2019, um 10:44 Uhr an der Lang & Schwarz Exchange.\nPOSITION ANZAHL KURS BETRAG\nDeutsche Post AG 10 Stk. 32,50 EUR 325,00 EUR\nNamens-Aktien o.N.\nDE0005552004\nGESAMT 325,00 EUR\nABRECHNUNG\nPOSITION BETRAG\nFremdkostenzuschlag -1,00 EUR\nGESAMT -326,00 EUR\nBUCHUNG\nVERRECHNUNGSKONTO VALUTA BETRAG\nDE00000000000000000000 25.11.2019 -326,00 EUR\fTRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN\nTom Probe SEITE 1 von 1\nBirkenallee 12 DATUM 14.02.2024\n54321 Beispielheim ORDER 93d0-4b8e\nAUSFÜHRUNG d7a2-15fc\nDEPOT 0000002222\nWERTPAPIERABRECHNUNG\nÜBERSICHT\nMarket-Order Kauf am 14.02.2024, um 11:08 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.\nPOSITION ANZAHL PREIS BETRAG\nDeutsche Post AG 10 Stk. 41,20 EUR 412,00 EUR\nNamens-Aktien o.N.\nISIN: DE0005552004\nGESAMT 412,00 EUR\nABRECHNUNG\nPOSITION BETRAG\nFremdkostenzuschlag -1,00 EUR\nGESAMT -413,00 EUR\nBUCHUNG\nVERRECHNUNGSKONTO WERTSTELLUNG BETRAG\nDE00000000000000000000 16.02.2024 -413,00 EUR\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

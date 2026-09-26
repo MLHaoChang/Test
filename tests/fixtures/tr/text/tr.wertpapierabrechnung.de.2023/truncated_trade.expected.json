@@ -1,0 +1,27 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [],
+  "review": [
+    {
+      "kind": "missing_field",
+      "message": "The settlement block (ABRECHNUNG) has no GESAMT line, so the total cannot be checked. The document may be cut off.",
+      "fields": {
+        "document_date": "2023-10-16",
+        "executed_at": "2023-10-16T13:37:00",
+        "isin": "DE0008404005",
+        "missing": "settlement_total",
+        "name": "Allianz SE",
+        "position_amount": "450.80",
+        "position_total": "450.80",
+        "price": "225.40",
+        "quantity": "2",
+        "source_ref": "4b73-f2d6",
+        "type": "buy"
+      },
+      "extracted_text": "TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN\nTom Probe SEITE 1 von 2\nBirkenallee 12 DATUM 16.10.2023\n54321 Beispielheim ORDER a8e1-5c09\nAUSFÜHRUNG 4b73-f2d6\nDEPOT 0000002222\nWERTPAPIERABRECHNUNG\nÜBERSICHT\nMarket-Order Kauf am 16.10.2023, um 13:37 Uhr (Europe/Berlin) an der Lang & Schwarz Exchange.\nHandelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.\nPOSITION ANZAHL PREIS BETRAG\nAllianz SE 2 Stk. 225,40 EUR 450,80 EUR\nvink.Namens-Aktien o.N.\nISIN: DE0008404005\nGESAMT 450,80 EUR\nABRECHNUNG\nPOSITION BETRAG\nFremdkostenzuschlag -1,00 EUR\n"
+    }
+  ],
+  "confirmed_holdings": []
+}

@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "ts_utc": "2024-03-20T14:45:00Z",
+      "ts_local": "2024-03-20T15:45:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2024-03-22",
+      "quantity": "2",
+      "price": "850.00",
+      "currency": "EUR",
+      "amount": "-1701.00",
+      "amount_eur": "-1701.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "83ab-d4c6",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        22
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

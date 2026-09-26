@@ -1,0 +1,21 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 01.02.2024
+12345 Musterstadt AUSFÜHRUNG 2c61-7e0b
+SPARPLAN a4d9-1f35
+DEPOT 0000001111
+WERTPAPIERABRECHNUNG SPARPLAN
+ÜBERSICHT
+Sparplanausführung am 01.02.2024 an der Lang & Schwarz Exchange.
+Handelspartner der Transaktion ist die Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION ANZAHL DURCHSCHNITTSKURS BETRAG
+iShsIII-Core MSCI World U.ETF 2,5 Stk. 80,00 EUR 200,00 EUR
+Registered Shs USD (Acc) o.N.
+ISIN: IE00B4L5Y983
+GESAMT 200,00 EUR
+BUCHUNG
+VERRECHNUNGSKONTO WERTSTELLUNG BETRAG
+DE00000000000000000000 05.02.2024 -200,00 EUR
+iShsIII-Core MSCI World U.ETF Registered Shs USD (Acc) o.N. in Wertpapierrechnung in Irland.
+Diese Abrechnung wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

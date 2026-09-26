@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2019",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "ts_utc": "2019-11-12T14:16:00Z",
+      "ts_local": "2019-11-12T15:16:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2019-11-14",
+      "quantity": "3",
+      "price": "198.50",
+      "currency": "EUR",
+      "amount": "-596.50",
+      "amount_eur": "-596.50",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "9e47-b6d5",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        22
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

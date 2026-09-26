@@ -7,6 +7,7 @@ import tomllib
 from pathlib import Path
 from typing import Literal, get_args, get_origin
 
+import yaml
 from typer.testing import CliRunner
 
 from playground.cli.main import app
@@ -275,3 +276,101 @@ def test_system_clock_is_read_only_from_core_clock() -> None:
             if pattern.search(text):
                 offenders.append(f"{py_file}: {label}")
     assert not offenders, f"System clock read outside core/clock.py: {offenders}"
+
+
+# --- Fixtures: manifest and dummy IBANs (plan 6.2, 7.5) --------------------------------------
+
+_FIXTURES_PREFIX = "tests/fixtures/"
+# Committed binary and data inputs that must sit under tests/fixtures/ and be listed in the manifest.
+_MANIFEST_SUFFIXES = (".pdf", ".csv", ".zip")
+# The PDF text fixtures are the source of truth for the PDF fixtures, so they are listed too.
+_TEXT_FIXTURES_PREFIX = "tests/fixtures/tr/text/"
+# Text files under tests/fixtures/ scanned for IBANs.
+_TEXT_SUFFIXES = (".txt", ".csv", ".json", ".yaml", ".yml", ".md")
+# An IBAN: two letters, two check digits, then 11 to 30 letters or digits, written either in one
+# piece or in groups of four separated by single spaces. An ISIN (12 characters) is too short.
+_IBAN_PATTERN = re.compile(r"\b[A-Z]{2}\d{2}(?:[A-Z0-9]{11,30}|(?: [A-Z0-9]{4}){2,7}(?: [A-Z0-9]{1,4})?)\b")
+# The documented dummy: DE00 followed by zeros only, written with or without spaces.
+_DUMMY_IBAN = "DE" + "0" * 20
+
+
+def _tracked_files() -> list[str]:
+    result = subprocess.run(["git", "ls-files"], cwd=_repo_root(), capture_output=True, text=True, check=True)
+    return result.stdout.splitlines()
+
+
+def _files_the_manifest_must_list(tracked: list[str]) -> set[str]:
+    """Tracked PDF, CSV and zip files, plus the PDF text fixtures, relative to tests/fixtures/."""
+    required = set()
+    for path in tracked:
+        if not path.startswith(_FIXTURES_PREFIX):
+            continue
+        if path.endswith(_MANIFEST_SUFFIXES) or (path.startswith(_TEXT_FIXTURES_PREFIX) and path.endswith(".txt")):
+            required.add(path.removeprefix(_FIXTURES_PREFIX))
+    return required
+
+
+def _foreign_ibans(text: str) -> list[str]:
+    """Every IBAN in `text` that is not the documented dummy."""
+    return [match for match in _IBAN_PATTERN.findall(text) if match.replace(" ", "") != _DUMMY_IBAN]
+
+
+def test_files_the_manifest_must_list_selects_the_right_files() -> None:
+    tracked = [
+        "README.md",
+        "tests/fixtures/MANIFEST.yaml",
+        "tests/fixtures/tr/text/tr.sparplan.de/a.txt",
+        "tests/fixtures/tr/text/tr.sparplan.de/a.expected.json",
+        "tests/fixtures/tr/pdf/tr.sparplan.de/a.pdf",
+        "tests/fixtures/tr/csv/x.csv",
+        "tests/fixtures/http/ecb/rates.zip",
+        "tests/fixtures/http/stooq/no_data.txt",
+    ]
+    assert _files_the_manifest_must_list(tracked) == {
+        "tr/text/tr.sparplan.de/a.txt",
+        "tr/pdf/tr.sparplan.de/a.pdf",
+        "tr/csv/x.csv",
+        "http/ecb/rates.zip",
+    }
+
+
+def test_foreign_ibans_allows_only_the_dummy() -> None:
+    assert _foreign_ibans("DE00000000000000000000 17.01.2024 -1.401,00 EUR") == []
+    assert _foreign_ibans("DE00 0000 0000 0000 0000 00 2024-03-07 536,00 EUR") == []
+    assert _foreign_ibans("Konto DE12500105170648489890 ist echt") == ["DE12500105170648489890"]
+    assert _foreign_ibans("DE89 3704 0044 0532 0130 00") == ["DE89 3704 0044 0532 0130 00"]
+    # ISINs, dates and order numbers are not IBANs.
+    assert _foreign_ibans("ISIN: DE0007164600 IE00B4L5Y983 US67066G1040 2024-01-15 5d0a-93f1") == []
+
+
+def test_pdf_csv_and_zip_files_are_committed_only_under_tests_fixtures() -> None:
+    offenders = [
+        path for path in _tracked_files() if path.endswith(_MANIFEST_SUFFIXES) and not path.startswith(_FIXTURES_PREFIX)
+    ]
+    assert not offenders, f"data files outside tests/fixtures/: {offenders}"
+
+
+def test_manifest_lists_every_fixture_input_as_synthetic_with_the_layout_it_imitates() -> None:
+    manifest_path = _repo_root() / "tests" / "fixtures" / "MANIFEST.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    entries = manifest["files"] or []
+    paths = [entry["path"] for entry in entries]
+    assert len(paths) == len(set(paths)), "a path is listed twice in MANIFEST.yaml"
+    for entry in entries:
+        assert entry.get("synthetic") is True, f"{entry['path']}: synthetic must be true"
+        assert isinstance(entry.get("imitates"), str), f"{entry['path']}: says nothing about what it imitates"
+        assert entry["imitates"].strip(), f"{entry['path']}: says nothing about what it imitates"
+        assert (manifest_path.parent / entry["path"]).is_file(), f"{entry['path']}: listed but missing"
+
+    missing = _files_the_manifest_must_list(_tracked_files()) - set(paths)
+    assert not missing, f"not listed in tests/fixtures/MANIFEST.yaml: {sorted(missing)}"
+
+
+def test_no_iban_in_any_fixture_other_than_the_dummy() -> None:
+    offenders = []
+    for path in _tracked_files():
+        if path.startswith(_FIXTURES_PREFIX) and path.endswith(_TEXT_SUFFIXES):
+            found = _foreign_ibans((_repo_root() / path).read_text(encoding="utf-8", errors="replace"))
+            if found:
+                offenders.append(f"{path}: {found}")
+    assert not offenders, f"IBANs other than the dummy {_DUMMY_IBAN}: {offenders}"

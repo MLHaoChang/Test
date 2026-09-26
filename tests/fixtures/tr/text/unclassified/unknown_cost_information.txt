@@ -1,0 +1,18 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Jana Beispiel SEITE 1 von 1
+Ahornweg 7 DATUM 11.06.2024
+12345 Musterstadt DEPOT 0000001111
+KOSTENINFORMATION
+ÜBERSICHT
+Informationen über Kosten und Nebenkosten Ihrer geplanten Order vom 11.06.2024.
+POSITION ANZAHL VORAUSSICHTLICHER PREIS
+SAP SE 12 Stk. 175,00 EUR
+ISIN: DE0007164600
+KOSTENART BETRAG IN PROZENT
+Dienstleistungskosten 1,00 EUR 0,05 %
+davon Fremdkostenzuschlag 1,00 EUR 0,05 %
+Produktkosten 0,00 EUR 0,00 %
+Gesamtkosten 1,00 EUR 0,05 %
+Die Kosten mindern die Rendite im ersten Jahr um 0,05 %.
+Diese Information wird maschinell erstellt und trägt keine Unterschrift.
+Trade Republic Bank GmbH www.traderepublic.com

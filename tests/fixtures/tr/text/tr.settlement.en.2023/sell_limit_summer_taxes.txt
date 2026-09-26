@@ -1,0 +1,27 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Lena Fiktiv PAGE 1 from 1
+Lindenring 4 DATE 17.07.2023
+10999 Probedorf ORDER 58a3-c7e1
+EXECUTION b40f-926d
+SECURITIES ACCOUNT 0000003333
+SECURITIES SETTLEMENT
+OVERVIEW
+Limit-Order Sell on 17.07.2023 at 16:05 (Europe/Berlin) on the Lang & Schwarz Exchange.
+The counterparty of the transaction is Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION QUANTITY PRICE AMOUNT
+Apple Inc. 1.234567 Pcs. 172.40 EUR 212.84 EUR
+Registered Shares o.N.
+ISIN: US0378331005
+TOTAL 212.84 EUR
+BILLING
+POSITION AMOUNT
+External cost surcharge -1.00 EUR
+Capital Gains Tax -9.12 EUR
+Solidarity Surcharge -0.50 EUR
+TOTAL 202.22 EUR
+BOOKING
+CLEARING ACCOUNT VALUE DATE AMOUNT
+DE00000000000000000000 19.07.2023 202.22 EUR
+Apple Inc. Registered Shares o.N. in collective safe custody in the USA.
+This statement is created by machine and carries no signature.
+Trade Republic Bank GmbH www.traderepublic.com

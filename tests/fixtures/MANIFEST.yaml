@@ -1,3 +1,91 @@
-# Fixture manifest - lists all committed test data files
-# Each entry documents what the file is and what layout or format it represents
-files: []
+# Fixture manifest (plan 6.2, 7.5). It lists every committed input file under tests/fixtures/:
+# every PDF, CSV and zip file, and the PDF text fixtures they are made from. Paths are relative
+# to tests/fixtures/.
+#
+# Every file is synthetic: the names, addresses, numbers and order numbers are invented, the only
+# IBAN is the dummy DE00 0000 0000 0000 0000 00, and only the ISINs are real public identifiers.
+# "imitates" names the layout or format the file copies. The Trade Republic layouts were learned
+# from the public, anonymised test texts of the Portfolio Performance project; no text from them
+# was copied. "generated_from" names the text a PDF was written from by tr/make_pdfs.py.
+files:
+  # Trade confirmation, 2019 layout (KURS column, ISIN alone on its line, VALUTA, no time zone).
+  - path: tr/text/tr.wertpapierabrechnung.de.2019/kauf_market_winter.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019
+    description: Market order buy in winter time (CET).
+  - path: tr/text/tr.wertpapierabrechnung.de.2019/verkauf_limit_summer_taxes.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019
+    description: Limit order sell in summer time (CEST) with capital gains tax, solidarity surcharge and church tax.
+
+  # Trade confirmation, 2023 layout (PREIS column, "ISIN:" prefix, WERTSTELLUNG, "(Europe/Berlin)").
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/golden_t02_kauf_sap.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Golden portfolio T2, buy of 10 SAP at 140.00 with a 1.00 fee.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/golden_t06_kauf_nvda.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Golden portfolio T6, buy of 2 NVIDIA at 850.00 in winter time.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/golden_t08_kauf_sap.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Golden portfolio T8, limit order buy of 5 SAP at 160.00 in summer time.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/golden_t12_verkauf_sap.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Golden portfolio T12, sell of 12 SAP at 175.00 with capital gains tax and solidarity surcharge.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/limit_kauf_tausend_stk.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Limit order buy with a thousands dot in the quantity ("1.000 Stk.").
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/stop_market_verkauf_iso_wertstellung.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Stop-market sell with zero tax lines, the value date as yyyy-mm-dd and the account written with spaces.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/truncated_trade.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Negative case. A buy cut off after the fee line, so the settlement GESAMT and the booking are missing.
+  - path: tr/text/tr.wertpapierabrechnung.de.2023/amounts_off_by_one_euro.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2023
+    description: Negative case. A buy whose settlement total is one euro off the position and the fee.
+
+  # Savings plan execution (WERTPAPIERABRECHNUNG SPARPLAN).
+  - path: tr/text/tr.sparplan.de/golden_t03_sparplan_msciw.txt
+    synthetic: true
+    imitates: tr.sparplan.de
+    description: Golden portfolio T3, savings plan buy of 2.5 MSCI World ETF at 80.00, no fee.
+  - path: tr/text/tr.sparplan.de/kurs_iso_valuta.txt
+    synthetic: true
+    imitates: tr.sparplan.de
+    description: Older savings plan with the KURS column, a fractional quantity, the ISIN alone and VALUTA as yyyy-mm-dd.
+  - path: tr/text/tr.sparplan.de/same_day_a.txt
+    synthetic: true
+    imitates: tr.sparplan.de
+    description: Same-day pair, document A. Identical to B except for the execution number.
+  - path: tr/text/tr.sparplan.de/same_day_b.txt
+    synthetic: true
+    imitates: tr.sparplan.de
+    description: Same-day pair, document B. Identical to A except for the execution number.
+
+  # Trade confirmation in English (SECURITIES SETTLEMENT).
+  - path: tr/text/tr.settlement.en.2023/buy_market_winter.txt
+    synthetic: true
+    imitates: tr.settlement.en.2023
+    description: Market order buy in winter time with a thousands comma in the amounts.
+  - path: tr/text/tr.settlement.en.2023/sell_limit_summer_taxes.txt
+    synthetic: true
+    imitates: tr.settlement.en.2023
+    description: Limit order sell in summer time with a fractional quantity and English tax lines.
+
+  # Documents no single parser may claim.
+  - path: tr/text/unclassified/unknown_cost_information.txt
+    synthetic: true
+    imitates: Trade Republic cost information sheet (KOSTENINFORMATION), which no parser reads
+    description: Negative case. Must give unknown_layout.
+  - path: tr/text/unclassified/two_layouts_mixed.txt
+    synthetic: true
+    imitates: tr.wertpapierabrechnung.de.2019 and tr.wertpapierabrechnung.de.2023 in one file
+    description: Negative case. A 2019 trade on page 1 and a 2023 trade on page 2. Must give ambiguous_layout.

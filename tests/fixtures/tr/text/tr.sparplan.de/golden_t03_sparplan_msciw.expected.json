@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.sparplan.de",
+  "parser_version": 1,
+  "doc_type": "savings_plan_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "ts_utc": "2024-01-31T23:00:00Z",
+      "ts_local": "2024-02-01T00:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "day",
+      "value_date": "2024-02-05",
+      "quantity": "2.5",
+      "price": "80.00",
+      "currency": "EUR",
+      "amount": "-200.00",
+      "amount_eur": "-200.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "0.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "savings_plan",
+      "source_ref": "2c61-7e0b",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        18
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

@@ -1,0 +1,41 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2019",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "sell",
+      "isin": "DE0005552004",
+      "name": "Deutsche Post AG",
+      "ts_utc": "2019-06-17T15:50:00Z",
+      "ts_local": "2019-06-17T17:50:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2019-06-19",
+      "quantity": "40",
+      "price": "29.80",
+      "currency": "EUR",
+      "amount": "1158.71",
+      "amount_eur": "1158.71",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "32.29",
+      "tax_detail": {
+        "kapitalertragssteuer": "28.20",
+        "kirchensteuer": "2.54",
+        "solidaritaetszuschlag": "1.55"
+      },
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "0da2-4f68",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        25
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

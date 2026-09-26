@@ -1,0 +1,25 @@
+TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN
+Lena Fiktiv PAGE 1 from 1
+Lindenring 4 DATE 05.02.2024
+10999 Probedorf ORDER 6d1e-f402
+EXECUTION 0b8c-37a9
+SECURITIES ACCOUNT 0000003333
+SECURITIES SETTLEMENT
+OVERVIEW
+Market-Order Buy on 05.02.2024 at 09:31 (Europe/Berlin) on the Lang & Schwarz Exchange.
+The counterparty of the transaction is Lang & Schwarz TradeCenter AG & Co. KG.
+POSITION QUANTITY PRICE AMOUNT
+Vanguard FTSE All-World U.ETF 12 Pcs. 108.46 EUR 1,301.52 EUR
+Registered Shares USD Acc. o.N.
+ISIN: IE00BK5BQT80
+TOTAL 1,301.52 EUR
+BILLING
+POSITION AMOUNT
+External cost surcharge -1.00 EUR
+TOTAL -1,302.52 EUR
+BOOKING
+CLEARING ACCOUNT VALUE DATE AMOUNT
+DE00000000000000000000 07.02.2024 -1,302.52 EUR
+Vanguard FTSE All-World U.ETF Registered Shares USD Acc. o.N. in collective safe custody in Ireland.
+This statement is created by machine and carries no signature.
+Trade Republic Bank GmbH www.traderepublic.com

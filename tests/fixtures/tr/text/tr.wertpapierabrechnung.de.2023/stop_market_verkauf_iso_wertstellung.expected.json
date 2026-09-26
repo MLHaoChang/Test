@@ -1,0 +1,40 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "sell",
+      "isin": "DE0005557508",
+      "name": "Deutsche Telekom AG",
+      "ts_utc": "2024-03-05T18:00:00Z",
+      "ts_local": "2024-03-05T19:00:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2024-03-07",
+      "quantity": "25",
+      "price": "21.48",
+      "currency": "EUR",
+      "amount": "536.00",
+      "amount_eur": "536.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {
+        "kapitalertragssteuer": "0.00",
+        "solidaritaetszuschlag": "0.00"
+      },
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "27c0-e85b",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        24
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

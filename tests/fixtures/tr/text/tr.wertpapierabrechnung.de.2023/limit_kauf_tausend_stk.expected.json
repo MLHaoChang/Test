@@ -1,0 +1,37 @@
+{
+  "parser_id": "tr.wertpapierabrechnung.de.2023",
+  "parser_version": 1,
+  "doc_type": "trade_confirmation",
+  "transactions": [
+    {
+      "type": "buy",
+      "isin": "NO0010081235",
+      "name": "Nel ASA",
+      "ts_utc": "2023-12-04T15:17:00Z",
+      "ts_local": "2023-12-04T16:17:00",
+      "source_tz": "Europe/Berlin",
+      "ts_precision": "minute",
+      "value_date": "2023-12-06",
+      "quantity": "1000",
+      "price": "0.94",
+      "currency": "EUR",
+      "amount": "-941.00",
+      "amount_eur": "-941.00",
+      "fx_rate": null,
+      "fx_source": "none",
+      "fees_eur": "1.00",
+      "tax_eur": "0.00",
+      "tax_detail": {},
+      "split_new_quantity": null,
+      "origin": "order",
+      "source_ref": "5e9d-0a73",
+      "source_kind": "pdf_document",
+      "evidence": [
+        9,
+        22
+      ]
+    }
+  ],
+  "review": [],
+  "confirmed_holdings": []
+}

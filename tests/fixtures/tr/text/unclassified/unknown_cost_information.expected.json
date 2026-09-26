@@ -1,0 +1,15 @@
+{
+  "parser_id": null,
+  "parser_version": null,
+  "doc_type": null,
+  "transactions": [],
+  "review": [
+    {
+      "kind": "unknown_layout",
+      "message": "No parser recognises this document layout. Nothing was imported from it.",
+      "fields": {},
+      "extracted_text": "TRADE REPUBLIC BANK GMBH BRUNNENSTRASSE 19-21 10119 BERLIN\nJana Beispiel SEITE 1 von 1\nAhornweg 7 DATUM 11.06.2024\n12345 Musterstadt DEPOT 0000001111\nKOSTENINFORMATION\nÜBERSICHT\nInformationen über Kosten und Nebenkosten Ihrer geplanten Order vom 11.06.2024.\nPOSITION ANZAHL VORAUSSICHTLICHER PREIS\nSAP SE 12 Stk. 175,00 EUR\nISIN: DE0007164600\nKOSTENART BETRAG IN PROZENT\nDienstleistungskosten 1,00 EUR 0,05 %\ndavon Fremdkostenzuschlag 1,00 EUR 0,05 %\nProduktkosten 0,00 EUR 0,00 %\nGesamtkosten 1,00 EUR 0,05 %\nDie Kosten mindern die Rendite im ersten Jahr um 0,05 %.\nDiese Information wird maschinell erstellt und trägt keine Unterschrift.\nTrade Republic Bank GmbH www.traderepublic.com\n"
+    }
+  ],
+  "confirmed_holdings": []
+}
