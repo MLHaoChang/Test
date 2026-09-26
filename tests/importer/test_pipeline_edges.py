@@ -8,14 +8,17 @@
 - An instrument first known from a manual row (which names no instrument) is named by its ISIN
   until a document names it.
 - Discarding a batch removes the instruments only it had brought.
+- The files are kept in `uploads/` once the stage is stored, so a failed import leaves no copy.
 - No row takes a key and occurrence another row still holds: not a new row of a stage while a
   stored transaction moves in memory, and not a merge while a batch is staged.
 """
 
+import hashlib
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
 import sqlalchemy as sa
 
 from playground.importer.keys import content_hash
@@ -205,3 +208,30 @@ def test_a_merge_while_a_batch_is_staged_never_takes_the_occurrence_of_a_staged_
     assert {txn.state for txn in txns} == {"accepted"}
     assert_keys_hold(harness)
     assert harness.holdings() == {SAP: Decimal("30")}
+
+
+def test_the_files_are_kept_in_uploads_once_the_stage_is_stored_and_not_before(harness, docs) -> None:
+    trade = docs.trade("kauf_sap.pdf")
+    export = docs.csv("export.csv", [T2_ROW])
+    working = harness.extract
+
+    def broken(data: bytes) -> str:
+        raise RuntimeError("the text extractor broke")
+
+    harness.extract = broken
+    with pytest.raises(RuntimeError):
+        harness.stage(trade, export)
+    assert list(harness.uploads_dir.iterdir()) == []
+    assert harness.imports() == []
+
+    harness.extract = working
+    harness.stage(trade, export)
+
+    trade_hash = hashlib.sha256(trade.data).hexdigest()
+    export_hash = hashlib.sha256(export.data).hexdigest()
+    assert sorted(path.name for path in harness.uploads_dir.iterdir()) == sorted(
+        [f"{trade_hash}.pdf", f"{export_hash}.csv"]
+    )
+    assert (harness.uploads_dir / f"{trade_hash}.pdf").read_bytes() == trade.data
+    stored = {row.file_name: row.stored_path for row in harness.imports()}
+    assert stored == {"kauf_sap.pdf": f"uploads/{trade_hash}.pdf", "export.csv": f"uploads/{export_hash}.csv"}

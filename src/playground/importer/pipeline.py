@@ -2,9 +2,9 @@
 
 `stage_files` (and `stage_inputs`, for files already in memory) takes one batch:
 
-1. Each file is copied to `uploads/<sha256>.<ext>` and its kind is found: a PDF by its magic
-   bytes, a CSV by its extension. Anything else, and a CSV file that is not text in UTF-8 or
-   Windows-1252, is refused before anything is stored.
+1. Each file's kind is found: a PDF by its magic bytes, a CSV by its extension. Anything else,
+   and a CSV file that is not text in UTF-8 or Windows-1252, is refused before anything is
+   stored. Once the stage is stored, each file is copied to `uploads/<sha256>.<ext>`.
 2. **File level.** A file already imported in a batch that was not discarded is recorded as
    `duplicate_file` and not parsed again. The exception is a file whose earlier import failed or
    found no parser: it is classified again, so a parser added since then takes effect. If a
@@ -295,6 +295,7 @@ def stage_inputs(
     persist.store_stage(conn, ws, plan)
     summary = _summary(conn, ws, plan, results, outcomes, created, batch_id)
     repos.set_batch_summary(conn, batch_id, summary)
+    _store_uploads(uploads_dir, files)
     return BatchSummary(batch_id=batch_id, data=summary)
 
 
@@ -319,18 +320,22 @@ def _prepare(item: InputFile) -> _File:
     return _File(name=item.name, data=item.data, sha256=hashlib.sha256(item.data).hexdigest(), kind=kind)
 
 
-def _store_upload(uploads_dir: Path, file: _File) -> str:
-    """Keep a copy of the file in `uploads/`, so review items can be reopened (plan 4.3).
+def _upload_path(uploads_dir: Path, file: _File) -> str:
+    """Where the copy of `file` is kept, relative to the data directory (`uploads/<sha256>.<ext>`),
+    so the data directory can move."""
+    return f"{uploads_dir.name}/{file.sha256}.{file.kind}"
 
-    Returns the path relative to the data directory (`uploads/<sha256>.<ext>`), so the data
-    directory can move.
+
+def _store_uploads(uploads_dir: Path, files: Sequence[_File]) -> None:
+    """Keep a copy of every file in `uploads/`, so review items can be reopened (plan 4.3).
+
+    Called once the stage is stored, so a refused or failed import leaves no copy behind.
     """
     uploads_dir.mkdir(parents=True, exist_ok=True)
-    name = f"{file.sha256}.{file.kind}"
-    target = uploads_dir / name
-    if not target.exists():
-        target.write_bytes(file.data)
-    return f"{uploads_dir.name}/{name}"
+    for file in files:
+        target = uploads_dir / f"{file.sha256}.{file.kind}"
+        if not target.exists():
+            target.write_bytes(file.data)
 
 
 def _read(
@@ -389,7 +394,7 @@ def _read_files(
     in_batch: dict[str, _FileResult] = {}
     reparsed: dict[int, str] = {}
     for file in files:
-        stored_path = _store_upload(uploads_dir, file)
+        stored_path = _upload_path(uploads_dir, file)
         earlier = ws.active_import_for(file.sha256)
         reading: _Reading | None = None
         duplicate: _FileResult | ImportInfo | None = in_batch.get(file.sha256)
