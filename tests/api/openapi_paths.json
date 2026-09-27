@@ -1,0 +1,19 @@
+[
+  "/benchmarks",
+  "/benchmarks/{benchmark_id}/series",
+  "/health",
+  "/instruments",
+  "/instruments/{isin}/mapping",
+  "/instruments/{isin}/mapping-history",
+  "/portfolio",
+  "/portfolio/holdings",
+  "/portfolio/imports",
+  "/portfolio/imports/{batch_id}",
+  "/portfolio/imports/{batch_id}/accept",
+  "/portfolio/imports/{batch_id}/confirmed-holdings",
+  "/portfolio/imports/{batch_id}/discard",
+  "/portfolio/lots",
+  "/portfolio/review",
+  "/portfolio/transactions",
+  "/portfolio/value"
+]
