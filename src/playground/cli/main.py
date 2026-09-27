@@ -12,6 +12,7 @@ from playground.cli import instruments as instruments_commands
 from playground.cli import marketdata as marketdata_commands
 from playground.cli import portfolio as portfolio_commands
 from playground.cli import review as review_commands
+from playground.cli import serve as serve_commands
 from playground.cli.context import AppContext
 from playground.config import Settings
 from playground.core.clock import InvalidClockSettingError, clock_from_settings, today_from_env
@@ -98,6 +99,7 @@ review_commands.register(app)
 portfolio_commands.register(app)
 instruments_commands.register(app)
 marketdata_commands.register(app)
+serve_commands.register(app)
 
 
 if __name__ == "__main__":
