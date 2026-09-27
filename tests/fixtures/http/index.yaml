@@ -1,0 +1,145 @@
+requests:
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: sap.de
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/sap.de.csv
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: eunl.de
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/eunl.de.csv
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: aapl.us
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/aapl.us.csv
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: nvda.us
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/nvda.us.csv
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: ^spx
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/spx_index.csv
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: no-data.invalid
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/no_data.txt
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: html-block.invalid
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 200
+    file: stooq/html_block.html
+- method: GET
+  url: https://stooq.com/q/d/l/
+  query:
+    s: http-500.invalid
+    d1: '20240101'
+    d2: '20241231'
+    i: d
+  response:
+    status: 500
+    file: stooq/http_500.txt
+- method: GET
+  url: https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip
+  query: {}
+  response:
+    status: 200
+    file: ecb/eurofxref-hist.zip
+    headers:
+      Content-Type: application/zip
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "DE0007164600"}]'
+  response:
+    status: 200
+    file: openfigi/DE0007164600.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "IE00B4L5Y983"}]'
+  response:
+    status: 200
+    file: openfigi/IE00B4L5Y983.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "US0378331005"}]'
+  response:
+    status: 200
+    file: openfigi/US0378331005.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "US67066G1040"}]'
+  response:
+    status: 200
+    file: openfigi/US67066G1040.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "DE0008404005"}]'
+  response:
+    status: 200
+    file: openfigi/DE0008404005.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "GB9999999998"}]'
+  response:
+    status: 200
+    file: openfigi/empty.json
+    headers:
+      Content-Type: application/json
+- method: POST
+  url: https://api.openfigi.com/v3/mapping
+  body: '[{"idType": "ID_ISIN", "idValue": "US9999999991"}]'
+  response:
+    status: 429
+    file: openfigi/rate_limited.json
+    headers:
+      Content-Type: application/json

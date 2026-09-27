@@ -1,0 +1,4 @@
+date;data_symbol;close;currency;adjustment
+2024-01-02;TEST.DE;100.00;EUR;raw
+2024-01-03;TEST.DE;101.50;EUR;raw
+2024-01-04;TEST.DE;99.75;EUR;raw

@@ -1,0 +1,6 @@
+isin;data_source;data_symbol;currency;note
+DE0007164600;stooq;sap.de;EUR;
+IE00B4L5Y983;stooq;eunl.de;EUR;
+US0378331005;stooq;aapl.us;USD;
+US67066G1040;stooq;nvda.us;USD;
+DE0008404005;manual;ALV.DE;EUR;
