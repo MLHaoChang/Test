@@ -1,11 +1,13 @@
 """The import commands (plan 5.9): `import`, `imports`, `reconcile`, `accept`, `discard`, `transactions`, `status`.
 
 `pg import FILE...` stages one batch and prints the reconciliation diff; nothing changes until
-`pg accept`. Every command that reads takes `--json`. Exit status: 0 on success, 1 on a usage or
-input error, 3 when `reconcile --strict` finds a difference with your confirmed holdings.
+`pg accept`, which rebuilds the lots and then the value series. `pg status` shows the latest value.
+Every command that reads takes `--json`. Exit status: 0 on success, 1 on a usage or input error, 3
+when `reconcile --strict` finds a difference with your confirmed holdings.
 """
 
 from pathlib import Path
+from typing import Any
 
 import typer
 
@@ -16,6 +18,7 @@ from playground.cli.context import (
     parse_day,
     portfolio_transaction,
     print_json,
+    values_line,
 )
 from playground.core.dates import format_ts_utc
 from playground.core.types import TxnType
@@ -138,11 +141,11 @@ def accept(
     batch: str = typer.Argument(..., help='The batch number, or "latest".'),
     json_output: bool = _JSON,
 ) -> None:
-    """Accept these transactions into your portfolio copy, and rebuild the lots."""
+    """Accept these transactions into your portfolio copy, and rebuild the lots and the value series."""
     app_ctx: AppContext = ctx.obj
     with portfolio_transaction(app_ctx) as (conn, portfolio_id):
         batch_id = resolve_batch_ref(conn, portfolio_id, batch)
-        result = accept_batch(conn, batch_id, clock=app_ctx.clock).to_dict()
+        result = accept_batch(conn, batch_id, clock=app_ctx.clock, market=app_ctx.market).to_dict()
     if json_output:
         print_json(result)
         return
@@ -151,6 +154,9 @@ def accept(
         f"{result['held_back']} held back, {result['released']} released."
     )
     typer.echo(f"Lots rebuilt: {result['lots']} lots, {result['disposals']} disposals.")
+    line = values_line(result["values"])
+    if line is not None:
+        typer.echo(line)
     for item in result["review_closed"]:
         resolution = item.get("resolution") or {}
         typer.echo(f"Closed review item {item['id']} ({item['kind']}): {resolution.get('how')}.")
@@ -213,10 +219,10 @@ def transactions(
 
 
 def status(ctx: typer.Context, json_output: bool = _JSON) -> None:
-    """Show the portfolio, the last import, the reminder to import again and the review queue."""
+    """Show the portfolio, the last import, the reminder to import again, the review queue and the latest value."""
     app_ctx: AppContext = ctx.obj
     with portfolio_transaction(app_ctx) as (conn, portfolio_id):
-        summary = portfolio_status(conn, portfolio_id, clock=app_ctx.clock)
+        summary = portfolio_status(conn, portfolio_id, clock=app_ctx.clock, market=app_ctx.market)
     if json_output:
         print_json(summary)
         return
@@ -234,6 +240,29 @@ def status(ctx: typer.Context, json_output: bool = _JSON) -> None:
     typer.echo(f"Open review items: {summary['open_review_items']} (see pg review list)")
     counts = summary["transactions"]
     typer.echo(f"Transactions: {counts['accepted']} accepted, {counts['held']} held back, {counts['staged']} staged")
+    for line in _latest_value_lines(summary["latest_value"]):
+        typer.echo(line)
+
+
+def _latest_value_lines(latest: dict[str, Any] | None) -> list[str]:
+    """The latest value in plain English: the value, the cost basis, and how many flags of each kind it has."""
+    if latest is None:
+        return ["Latest value: none yet. It appears once an import is accepted."]
+    cost = (
+        f"cost basis {latest['cost_basis_eur']} EUR"
+        if latest["cost_basis_eur"] is not None
+        else "cost basis unknown (see pg transfers list)"
+    )
+    state = "complete" if latest["complete"] else "incomplete: some holdings have no price or rate (see pg value)"
+    lines = [f"Latest value: {latest['value_eur']} EUR on {latest['date']}, {cost}, {state}."]
+    if latest["flags"]:
+        kinds: dict[str, int] = {}
+        for label in latest["flags"]:
+            kind = label.split(" ", 1)[0]
+            kinds[kind] = kinds.get(kind, 0) + 1
+        listed = ", ".join(f"{kind} ({count})" for kind, count in kinds.items())
+        lines.append(f"Flags on that day: {listed}. pg holdings says what each one means.")
+    return lines
 
 
 def register(app: typer.Typer) -> None:

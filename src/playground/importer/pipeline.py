@@ -26,9 +26,11 @@ Only one batch can be staged at a time, and nothing touches accepted data until 
 apart from the instruments: a stage stores the ones its files name, and names one known so far
 only by its ISIN (`persist.store_stage`). Accept marks the batch accepted, applies the closures
 and merges, releases what is no longer held, rebuilds the lot book from every accepted
-transaction, and sets the time of the last import.
+transaction, then the value series and its holdings snapshots (plan 5.7, when it is given the
+market data), and sets the time of the last import.
 `discard_batch` removes the batch's transactions and sources and closes the items it raised as
-"batch discarded". `pg status` shows a reminder when the last import is more than 30 days old.
+"batch discarded". `pg status` shows a reminder when the last import is more than 30 days old,
+and the latest value.
 """
 
 import hashlib
@@ -65,6 +67,7 @@ from playground.storage.schema import (
     transaction_sources,
     transactions,
 )
+from playground.valuation.portfolio import MarketData, day_record, latest_value, rebuild_values
 
 REMINDER_AFTER_DAYS = 30
 """Spec 3.10: the app reminds you when the last import is more than this many days old."""
@@ -785,8 +788,13 @@ def reparsed_by(ws: Workspace, batch_id: int) -> dict[int, str]:
     return found
 
 
-def accept_batch(conn: Connection, batch_id: int, *, clock: Clock) -> AcceptResult:
-    """Accept a staged batch: apply what its diff showed and rebuild the lot book (plan 5.3.6)."""
+def accept_batch(conn: Connection, batch_id: int, *, clock: Clock, market: MarketData | None = None) -> AcceptResult:
+    """Accept a staged batch: apply what its diff showed, rebuild the lot book, then the values (plan 5.3.6).
+
+    With `market`, the stored value series is rebuilt over its default range (plan 5.7) and the
+    result says so under `values`. Without it the value step is left out and `values` is `None`:
+    the CLI and the API always give the market data of their data directory.
+    """
     batch = _staged_batch(conn, batch_id)
     portfolio_id = int(batch.portfolio_id)
     now = format_ts_utc(clock.now_utc())
@@ -802,6 +810,7 @@ def accept_batch(conn: Connection, batch_id: int, *, clock: Clock) -> AcceptResu
         repos.set_import_status(conn, import_id, "reparsed")
     repos.set_batch_status(conn, batch_id, "accepted", accepted_at=now)
     repos.set_last_import_at(conn, portfolio_id, now)
+    values = rebuild_values(conn, portfolio_id, market=market, clock=clock) if market is not None else None
 
     instrument_names = repos.instrument_names(conn)
     in_batch = [txn for txn in ws.alive() if txn.batch_id == batch_id]
@@ -818,6 +827,7 @@ def accept_batch(conn: Connection, batch_id: int, *, clock: Clock) -> AcceptResu
         "disposals": len(plan.book.disposals),
         "open_review_items": sum(1 for item in ws.items.values() if item.status == "open"),
         "last_import_at": now,
+        "values": values.summary() if values is not None else None,
     }
     return AcceptResult(batch_id=batch_id, data=data)
 
@@ -860,31 +870,41 @@ def discard_batch(conn: Connection, batch_id: int, *, clock: Clock) -> DiscardRe
 
 @dataclass(frozen=True)
 class RefreshResult:
-    """What checking the portfolio again did after a change that is not an import."""
+    """What checking the portfolio again did after a change that is not an import.
+
+    `values` summarises the rebuilt value series (`ValueReport.summary`), or is `None` when the
+    refresh was not given the market data.
+    """
 
     review_closed: list[dict[str, Any]]
     review_opened: list[dict[str, Any]]
     lots: int
     disposals: int
+    values: dict[str, Any] | None = None
 
 
-def refresh_portfolio(conn: Connection, portfolio_id: int, *, clock: Clock, cause: str) -> RefreshResult:
+def refresh_portfolio(
+    conn: Connection, portfolio_id: int, *, clock: Clock, cause: str, market: MarketData | None = None
+) -> RefreshResult:
     """Check every review item again and rebuild the lot book from the accepted transactions.
 
     For a change outside an import, such as a cost basis entered with `pg transfers set-cost`
     (plan 5.3.5): `cause` says what changed and is named as what superseded an item. A batch
-    that is staged is left out: its data is checked when it is accepted.
+    that is staged is left out: its data is checked when it is accepted. With `market`, the
+    stored value series is rebuilt too (plan 5.7).
     """
     now = format_ts_utc(clock.now_utc())
     ws = Workspace.load(conn, portfolio_id, exclude_batch=repos.staged_batch_id(conn, portfolio_id))
     plan = evaluate(ws, Cause(batch_id=None, text=cause), now=now)
     persist.apply_plan(conn, ws, plan, now=now)
+    values = rebuild_values(conn, portfolio_id, market=market, clock=clock) if market is not None else None
     names = repos.instrument_names(conn)
     return RefreshResult(
         review_closed=[item_record(ws, closure.item, names) for closure in plan.closures],
         review_opened=[item_record(ws, item, names) for item in [*plan.new_items, *plan.reopened]],
         lots=len(plan.book.lots),
         disposals=len(plan.book.disposals),
+        values=values.summary() if values is not None else None,
     )
 
 
@@ -958,8 +978,15 @@ def import_reminder(last_import_at: str | None, today: date) -> Reminder:
     return Reminder(due=False, days_since_last_import=days, message=f"Your last import was {when}.")
 
 
-def portfolio_status(conn: Connection, portfolio_id: int, *, clock: Clock) -> dict[str, Any]:
-    """The portfolio summary of `pg status` (and `GET /portfolio`): the last import, the reminder and the queue."""
+def portfolio_status(
+    conn: Connection, portfolio_id: int, *, clock: Clock, market: MarketData | None = None
+) -> dict[str, Any]:
+    """The portfolio summary of `pg status` (and `GET /portfolio`): the last import, the reminder and the queue.
+
+    With `market`, `latest_value` is the value on the last weekday on or before today (plan 5.7),
+    worked out from the prices and rates stored now: `valuation.portfolio.day_record`. It is
+    `None` before anything is accepted, and without the market data.
+    """
     portfolio = repos.get_portfolio(conn, portfolio_id)
     today = clock.today()
     counts: dict[str, int] = {
@@ -975,6 +1002,7 @@ def portfolio_status(conn: Connection, portfolio_id: int, *, clock: Clock) -> di
         .select_from(review_items)
         .where(review_items.c.portfolio_id == portfolio_id, review_items.c.status == "open")
     ).scalar_one()
+    latest = latest_value(conn, portfolio_id, market=market, clock=clock) if market is not None else None
     return {
         "portfolio": {"name": portfolio.name, "base_currency": portfolio.base_currency, "source": portfolio.source},
         "today": today.isoformat(),
@@ -983,4 +1011,5 @@ def portfolio_status(conn: Connection, portfolio_id: int, *, clock: Clock) -> di
         "staged_batch": repos.staged_batch_id(conn, portfolio_id),
         "open_review_items": int(open_items),
         "transactions": {state: int(counts.get(state, 0)) for state in ("accepted", "held", "staged")},
+        "latest_value": day_record(latest) if latest is not None else None,
     }

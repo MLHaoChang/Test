@@ -1,9 +1,9 @@
 """The review queue commands (plan 5.9): `pg review list`, `show`, `dismiss`, `resolve` and `export`.
 
 The review queue lists documents, rows and conflicts the app could not handle with certainty.
-A resolution applies at once, and the lots are rebuilt. `pg review export` writes an item's
-extracted text to a file, optionally anonymised, so a new layout can be shared and turned into a
-fixture without ever sending the file itself (plan 5.3.5).
+A resolution applies at once, and the lots and the value series are rebuilt. `pg review export`
+writes an item's extracted text to a file, optionally anonymised, so a new layout can be shared and
+turned into a fixture without ever sending the file itself (plan 5.3.5).
 """
 
 from pathlib import Path
@@ -83,7 +83,7 @@ def dismiss_command(
     if not reason:
         fail("Say why you dismiss the item with --reason.")
     with portfolio_transaction(app_ctx) as (conn, _):
-        item = dismiss_item(conn, item_id, reason=reason, clock=app_ctx.clock)
+        item = dismiss_item(conn, item_id, reason=reason, clock=app_ctx.clock, market=app_ctx.market)
     if json_output:
         print_json(item)
         return
@@ -110,7 +110,7 @@ def resolve_command(
     if into is not None and chosen[0] != "merge":
         fail("--into goes with --merge only.")
     with portfolio_transaction(app_ctx) as (conn, _):
-        item = resolve_item(conn, item_id, how=chosen[0], clock=app_ctx.clock, into=into)
+        item = resolve_item(conn, item_id, how=chosen[0], clock=app_ctx.clock, into=into, market=app_ctx.market)
     if json_output:
         print_json(item)
         return

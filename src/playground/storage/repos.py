@@ -7,7 +7,9 @@ the functions of the import pipeline: instruments named by documents,
 batches, imports, transactions and their sources, review items, the lot
 book and the time of the last import. WP8 adds reading the stored lot
 book back (`list_lots`, `list_disposals`) and storing a transfer's cost
-basis (`insert_cost_basis_input`). Later work packages add theirs.
+basis (`insert_cost_basis_input`). WP10 adds the value series and its
+holdings snapshots (`replace_value_series`, `list_value_series`,
+`list_holdings_snapshots`). Later work packages add theirs.
 """
 
 from collections.abc import Mapping, Sequence
@@ -24,11 +26,13 @@ from playground.storage.schema import (
     confirmed_holdings,
     cost_basis_inputs,
     disposals,
+    holdings_snapshots,
     import_batches,
     imports,
     instrument_mapping_log,
     instruments,
     lots,
+    portfolio_values,
     portfolios,
     review_items,
     transaction_sources,
@@ -102,12 +106,21 @@ def instrument_names(conn: Connection) -> dict[str, str]:
     return {row.isin: row.name for row in conn.execute(sa.select(instruments.c.isin, instruments.c.name))}
 
 
+def instrument_ids(conn: Connection) -> dict[str, int]:
+    """The id of every known instrument, by ISIN."""
+    return {row.isin: int(row.id) for row in conn.execute(sa.select(instruments.c.isin, instruments.c.id))}
+
+
 def delete_unused_instruments(conn: Connection) -> int:
-    """Delete unmapped instruments that no transaction, lot or mapping log row refers to (after a discard)."""
+    """Delete unmapped instruments that no transaction, lot, snapshot or mapping log row refers to (after a discard)."""
     used = (
         sa.select(transactions.c.instrument_id)
         .where(transactions.c.instrument_id.is_not(None))
-        .union(sa.select(lots.c.instrument_id), sa.select(instrument_mapping_log.c.instrument_id))
+        .union(
+            sa.select(lots.c.instrument_id),
+            sa.select(holdings_snapshots.c.instrument_id),
+            sa.select(instrument_mapping_log.c.instrument_id),
+        )
     )
     result = conn.execute(
         sa.delete(instruments).where(instruments.c.mapping_status == "unmapped", instruments.c.id.not_in(used))
@@ -322,6 +335,66 @@ def list_disposals(conn: Connection, portfolio_id: int, *, isin: str | None = No
     if isin is not None:
         query = query.where(instruments.c.isin == isin)
     return list(conn.execute(query).all())
+
+
+# --- The value series ---------------------------------------------------------------------------
+
+
+def replace_value_series(
+    conn: Connection,
+    portfolio_id: int,
+    *,
+    values: Sequence[Mapping[str, Any]],
+    snapshots: Sequence[Mapping[str, Any]],
+    start: date | None = None,
+    end: date | None = None,
+) -> None:
+    """Replace the stored value series (`portfolio_values`) and its `holdings_snapshots` (plan 5.2, 5.7).
+
+    Without `start` and `end` every stored day of the portfolio is replaced, as the rebuild after an
+    accept, a resolution or `pg transfers set-cost` does; with them, only the days from `start` to
+    `end`, as `pg value --from --to` does. The rows are written as given: `values` are
+    `portfolio_values` rows and `snapshots` are `holdings_snapshots` rows, each with its
+    `portfolio_id`. The caller runs this inside one database transaction.
+    """
+    value_filter = [portfolio_values.c.portfolio_id == portfolio_id]
+    snapshot_filter = [holdings_snapshots.c.portfolio_id == portfolio_id]
+    if start is not None:
+        value_filter.append(portfolio_values.c.date >= start)
+        snapshot_filter.append(holdings_snapshots.c.as_of >= start)
+    if end is not None:
+        value_filter.append(portfolio_values.c.date <= end)
+        snapshot_filter.append(holdings_snapshots.c.as_of <= end)
+    conn.execute(sa.delete(holdings_snapshots).where(*snapshot_filter))
+    conn.execute(sa.delete(portfolio_values).where(*value_filter))
+    if values:
+        conn.execute(sa.insert(portfolio_values), [dict(row) for row in values])
+    if snapshots:
+        conn.execute(sa.insert(holdings_snapshots), [dict(row) for row in snapshots])
+
+
+def list_value_series(
+    conn: Connection, portfolio_id: int, *, start: date | None = None, end: date | None = None
+) -> list[Row[Any]]:
+    """The stored value series, oldest day first; only the days from `start` to `end` when given."""
+    query = sa.select(portfolio_values).where(portfolio_values.c.portfolio_id == portfolio_id)
+    if start is not None:
+        query = query.where(portfolio_values.c.date >= start)
+    if end is not None:
+        query = query.where(portfolio_values.c.date <= end)
+    return list(conn.execute(query.order_by(portfolio_values.c.date)).all())
+
+
+def list_holdings_snapshots(conn: Connection, portfolio_id: int, as_of: date) -> list[Row[Any]]:
+    """The stored holdings snapshots of one day, with each instrument's ISIN, in ISIN order."""
+    return list(
+        conn.execute(
+            sa.select(holdings_snapshots, instruments.c.isin)
+            .join(instruments, instruments.c.id == holdings_snapshots.c.instrument_id)
+            .where(holdings_snapshots.c.portfolio_id == portfolio_id, holdings_snapshots.c.as_of == as_of)
+            .order_by(instruments.c.isin)
+        ).all()
+    )
 
 
 # --- Cost basis for transfers in ---------------------------------------------------------------

@@ -1,0 +1,40 @@
+{
+  "portfolio": {
+    "name": "Trade Republic",
+    "base_currency": "EUR",
+    "source": "trade_republic"
+  },
+  "today": "2025-02-03",
+  "last_import_at": "2024-12-31T11:00:00Z",
+  "reminder": {
+    "due": true,
+    "days_since_last_import": 34,
+    "message": "Your last import was 34 days ago, more than 30. Import your latest Trade Republic exports to keep your portfolio up to date."
+  },
+  "staged_batch": null,
+  "open_review_items": 1,
+  "transactions": {
+    "accepted": 14,
+    "held": 0,
+    "staged": 0
+  },
+  "latest_value": {
+    "date": "2025-02-03",
+    "value_eur": "6146.85",
+    "cost_basis_eur": "4192.60",
+    "complete": true,
+    "flags": [
+      "stale_price DE0007164600",
+      "stale_price DE0008404005",
+      "stale_price IE00B4L5Y983",
+      "stale_price US0378331005",
+      "stale_price US67066G1040",
+      "stale_fx US0378331005",
+      "stale_fx US67066G1040",
+      "dividend_adjusted_prices DE0007164600",
+      "dividend_adjusted_prices IE00B4L5Y983",
+      "dividend_adjusted_prices US0378331005",
+      "dividend_adjusted_prices US67066G1040"
+    ]
+  }
+}

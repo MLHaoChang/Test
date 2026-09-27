@@ -73,13 +73,19 @@ def priced(imported: str) -> str:
     return imported
 
 
-def stored_dates(data_dir: str) -> list[str]:
+def stored_series(data_dir: str) -> list[tuple[str, str]]:
+    """The stored value series: (date, value in EUR to the cent), oldest day first."""
     engine = open_registry(Path(data_dir))
     try:
         with engine.connect() as conn:
-            return [row.date.isoformat() for row in conn.execute(sa.select(portfolio_values).order_by("date"))]
+            rows = conn.execute(sa.select(portfolio_values).order_by(portfolio_values.c.date)).all()
     finally:
         engine.dispose()
+    return [(row.date.isoformat(), f"{row.value_eur:.2f}") for row in rows]
+
+
+def stored_dates(data_dir: str) -> list[str]:
+    return [day for day, _ in stored_series(data_dir)]
 
 
 # --- pg value ---------------------------------------------------------------------------------
@@ -168,6 +174,13 @@ def test_value_with_an_explicit_range_uses_it(priced: str) -> None:
         "2024-06-06",
         "2024-06-07",
     ]
+
+
+def test_value_from_a_day_runs_to_the_last_weekday_up_to_today(priced: str) -> None:
+    data = json.loads(ok(pg(priced, "value", "--from", "2024-12-27", "--json", today="2024-12-29")))
+
+    # PG_TODAY is a Sunday: the range ends on the Friday before.
+    assert (data["from"], data["to"], data["days"]) == ("2024-12-27", "2024-12-27", 1)
 
 
 @pytest.mark.parametrize(
@@ -281,6 +294,27 @@ def test_set_cost_rebuilds_the_value_series(priced: str) -> None:
 
     status = json.loads(ok(pg(priced, "status", "--json")))
     assert status["latest_value"]["cost_basis_eur"] == "2201.00"
+
+
+def test_a_resolution_through_pg_review_rebuilds_the_value_series(priced: str, tmp_path: Path) -> None:
+    # A manual row one day after the CSV purchase is held back as a possible duplicate (plan 5.3.4,
+    # rule c). Keeping both releases it, so from then on the series counts 20 SAP shares.
+    manual = tmp_path / "manual.csv"
+    manual.write_text(
+        "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note\n"
+        "2024-01-16;10:05;buy;DE0007164600;10;140.00;EUR;-1401.00;1.00;;a second purchase\n",
+        encoding="utf-8",
+    )
+    ok(pg(priced, "import", str(manual)))
+    ok(pg(priced, "accept", "latest"))
+    items = json.loads(ok(pg(priced, "review", "list", "--json")))["items"]
+    duplicate = next(item for item in items if item["kind"] == "possible_duplicate")
+    assert stored_series(priced)[-1] == ("2024-12-31", "3520.00")
+
+    ok(pg(priced, "review", "resolve", str(duplicate["id"]), "--keep-both"))
+
+    # 20 SAP at 236.00 and 4 Allianz at 290.00.
+    assert stored_series(priced)[-1] == ("2024-12-31", "5880.00")
 
 
 def test_status_shows_the_latest_value(priced: str) -> None:

@@ -1,7 +1,7 @@
 """What every `pg` command shares: the settings, the clock, the registry and plain output (plan 5.9)."""
 
 import json
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date
@@ -18,6 +18,7 @@ from playground.http.client import HttpClient
 from playground.storage import repos
 from playground.storage.db import open_registry
 from playground.storage.schema import ensure_schema
+from playground.valuation.portfolio import MarketData
 
 EXIT_INPUT_ERROR = 1
 EXIT_MISMATCH = 3
@@ -38,6 +39,25 @@ class AppContext:
     @property
     def uploads_dir(self) -> Path:
         return self.settings.data_dir / "uploads"
+
+    @property
+    def market(self) -> MarketData:
+        """The prices and ECB rates stored under the data directory (plan 4.2), for every valuation."""
+        return MarketData.from_data_dir(self.settings.data_dir)
+
+
+def values_line(summary: Mapping[str, Any] | None) -> str | None:
+    """One line on a rebuilt value series (`ValueReport.summary`), for accept and set-cost; `None` if not rebuilt."""
+    if summary is None:
+        return None
+    latest = summary["latest"]
+    if latest is None:
+        return "Value series rebuilt: nothing to value yet."
+    state = "" if latest["complete"] else ", incomplete (see pg value)"
+    return (
+        f"Value series rebuilt: {summary['days']} weekdays from {summary['from']} to {summary['to']}. "
+        f"Latest value: {latest['value_eur']} EUR on {latest['date']}{state}."
+    )
 
 
 def fail(message: str, code: int = EXIT_INPUT_ERROR) -> NoReturn:

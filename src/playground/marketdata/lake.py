@@ -200,6 +200,42 @@ class PriceStore:
         """Every stored point for `(source, symbol)`, oldest first."""
         return sorted(self._read_points(self._path(source, symbol)), key=lambda point: point.date)
 
+    def series(self, source: str, symbol: str) -> PriceSeries | None:
+        """The stored series for `(source, symbol)` with its currency and adjustment, or `None` if nothing is stored.
+
+        The valuation (plan 5.7) needs the `adjustment` the series declares (`raw`, `split` or
+        `split_dividend`) and the currency its closes are in, not only the closes. Every row of a
+        stored file carries the same two values, because `upsert` writes the newest series' own
+        values on every row it keeps.
+        """
+        path = self._path(source, symbol)
+        if not path.is_file():
+            return None
+        rows = pq.read_table(path).to_pylist()
+        if not rows:
+            return None
+        points = sorted(
+            (
+                PricePoint(
+                    date=row["date"],
+                    open=row["open"],
+                    high=row["high"],
+                    low=row["low"],
+                    close=row["close"],
+                    volume=row["volume"],
+                )
+                for row in rows
+            ),
+            key=lambda point: point.date,
+        )
+        return PriceSeries(
+            source=source,
+            symbol=symbol,
+            currency=rows[0]["currency"],
+            adjustment=rows[0]["adjustment"],
+            points=tuple(points),
+        )
+
     def latest_on_or_before(self, source: str, symbol: str, day: date) -> PricePoint | None:
         """The latest point for `(source, symbol)` dated on or before `day` (the as-of rule, 5.7)."""
         candidates = [point for point in self._read_points(self._path(source, symbol)) if point.date <= day]
@@ -240,6 +276,10 @@ class FxStore:
             return []
         table = pq.read_table(self._path)
         return [FxPoint(date=row["date"], currency=row["currency"], rate=row["rate"]) for row in table.to_pylist()]
+
+    def rates(self, currency: str) -> list[FxPoint]:
+        """Every stored rate for `currency`, oldest first (the valuation reads them once, plan 5.7)."""
+        return sorted((point for point in self._read_points() if point.currency == currency), key=lambda p: p.date)
 
     def rate_on_or_before(self, currency: str, day: date) -> FxPoint | None:
         """The latest ECB rate for `currency` dated on or before `day` (the as-of rule, 5.7)."""

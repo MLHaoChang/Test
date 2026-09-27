@@ -1,0 +1,3060 @@
+{
+  "currency": "EUR",
+  "from": "2024-01-02",
+  "to": "2024-12-31",
+  "stale_after_days": 5,
+  "days": 261,
+  "complete_days": 261,
+  "latest": {
+    "date": "2024-12-31",
+    "value_eur": "6146.85",
+    "cost_basis_eur": "4192.60",
+    "complete": true,
+    "flags": [
+      "stale_price DE0008404005",
+      "dividend_adjusted_prices DE0007164600",
+      "dividend_adjusted_prices IE00B4L5Y983",
+      "dividend_adjusted_prices US0378331005",
+      "dividend_adjusted_prices US67066G1040"
+    ]
+  },
+  "flags": [
+    {
+      "kind": "stale_price",
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "detail": "The close used is more than 5 days older than the day valued. It is still used. Load newer closes with pg prices import-file.",
+      "first": "2024-12-26",
+      "last": "2024-12-31",
+      "days": 4
+    },
+    {
+      "kind": "dividend_adjusted_prices",
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "detail": "The closes of sap.de (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated.",
+      "first": "2024-01-15",
+      "last": "2024-12-31",
+      "days": 252
+    },
+    {
+      "kind": "dividend_adjusted_prices",
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "detail": "The closes of eunl.de (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated.",
+      "first": "2024-02-01",
+      "last": "2024-12-31",
+      "days": 239
+    },
+    {
+      "kind": "dividend_adjusted_prices",
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "detail": "The closes of aapl.us (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated.",
+      "first": "2024-03-12",
+      "last": "2024-12-31",
+      "days": 211
+    },
+    {
+      "kind": "dividend_adjusted_prices",
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "detail": "The closes of nvda.us (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated.",
+      "first": "2024-03-20",
+      "last": "2024-12-31",
+      "days": 205
+    }
+  ],
+  "series": [
+    {
+      "date": "2024-01-02",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-03",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-04",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-05",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-08",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-09",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-10",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-11",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-12",
+      "value_eur": "0.00",
+      "cost_basis_eur": "0.00",
+      "complete": true,
+      "flags": []
+    },
+    {
+      "date": "2024-01-15",
+      "value_eur": "1400.00",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-16",
+      "value_eur": "1403.30",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-17",
+      "value_eur": "1406.70",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-18",
+      "value_eur": "1410.00",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-19",
+      "value_eur": "1413.30",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-22",
+      "value_eur": "1416.70",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-23",
+      "value_eur": "1420.00",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-24",
+      "value_eur": "1423.30",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-25",
+      "value_eur": "1426.70",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-26",
+      "value_eur": "1430.00",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-29",
+      "value_eur": "1433.30",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-30",
+      "value_eur": "1436.70",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-01-31",
+      "value_eur": "1440.00",
+      "cost_basis_eur": "1401.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600"
+      ]
+    },
+    {
+      "date": "2024-02-01",
+      "value_eur": "1643.30",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-02",
+      "value_eur": "1647.18",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-05",
+      "value_eur": "1650.95",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-06",
+      "value_eur": "1654.73",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-07",
+      "value_eur": "1658.60",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-08",
+      "value_eur": "1662.38",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-09",
+      "value_eur": "1666.15",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-12",
+      "value_eur": "1670.03",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-13",
+      "value_eur": "1673.80",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-14",
+      "value_eur": "1677.58",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-15",
+      "value_eur": "1681.45",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-16",
+      "value_eur": "1685.25",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-19",
+      "value_eur": "1689.03",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-20",
+      "value_eur": "1692.90",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-21",
+      "value_eur": "1696.68",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-22",
+      "value_eur": "1700.45",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-23",
+      "value_eur": "1704.33",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-26",
+      "value_eur": "1708.10",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-27",
+      "value_eur": "1711.88",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-28",
+      "value_eur": "1715.75",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-02-29",
+      "value_eur": "1719.53",
+      "cost_basis_eur": "1601.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-01",
+      "value_eur": "1933.30",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-04",
+      "value_eur": "1937.20",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-05",
+      "value_eur": "1940.95",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-06",
+      "value_eur": "1944.75",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-07",
+      "value_eur": "1948.65",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-08",
+      "value_eur": "1952.40",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-11",
+      "value_eur": "1956.20",
+      "cost_basis_eur": "1811.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983"
+      ]
+    },
+    {
+      "date": "2024-03-12",
+      "value_eur": "2760.09",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-13",
+      "value_eur": "2765.25",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-14",
+      "value_eur": "2770.51",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-15",
+      "value_eur": "2775.74",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-18",
+      "value_eur": "2780.90",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-19",
+      "value_eur": "2786.12",
+      "cost_basis_eur": "2612.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005"
+      ]
+    },
+    {
+      "date": "2024-03-20",
+      "value_eur": "4491.48",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-21",
+      "value_eur": "4503.44",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-22",
+      "value_eur": "4515.26",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-25",
+      "value_eur": "4527.37",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-26",
+      "value_eur": "4539.20",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-27",
+      "value_eur": "4551.21",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-28",
+      "value_eur": "4563.32",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-03-29",
+      "value_eur": "4563.32",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-01",
+      "value_eur": "4571.12",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-02",
+      "value_eur": "4583.13",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-03",
+      "value_eur": "4594.96",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-04",
+      "value_eur": "4607.08",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-05",
+      "value_eur": "4619.10",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-08",
+      "value_eur": "4630.89",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-09",
+      "value_eur": "4643.06",
+      "cost_basis_eur": "4313.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-10",
+      "value_eur": "5454.90",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-11",
+      "value_eur": "5467.78",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-12",
+      "value_eur": "5480.71",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-15",
+      "value_eur": "5493.30",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-16",
+      "value_eur": "5506.23",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-17",
+      "value_eur": "5518.73",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-18",
+      "value_eur": "5531.66",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-19",
+      "value_eur": "5544.40",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-22",
+      "value_eur": "5557.20",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-23",
+      "value_eur": "5570.14",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-24",
+      "value_eur": "5582.84",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-25",
+      "value_eur": "5595.78",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-26",
+      "value_eur": "5608.62",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-29",
+      "value_eur": "5621.33",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-04-30",
+      "value_eur": "5634.28",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-01",
+      "value_eur": "5642.09",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-02",
+      "value_eur": "5655.03",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-03",
+      "value_eur": "5667.83",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-06",
+      "value_eur": "5680.60",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-07",
+      "value_eur": "5693.55",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-08",
+      "value_eur": "5706.27",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-09",
+      "value_eur": "5719.27",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-10",
+      "value_eur": "5732.08",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-13",
+      "value_eur": "5744.85",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-14",
+      "value_eur": "5757.76",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-15",
+      "value_eur": "5770.54",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-16",
+      "value_eur": "5783.40",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-17",
+      "value_eur": "5796.05",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-20",
+      "value_eur": "5808.83",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-21",
+      "value_eur": "5821.80",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-22",
+      "value_eur": "5834.58",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-23",
+      "value_eur": "5847.40",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-24",
+      "value_eur": "5860.37",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-27",
+      "value_eur": "5865.29",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-28",
+      "value_eur": "5878.07",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-29",
+      "value_eur": "5890.95",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-30",
+      "value_eur": "5903.69",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-05-31",
+      "value_eur": "5916.67",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-03",
+      "value_eur": "5932.14",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-04",
+      "value_eur": "5947.38",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-05",
+      "value_eur": "5962.76",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-06",
+      "value_eur": "5978.09",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-07",
+      "value_eur": "5993.49",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-10",
+      "value_eur": "6008.83",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-11",
+      "value_eur": "6024.27",
+      "cost_basis_eur": "5114.00",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-12",
+      "value_eur": "3939.52",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-13",
+      "value_eur": "3946.84",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-14",
+      "value_eur": "3954.18",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-17",
+      "value_eur": "3961.42",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-18",
+      "value_eur": "3968.76",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-19",
+      "value_eur": "3971.26",
+      "cost_basis_eur": "3392.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-20",
+      "value_eur": "5018.34",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-21",
+      "value_eur": "5026.73",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-24",
+      "value_eur": "5035.03",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-25",
+      "value_eur": "5043.03",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-26",
+      "value_eur": "5051.53",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-27",
+      "value_eur": "5059.77",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-06-28",
+      "value_eur": "5067.76",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-01",
+      "value_eur": "5076.19",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-02",
+      "value_eur": "5084.52",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-03",
+      "value_eur": "5092.51",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-04",
+      "value_eur": "5095.92",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-05",
+      "value_eur": "5104.44",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-08",
+      "value_eur": "5112.46",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-09",
+      "value_eur": "5120.70",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-10",
+      "value_eur": "5129.01",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-11",
+      "value_eur": "5137.26",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-12",
+      "value_eur": "5145.57",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-15",
+      "value_eur": "5153.84",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-16",
+      "value_eur": "5162.04",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-17",
+      "value_eur": "5170.37",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-18",
+      "value_eur": "5178.73",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-19",
+      "value_eur": "5186.91",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-22",
+      "value_eur": "5195.27",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-23",
+      "value_eur": "5203.64",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-24",
+      "value_eur": "5211.83",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-25",
+      "value_eur": "5220.20",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-26",
+      "value_eur": "5228.46",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-29",
+      "value_eur": "5236.73",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-30",
+      "value_eur": "5245.09",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-07-31",
+      "value_eur": "5253.43",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-01",
+      "value_eur": "5261.66",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-02",
+      "value_eur": "5270.02",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-05",
+      "value_eur": "5278.42",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-06",
+      "value_eur": "5286.68",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-07",
+      "value_eur": "5295.03",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-08",
+      "value_eur": "5303.36",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-09",
+      "value_eur": "5311.61",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-12",
+      "value_eur": "5320.02",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-13",
+      "value_eur": "5328.36",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-14",
+      "value_eur": "5336.66",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-15",
+      "value_eur": "5345.01",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-16",
+      "value_eur": "5353.43",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-19",
+      "value_eur": "5361.66",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-20",
+      "value_eur": "5370.09",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-21",
+      "value_eur": "5378.52",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-22",
+      "value_eur": "5386.81",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-23",
+      "value_eur": "5395.12",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-26",
+      "value_eur": "5403.53",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-27",
+      "value_eur": "5411.85",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-28",
+      "value_eur": "5420.27",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-29",
+      "value_eur": "5428.67",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-08-30",
+      "value_eur": "5436.96",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-02",
+      "value_eur": "5440.45",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-03",
+      "value_eur": "5448.91",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-04",
+      "value_eur": "5456.98",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-05",
+      "value_eur": "5465.63",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-06",
+      "value_eur": "5474.03",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-09",
+      "value_eur": "5482.19",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-10",
+      "value_eur": "5490.76",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-11",
+      "value_eur": "5499.21",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-12",
+      "value_eur": "5507.37",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-13",
+      "value_eur": "5516.02",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-16",
+      "value_eur": "5524.50",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-17",
+      "value_eur": "5532.55",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-18",
+      "value_eur": "5541.05",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-19",
+      "value_eur": "5549.73",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-20",
+      "value_eur": "5557.84",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-23",
+      "value_eur": "5566.30",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-24",
+      "value_eur": "5574.92",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-25",
+      "value_eur": "5583.11",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-26",
+      "value_eur": "5591.59",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-27",
+      "value_eur": "5600.24",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-09-30",
+      "value_eur": "5608.44",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-01",
+      "value_eur": "5616.93",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-02",
+      "value_eur": "5625.60",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-03",
+      "value_eur": "5633.73",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-04",
+      "value_eur": "5642.22",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-07",
+      "value_eur": "5650.91",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-08",
+      "value_eur": "5659.13",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-09",
+      "value_eur": "5667.57",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-10",
+      "value_eur": "5676.27",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-11",
+      "value_eur": "5684.49",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-14",
+      "value_eur": "5693.01",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-15",
+      "value_eur": "5701.71",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-16",
+      "value_eur": "5709.91",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-17",
+      "value_eur": "5718.42",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-18",
+      "value_eur": "5727.13",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-21",
+      "value_eur": "5735.29",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-22",
+      "value_eur": "5743.86",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-23",
+      "value_eur": "5752.59",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-24",
+      "value_eur": "5760.79",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-25",
+      "value_eur": "5769.29",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-28",
+      "value_eur": "5778.06",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-29",
+      "value_eur": "5786.31",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-30",
+      "value_eur": "5794.87",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-10-31",
+      "value_eur": "5803.60",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-01",
+      "value_eur": "5811.75",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-04",
+      "value_eur": "5820.34",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-05",
+      "value_eur": "5829.11",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-06",
+      "value_eur": "5837.37",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-07",
+      "value_eur": "5845.93",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-08",
+      "value_eur": "5854.66",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-11",
+      "value_eur": "5862.93",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-12",
+      "value_eur": "5871.52",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-13",
+      "value_eur": "5880.28",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-14",
+      "value_eur": "5888.53",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-15",
+      "value_eur": "5897.12",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-18",
+      "value_eur": "5905.90",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-19",
+      "value_eur": "5914.11",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-20",
+      "value_eur": "5922.74",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-21",
+      "value_eur": "5931.55",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-22",
+      "value_eur": "5939.84",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-25",
+      "value_eur": "5948.36",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-26",
+      "value_eur": "5957.01",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-27",
+      "value_eur": "5965.51",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-28",
+      "value_eur": "5969.12",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-11-29",
+      "value_eur": "5977.69",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-02",
+      "value_eur": "5985.97",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-03",
+      "value_eur": "5994.78",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-04",
+      "value_eur": "6003.42",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-05",
+      "value_eur": "6011.69",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-06",
+      "value_eur": "6020.55",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-09",
+      "value_eur": "6029.20",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-10",
+      "value_eur": "6037.53",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-11",
+      "value_eur": "6046.28",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-12",
+      "value_eur": "6054.97",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-13",
+      "value_eur": "6063.23",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-16",
+      "value_eur": "6072.12",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-17",
+      "value_eur": "6080.77",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-18",
+      "value_eur": "6089.04",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-19",
+      "value_eur": "6097.93",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-20",
+      "value_eur": "6106.61",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-23",
+      "value_eur": "6113.99",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-24",
+      "value_eur": "6120.31",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-25",
+      "value_eur": "6120.31",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-26",
+      "value_eur": "6125.35",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "stale_price DE0008404005",
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-27",
+      "value_eur": "6133.08",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "stale_price DE0008404005",
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-30",
+      "value_eur": "6140.71",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "stale_price DE0008404005",
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    },
+    {
+      "date": "2024-12-31",
+      "value_eur": "6146.85",
+      "cost_basis_eur": "4192.60",
+      "complete": true,
+      "flags": [
+        "stale_price DE0008404005",
+        "dividend_adjusted_prices DE0007164600",
+        "dividend_adjusted_prices IE00B4L5Y983",
+        "dividend_adjusted_prices US0378331005",
+        "dividend_adjusted_prices US67066G1040"
+      ]
+    }
+  ]
+}

@@ -41,6 +41,9 @@ as they are now. The other kinds stay open until you resolve or dismiss them. A 
 stays dismissed; its `dedupe_key` stops it from coming back. An item superseded automatically
 opens again if its problem comes back.
 
+**Lots and values.** Settling an item of the accepted data rebuilds the lot book at once, and the
+stored value series too when the call is given the market data (plan 5.7).
+
 **While a batch is staged.** Settling an item of the staged batch changes only that item and its
 transaction; accept checks the rest. Settling an item of the accepted data applies at once, on
 the accepted data only, so it must not merge: a file of the staged batch may already report one
@@ -75,6 +78,7 @@ from playground.importer.workspace import (
 from playground.ledger.fifo import LedgerTxn, build_lots
 from playground.storage import repos
 from playground.storage.schema import review_items
+from playground.valuation.portfolio import MarketData, rebuild_values
 
 Decision = Literal["merge", "keep-both", "use-parsed"]
 
@@ -531,32 +535,49 @@ def get_item(conn: Connection, portfolio_id: int, item_id: int) -> dict[str, Any
 # --- Settling an item -------------------------------------------------------------------------
 
 
-def dismiss_item(conn: Connection, item_id: int, *, reason: str, clock: Clock) -> dict[str, Any]:
+def dismiss_item(
+    conn: Connection, item_id: int, *, reason: str, clock: Clock, market: MarketData | None = None
+) -> dict[str, Any]:
     """Dismiss an open item with your reason, for good: no command undoes a dismissal.
 
     A transaction it holds back stays out of your holdings while its problem remains
     (`Workspace.holds`). For a possible duplicate, and for most items a parser raised, that is
     for good; a later file can still give a missing field or replace figures that did not add up.
+    With `market`, the value series is rebuilt with the lots (see the module docstring).
     """
-    return _settle(conn, item_id, clock=clock, how="dismiss", reason=reason)
+    return _settle(conn, item_id, clock=clock, how="dismiss", reason=reason, market=market)
 
 
 def resolve_item(
-    conn: Connection, item_id: int, *, how: Decision | str, clock: Clock, into: int | None = None
+    conn: Connection,
+    item_id: int,
+    *,
+    how: Decision | str,
+    clock: Clock,
+    into: int | None = None,
+    market: MarketData | None = None,
 ) -> dict[str, Any]:
     """Settle an open item: `merge` or `keep-both` for a possible duplicate, `use-parsed` to keep a held
     transaction as parsed. `into` names the transaction to merge into when there is more than one.
 
     While a batch is staged, `merge` of an item of the accepted data is refused until you accept or
-    discard that batch (see the module docstring).
+    discard that batch (see the module docstring). With `market`, the value series is rebuilt with
+    the lots.
     """
     if how not in ("merge", "keep-both", "use-parsed"):
         raise ReviewError(f"Unknown resolution {how!r}. Use merge, keep-both or use-parsed.")
-    return _settle(conn, item_id, clock=clock, how=how, into=into)
+    return _settle(conn, item_id, clock=clock, how=how, into=into, market=market)
 
 
 def _settle(
-    conn: Connection, item_id: int, *, clock: Clock, how: str, reason: str | None = None, into: int | None = None
+    conn: Connection,
+    item_id: int,
+    *,
+    clock: Clock,
+    how: str,
+    reason: str | None = None,
+    into: int | None = None,
+    market: MarketData | None = None,
 ) -> dict[str, Any]:
     portfolio_id = _portfolio_of_item(conn, item_id)
     staged = repos.staged_batch_id(conn, portfolio_id)
@@ -591,6 +612,8 @@ def _settle(
         checked.changed_items.append(item)
         checked.merges[:0] = plan.merges
         persist.apply_plan(conn, ws, checked, now=now)
+        if market is not None:
+            rebuild_values(conn, portfolio_id, market=market, clock=clock)
     return item_record(ws, item, repos.instrument_names(conn))
 
 

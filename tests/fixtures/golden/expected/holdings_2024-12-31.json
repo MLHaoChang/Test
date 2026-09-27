@@ -1,0 +1,162 @@
+{
+  "as_of": "2024-12-31",
+  "currency": "EUR",
+  "value_eur": "6146.85",
+  "cost_basis_eur": "4192.60",
+  "complete": true,
+  "holdings": [
+    {
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "quantity": "3",
+      "cost_eur": "480.60",
+      "value_eur": "708.00",
+      "pricing_quantity": "3",
+      "price": {
+        "close": "236.00",
+        "date": "2024-12-30",
+        "currency": "EUR",
+        "source": "stooq",
+        "symbol": "sap.de",
+        "adjustment": "split_dividend"
+      },
+      "fx": null,
+      "mapping": {
+        "status": "confirmed",
+        "source": "stooq",
+        "symbol": "sap.de",
+        "currency": "EUR"
+      },
+      "flags": [
+        {
+          "kind": "dividend_adjusted_prices",
+          "detail": "The closes of sap.de (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated."
+        }
+      ]
+    },
+    {
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "quantity": "4",
+      "cost_eur": "800.00",
+      "value_eur": "1160.00",
+      "pricing_quantity": "4",
+      "price": {
+        "close": "290.00",
+        "date": "2024-12-20",
+        "currency": "EUR",
+        "source": "manual",
+        "symbol": "ALV.DE",
+        "adjustment": "raw"
+      },
+      "fx": null,
+      "mapping": {
+        "status": "confirmed",
+        "source": "manual",
+        "symbol": "ALV.DE",
+        "currency": "EUR"
+      },
+      "flags": [
+        {
+          "kind": "stale_price",
+          "detail": "The close used is more than 5 days older than the day valued. It is still used. Load newer closes with pg prices import-file."
+        }
+      ]
+    },
+    {
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "quantity": "5",
+      "cost_eur": "410.00",
+      "value_eur": "500.00",
+      "pricing_quantity": "5",
+      "price": {
+        "close": "100.00",
+        "date": "2024-12-30",
+        "currency": "EUR",
+        "source": "stooq",
+        "symbol": "eunl.de",
+        "adjustment": "split_dividend"
+      },
+      "fx": null,
+      "mapping": {
+        "status": "confirmed",
+        "source": "stooq",
+        "symbol": "eunl.de",
+        "currency": "EUR"
+      },
+      "flags": [
+        {
+          "kind": "dividend_adjusted_prices",
+          "detail": "The closes of eunl.de (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated."
+        }
+      ]
+    },
+    {
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "quantity": "5",
+      "cost_eur": "801.00",
+      "value_eur": "1201.92",
+      "pricing_quantity": "5",
+      "price": {
+        "close": "250.00",
+        "date": "2024-12-31",
+        "currency": "USD",
+        "source": "stooq",
+        "symbol": "aapl.us",
+        "adjustment": "split_dividend"
+      },
+      "fx": {
+        "currency": "USD",
+        "rate": "1.0400",
+        "date": "2024-12-31"
+      },
+      "mapping": {
+        "status": "confirmed",
+        "source": "stooq",
+        "symbol": "aapl.us",
+        "currency": "USD"
+      },
+      "flags": [
+        {
+          "kind": "dividend_adjusted_prices",
+          "detail": "The closes of aapl.us (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated."
+        }
+      ]
+    },
+    {
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "quantity": "20",
+      "cost_eur": "1701.00",
+      "value_eur": "2576.92",
+      "pricing_quantity": "20",
+      "price": {
+        "close": "134.00",
+        "date": "2024-12-31",
+        "currency": "USD",
+        "source": "stooq",
+        "symbol": "nvda.us",
+        "adjustment": "split_dividend"
+      },
+      "fx": {
+        "currency": "USD",
+        "rate": "1.0400",
+        "date": "2024-12-31"
+      },
+      "mapping": {
+        "status": "confirmed",
+        "source": "stooq",
+        "symbol": "nvda.us",
+        "currency": "USD"
+      },
+      "flags": [
+        {
+          "kind": "dividend_adjusted_prices",
+          "detail": "The closes of nvda.us (stooq) are adjusted for splits and dividends, so values before a dividend are slightly understated."
+        }
+      ]
+    }
+  ]
+}

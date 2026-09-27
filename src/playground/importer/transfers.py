@@ -6,7 +6,8 @@ raises `missing_cost_basis` at staging. `set_cost` stores what you enter (the `c
 table) and rebuilds the portfolio (`pipeline.refresh_portfolio`): the review item is resolved as
 "cost entered", and the lot's cost and acquisition date follow what you gave (5.5). A transaction
 can be given a cost more than once, which corrects an earlier entry; only the most recent one is
-the one the ledger uses (`Workspace.load` orders them by `entered_at`, then `id`).
+the one the ledger uses (`Workspace.load` orders them by `entered_at`, then `id`). Given the
+market data, the refresh rebuilds the stored value series as well (plan 5.7).
 
 `list_transfers` and `set_cost` see the portfolio as it is now: while a batch is staged, its data
 is left out, exactly as `refresh_portfolio` leaves it out until you accept it (plan 5.3.5).
@@ -27,6 +28,7 @@ from playground.importer.keys import quantity_text
 from playground.importer.pipeline import RefreshResult, refresh_portfolio
 from playground.importer.workspace import Txn, Workspace
 from playground.storage import repos
+from playground.valuation.portfolio import MarketData
 
 
 class TransferError(PlaygroundError):
@@ -106,6 +108,7 @@ def _refresh_dict(result: RefreshResult) -> dict[str, Any]:
         "review_opened": result.review_opened,
         "lots": result.lots,
         "disposals": result.disposals,
+        "values": result.values,
     }
 
 
@@ -119,12 +122,14 @@ def set_cost(
     clock: Clock,
     txn_id: int | None = None,
     note: str | None = None,
+    market: MarketData | None = None,
 ) -> dict[str, Any]:
     """Enter the cost basis of a transfer in and rebuild the portfolio (`pg transfers set-cost`).
 
     `txn_id` names the transaction when `isin` has more than one transfer in; without it, there
     must be exactly one. Raises `TransferError` when there is none, when `isin` has more than one
-    and `txn_id` does not say which, or when `txn_id` does not name a transfer in of `isin`.
+    and `txn_id` does not say which, or when `txn_id` does not name a transfer in of `isin`. With
+    `market`, the value series is rebuilt too and `values` summarises it; otherwise it is `None`.
     """
     if cost_eur < 0:
         raise TransferError(f"--cost-eur must not be negative, got {cost_eur}.")
@@ -137,7 +142,9 @@ def set_cost(
     repos.insert_cost_basis_input(
         conn, transaction_id=target.id, acquired_on=acquired_on, cost_eur=cost_eur, entered_at=now, note=note
     )
-    refreshed = refresh_portfolio(conn, portfolio_id, clock=clock, cause=f"cost entered for the transfer in of {isin}")
+    refreshed = refresh_portfolio(
+        conn, portfolio_id, clock=clock, cause=f"cost entered for the transfer in of {isin}", market=market
+    )
     return {
         "isin": isin,
         "transaction_id": target.id,

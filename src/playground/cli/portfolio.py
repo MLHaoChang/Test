@@ -1,28 +1,31 @@
-"""The ledger view and transfer commands (plan 5.9): `holdings`, `lots` and `transfers`.
+"""The ledger view, value and transfer commands (plan 5.9): `holdings`, `lots`, `value` and `transfers`.
 
-`pg holdings` and `pg lots` read the accepted portfolio: what `pg accept`, a review resolution or
-`pg transfers set-cost` last built (plan 5.3.6, 5.5). `pg holdings` computes the quantity and open
-cost basis of every ISIN as of a day, the ledger's own as-of rule (5.5, `ledger.fifo.LotBook`);
-`pg lots` lists the stored lot book exactly as it stands now (every lot and disposal). `pg
+`pg holdings`, `pg lots` and `pg value` read the accepted portfolio: what `pg accept`, a review
+resolution or `pg transfers set-cost` last built (plan 5.3.6, 5.5). `pg holdings` computes the
+quantity and open cost basis of every ISIN as of a day, the ledger's own as-of rule (5.5,
+`ledger.fifo.LotBook`), and values each holding at the latest close and ECB rate on or before that
+day, with the evidence and flags behind the value (5.7). `pg lots` lists the stored lot book exactly
+as it stands now (every lot and disposal). `pg value` works out the daily value in EUR over a range,
+stores it and prints a summary with every flag (a **flag** is a note on a value: a holding left
+out, a price or rate that is old, or a check that failed). It never fails on missing data. `pg
 transfers list` shows every transfer in and whether you have entered its cost basis; `pg transfers
-set-cost` enters it, which resolves the `missing_cost_basis` review item and rebuilds the lots at
-once (`importer.transfers`).
+set-cost` enters it, which resolves the `missing_cost_basis` review item and rebuilds the lots and
+the value series at once (`importer.transfers`).
 """
 
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Any
 
 import typer
 
-from playground.cli.context import AppContext, fail, parse_day, portfolio_transaction, print_json
+from playground.cli.context import AppContext, fail, parse_day, portfolio_transaction, print_json, values_line
 from playground.core.errors import NumberFormatError
 from playground.core.isin import InvalidIsinError, normalise_isin
 from playground.core.numbers import parse_en_decimal
-from playground.importer.keys import quantity_text
-from playground.importer.reconcile import stored_ledger
 from playground.importer.transfers import list_transfers, set_cost
-from playground.ledger.fifo import build_lots
 from playground.storage import repos
+from playground.valuation.portfolio import ValueReport, compute_values, flag_summaries, holdings_report, money
 
 transfers_app = typer.Typer(help="Cost basis for transfers in.", no_args_is_help=True)
 
@@ -43,37 +46,63 @@ def _normalised_isin(value: str) -> str:
 # --- holdings -----------------------------------------------------------------------------------
 
 
+# Why a holding has no value, by the flag that left it out (plan 5.7).
+_NO_VALUE = {
+    "unmapped": "no price source mapped yet (pg instruments map)",
+    "missing_price": "no close stored on or before this day (pg prices fetch or pg prices import-file)",
+    "missing_fx": "no ECB rate stored on or before this day (pg fx fetch)",
+}
+
+
 def holdings(
     ctx: typer.Context,
     as_of: str | None = typer.Option(None, "--as-of", help="Show holdings on this day (YYYY-MM-DD). Today by default."),
     json_output: bool = _JSON,
 ) -> None:
-    """Quantity and cost basis of every ISIN held, as of a day (today by default)."""
+    """Quantity, cost basis and value in EUR of every ISIN held, as of a day (today by default)."""
     app_ctx: AppContext = ctx.obj
     day = parse_day(as_of, "--as-of") or app_ctx.clock.today()
     with portfolio_transaction(app_ctx) as (conn, portfolio_id):
-        book = build_lots(stored_ledger(conn, portfolio_id))
-        names = repos.instrument_names(conn)
-    quantities = book.holdings(day)
-    costs = book.open_cost(day)
-    records = [
-        {
-            "isin": isin,
-            "name": names.get(isin, isin),
-            "quantity": quantity_text(quantities[isin]),
-            "cost_eur": _dec(costs[isin]),
-        }
-        for isin in sorted(quantities)
-    ]
+        report = holdings_report(conn, portfolio_id, day=day, market=app_ctx.market)
     if json_output:
-        print_json({"as_of": day.isoformat(), "holdings": records})
+        print_json(report)
         return
-    typer.echo(f"Holdings on {day.isoformat()}:")
-    if not records:
+    typer.echo(f"Holdings on {report['as_of']}, valued in EUR at the latest close on or before that day:")
+    if not report["holdings"]:
         typer.echo("  none")
-    for record in records:
-        cost = f"{record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
-        typer.echo(f"  {record['isin']} {record['name']}: {record['quantity']} shares, cost {cost}")
+    for record in report["holdings"]:
+        typer.echo("  " + _holding_line(record))
+    if report["holdings"]:
+        cost = (
+            f"cost basis {report['cost_basis_eur']} EUR"
+            if report["cost_basis_eur"] is not None
+            else "cost basis unknown (see pg transfers list)"
+        )
+        state = "complete" if report["complete"] else "incomplete: some holdings have no value"
+        typer.echo(f"Total value {report['value_eur']} EUR, {cost}, {state}.")
+
+
+def _holding_line(record: Mapping[str, Any]) -> str:
+    cost = f"{record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
+    line = f"{record['isin']} {record['name']}: {record['quantity']} shares, cost {cost}"
+    kinds = [flag["kind"] for flag in record["flags"]]
+    if record["value_eur"] is None:
+        reason = next((_NO_VALUE[kind] for kind in kinds if kind in _NO_VALUE), "no value")
+        line += f", no value: {reason}"
+    else:
+        price = record["price"]
+        evidence = f"close {price['close']} {price['currency']} on {price['date']}"
+        if record["pricing_quantity"] != record["quantity"]:
+            # A split-adjusted series quotes today's share basis (plan 5.7, quantity for pricing).
+            evidence = f"priced as {record['pricing_quantity']} shares after later splits, {evidence}"
+        if record["fx"] is not None:
+            fx = record["fx"]
+            evidence += f", at {fx['rate']} {fx['currency']} per EUR on {fx['date']}"
+        line += f", value {record['value_eur']} EUR ({evidence})"
+    notes = [kind for kind in kinds if kind not in _NO_VALUE]
+    if notes:
+        line += f". Flags: {', '.join(notes)}"
+    return line
 
 
 # --- lots ---------------------------------------------------------------------------------------
@@ -210,6 +239,7 @@ def transfers_set_cost(
             cost_eur=amount,
             clock=app_ctx.clock,
             txn_id=txn,
+            market=app_ctx.market,
         )
     if json_output:
         print_json(result)
@@ -222,10 +252,92 @@ def transfers_set_cost(
         resolution = item.get("resolution") or {}
         typer.echo(f"Closed review item {item['id']} ({item['kind']}): {resolution.get('how')}.")
     typer.echo(f"Lots rebuilt: {result['lots']} lots, {result['disposals']} disposals.")
+    line = values_line(result["values"])
+    if line is not None:
+        typer.echo(line)
+
+
+# --- value ----------------------------------------------------------------------------------------
+
+
+def value(
+    ctx: typer.Context,
+    date_from: str | None = typer.Option(
+        None, "--from", help="First day (YYYY-MM-DD). The day of your first accepted transaction by default."
+    ),
+    date_to: str | None = typer.Option(
+        None, "--to", help="Last day (YYYY-MM-DD), today at the latest. The last weekday up to today by default."
+    ),
+    csv_file: Path | None = typer.Option(  # noqa: B008
+        None, "--csv", help="Also write one row per day to this CSV file (semicolons, dot decimals)."
+    ),
+    json_output: bool = _JSON,
+) -> None:
+    """Work out the daily value of your portfolio in EUR, store it and list every flag.
+
+    One value per weekday, from the latest close and ECB rate on or before each day. A holding
+    without a price source, a close or a rate is left out and flagged; nothing fails.
+    """
+    app_ctx: AppContext = ctx.obj
+    start = parse_day(date_from, "--from")
+    end = parse_day(date_to, "--to")
+    today = app_ctx.clock.today()
+    if start is not None and end is not None and start > end:
+        fail(f"--from ({start.isoformat()}) is after --to ({end.isoformat()}). Give a --from on or before --to.")
+    if end is not None and end > today:
+        fail(
+            f"--to ({end.isoformat()}) is after today ({today.isoformat()}). The value series ends today at the latest."
+        )
+    with portfolio_transaction(app_ctx) as (conn, portfolio_id):
+        report = compute_values(conn, portfolio_id, market=app_ctx.market, clock=app_ctx.clock, start=start, end=end)
+    if csv_file is not None and report.start is not None:
+        try:
+            csv_file.write_text(report.csv_text(), encoding="utf-8")
+        except OSError as exc:
+            fail(f"Could not write {csv_file}: {exc.strerror or exc}.")
+    if json_output:
+        print_json(report.to_dict())
+        return
+    for line in _value_lines(report, csv_file):
+        typer.echo(line)
+
+
+def _value_lines(report: ValueReport, csv_file: Path | None) -> list[str]:
+    if report.start is None or report.end is None:
+        return ["Nothing to value yet: no transaction has been accepted. Import your files with pg import FILE..."]
+    lines = [
+        f"Value in EUR from {report.start.isoformat()} to {report.end.isoformat()}: "
+        f"{len(report.days)} weekdays, {report.complete_days} complete."
+    ]
+    latest = report.latest
+    if latest is not None:
+        cost = (
+            f"cost basis {money(latest.cost_basis_eur)} EUR"
+            if latest.cost_basis_eur is not None
+            else "cost basis unknown (see pg transfers list)"
+        )
+        state = "complete" if latest.complete else "incomplete: some holdings have no value"
+        lines.append(f"Latest value: {money(latest.value_eur)} EUR on {latest.date.isoformat()}, {cost}, {state}.")
+    summaries = flag_summaries(report.days, report.names)
+    if summaries:
+        lines.append("Flags (notes on the values: a holding left out, an old price or rate, or a failed check):")
+        for summary in summaries:
+            who = f"{summary['isin']} {summary['name']}" if summary["isin"] is not None else "the portfolio"
+            span = summary["first"] if summary["days"] == 1 else f"{summary['first']} to {summary['last']}"
+            count = "1 day" if summary["days"] == 1 else f"{summary['days']} days"
+            lines.append(f"  {summary['kind']}, {who}, {span} ({count}): {summary['detail']}")
+    else:
+        lines.append("No flags: every holding has a price source, a recent close and a recent rate.")
+    stored = f"Stored {len(report.days)} days."
+    lines.append(
+        f"{stored} Wrote them to {csv_file}." if csv_file is not None else f"{stored} Add --csv FILE for a file."
+    )
+    return lines
 
 
 def register(app: typer.Typer) -> None:
-    """Add the ledger view and transfer commands to `app`."""
+    """Add the ledger view, value and transfer commands to `app`."""
     app.command()(holdings)
     app.command()(lots)
+    app.command()(value)
     app.add_typer(transfers_app, name="transfers")

@@ -88,3 +88,12 @@ The files in `expected/` are the JSON outputs of the end-to-end scenario (plan 7
 | `expected/reconcile.json` | `pg reconcile latest --confirmed ... --as-of 2024-12-31 --strict` (step 7) | the same diff with your confirmed holdings: 5 of 5 match | WP7 |
 | `expected/import2.json` | `pg import` of the same ten files plus the H1 statement (step 10) | 10 files skipped as already imported, 11 statement lines already known, 0 new | WP7 |
 | `expected/review.json` | `pg review list` after round 2 (step 13) | the unknown layout and the missing cost basis, both open | WP7 |
+| `expected/value_unmapped.json` | `pg value --from 2024-01-02 --to 2024-12-31` before any mapping (step 16) | 261 weekdays, every held instrument flagged `unmapped`, a value of 0.00, and `complete: false` on every day something is held | WP10 |
+| `expected/instruments.json` | `pg instruments list` after the mapping file (step 19) | the five instruments with the names read from the documents, all `confirmed` | WP10 |
+| `expected/holdings_2024-12-31.json` | `pg holdings --as-of 2024-12-31` (step 24) | quantity, cost, value and the price evidence of each holding: 6,146.85 EUR in total, cost basis 4,192.60, the Allianz price of 2024-12-20 flagged stale | WP10 |
+| `expected/lots.json` | `pg lots` (step 25) | the seven lots and the two disposals of the sale T12 | WP8 |
+| `expected/value.json` | `pg value --from 2024-01-02 --to 2024-12-31` (step 26) | one value per weekday: 5,916.67 EUR on 2024-05-31, 6,146.85 EUR on 2024-12-31, the Allianz price stale from 2024-12-26, and the info flag `dividend_adjusted_prices` for the four Stooq series | WP10 |
+| `expected/sp500_eur.json` | `pg benchmarks series sp500 --currency EUR` (step 27) | the S&P 500 in EUR over 2024 | WP9 |
+| `expected/status_2025-02-03.json` | `pg status` with the clock on 2025-02-03 (step 31) | the reminder to import again after 34 days, one open review item, and the latest value on 2025-02-03 with every price and rate flagged stale | WP10 |
+
+A value is shown rounded to cents; the registry keeps each holding's value to 8 decimals and adds the unrounded parts. In `value.json` each day lists its flags in short form, the kind then the ISIN (`stale_price DE0008404005`), and the `flags` list says once what each one means, with its first and last day. A **flag** is a note on a value: a holding left out, a price or rate that is old, or a check that failed.

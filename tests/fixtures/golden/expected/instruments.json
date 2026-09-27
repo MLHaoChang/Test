@@ -1,0 +1,59 @@
+{
+  "instruments": [
+    {
+      "isin": "DE0007164600",
+      "name": "SAP SE",
+      "type": "unknown",
+      "currency": "EUR",
+      "data_source": "stooq",
+      "data_symbol": "sap.de",
+      "mapping_status": "confirmed",
+      "mapping_updated_at": "2024-12-31T11:00:00Z",
+      "mapping_note": null
+    },
+    {
+      "isin": "DE0008404005",
+      "name": "Allianz SE",
+      "type": "unknown",
+      "currency": "EUR",
+      "data_source": "manual",
+      "data_symbol": "ALV.DE",
+      "mapping_status": "confirmed",
+      "mapping_updated_at": "2024-12-31T11:00:00Z",
+      "mapping_note": null
+    },
+    {
+      "isin": "IE00B4L5Y983",
+      "name": "iShsIII-Core MSCI World U.ETF",
+      "type": "unknown",
+      "currency": "EUR",
+      "data_source": "stooq",
+      "data_symbol": "eunl.de",
+      "mapping_status": "confirmed",
+      "mapping_updated_at": "2024-12-31T11:00:00Z",
+      "mapping_note": null
+    },
+    {
+      "isin": "US0378331005",
+      "name": "Apple Inc.",
+      "type": "unknown",
+      "currency": "USD",
+      "data_source": "stooq",
+      "data_symbol": "aapl.us",
+      "mapping_status": "confirmed",
+      "mapping_updated_at": "2024-12-31T11:00:00Z",
+      "mapping_note": null
+    },
+    {
+      "isin": "US67066G1040",
+      "name": "NVIDIA Corp.",
+      "type": "unknown",
+      "currency": "USD",
+      "data_source": "stooq",
+      "data_symbol": "nvda.us",
+      "mapping_status": "confirmed",
+      "mapping_updated_at": "2024-12-31T11:00:00Z",
+      "mapping_note": null
+    }
+  ]
+}
