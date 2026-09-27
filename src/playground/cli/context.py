@@ -14,6 +14,7 @@ from sqlalchemy import Connection, Engine
 from playground.config import Settings
 from playground.core.clock import Clock
 from playground.core.errors import PlaygroundError
+from playground.http.client import HttpClient
 from playground.storage import repos
 from playground.storage.db import open_registry
 from playground.storage.schema import ensure_schema
@@ -28,6 +29,7 @@ class AppContext:
 
     settings: Settings
     clock: Clock
+    http_client: HttpClient
 
     @property
     def data_dir(self) -> Path:

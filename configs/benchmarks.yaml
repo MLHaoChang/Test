@@ -1,0 +1,17 @@
+# Benchmark definitions (plan 4.3). Editable: add a benchmark here and `pg benchmarks fetch` and
+# `pg benchmarks series` pick it up, with no code change. Each key is the benchmark's id (its
+# slug); "data_source" and "data_symbol" name where its daily bars come from, the same way an
+# instrument's mapping does (plan 5.6); "currency" is that symbol's own listing currency;
+# "also_in" lists any other currency `pg benchmarks series --currency` can convert it to.
+msci_world_eur:
+  name: MSCI World in EUR (iShares Core MSCI World UCITS ETF on Xetra)
+  isin: IE00B4L5Y983
+  data_source: stooq
+  data_symbol: eunl.de
+  currency: EUR
+sp500:
+  name: S&P 500 index
+  data_source: stooq
+  data_symbol: ^spx
+  currency: USD
+  also_in: [EUR]

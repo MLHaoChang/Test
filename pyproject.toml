@@ -19,6 +19,8 @@ dependencies = [
     "uvicorn>=0.30",
     "python-multipart>=0.0.6",
     "tzdata>=2024.1",
+    # configs/benchmarks.yaml (plan 4.3) is read at runtime by marketdata/benchmarks.py.
+    "pyyaml>=6.0",
 ]
 
 [project.scripts]
@@ -34,8 +36,9 @@ dev = [
     "pytest-playwright>=0.4",
     # Development only (plan 2.2): writes the synthetic PDF fixtures from their text files.
     "reportlab>=5.0",
-    # Reads tests/fixtures/MANIFEST.yaml in the repository hygiene test.
-    "pyyaml>=6.0",
+    # Type stubs for pyyaml, so mypy can check src/playground/http and src/playground/marketdata
+    # (both parse YAML) without an ignore_missing_imports override.
+    "types-PyYAML>=6.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -93,3 +96,9 @@ disallow_untyped_defs = true
 [[tool.mypy.overrides]]
 module = "playground.importer.*"
 disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+# pyarrow ships no py.typed marker and no first-party stub package (plan 5.6, 4.2: the Parquet
+# lake); yaml's stubs come from the types-PyYAML dev dependency instead, so it needs no override.
+module = "pyarrow.*"
+ignore_missing_imports = true
