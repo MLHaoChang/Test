@@ -102,6 +102,8 @@ test("import, diff, accept, holdings and the value chart", async ({ page }) => {
   await expect(chart).toHaveAttribute("data-from", "2024-01-02");
   await expect(chart).toHaveAttribute("data-to", "2024-12-31");
   await expect(chart).toContainText("6,146.85 EUR");
+  // The y axis gives round amounts in EUR, so a day's value can be read without hovering (QA P0 round 2).
+  await expect(chart.getByTestId("value-chart-tick")).toHaveText(["7,500 EUR", "5,000 EUR", "2,500 EUR", "0 EUR"]);
 
   // Reload: the same holdings and chart come back from the server, not from in-page state alone.
   await page.reload();

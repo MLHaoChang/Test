@@ -11,6 +11,7 @@
   --text-muted: #898781;
   --border: #e1e0d9;
   --accent: #2a78d6;
+  --chart-baseline: #c3c2b7;
   --critical: #d03b3b;
   --critical-surface: #fbe9e8;
 }
@@ -25,6 +26,7 @@
     --text-muted: #898781;
     --border: #2c2c2a;
     --accent: #3987e5;
+    --chart-baseline: #383835;
     --critical: #e66767;
     --critical-surface: #3a1f1f;
   }
@@ -156,9 +158,79 @@ button:disabled {
   margin-top: 12px;
 }
 
-.value-chart svg {
-  width: 100%;
-  height: auto;
+.value-chart-plot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 8px;
+  padding-left: 8px;
   background: var(--surface);
   border-radius: 6px;
+}
+
+/* The y axis: HTML text beside the drawing, so it keeps its size at any width. */
+.value-chart-y-axis {
+  position: relative;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.value-chart-tick-sizer {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.value-chart-tick {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.value-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.value-chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.value-chart-grid.value-chart-baseline {
+  stroke: var(--chart-baseline);
+}
+
+.value-chart-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.value-chart-dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.value-chart-crosshair {
+  stroke: var(--chart-baseline);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.value-chart-hover-dot {
+  fill: var(--text-primary);
+  stroke: var(--surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
 }

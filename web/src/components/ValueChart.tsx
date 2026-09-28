@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 
 import type { DayValueRecord } from "../api";
+import { formatTick, valueTicks } from "../axis";
 import { formatDate, formatMoney } from "../format";
 
 export interface ValueChartProps {
@@ -13,16 +14,12 @@ export interface ValueChartProps {
 
 const WIDTH = 640;
 const HEIGHT = 220;
-const PADDING = { top: 12, right: 12, bottom: 8, left: 12 };
+const PADDING = { top: 12, right: 12, bottom: 12, left: 8 };
 
-// The dataviz skill's reference palette (references/palette.md): series slot 1 (blue) for this
-// chart's one line, chrome and ink from the same instance. Light values only: this is a small,
-// server-rendered admin page, not yet themed for dark mode (plan 5.10 calls it "minimal").
-const LINE_COLOR = "#2a78d6";
-const GRID_COLOR = "#e1e0d9";
-const AXIS_COLOR = "#c3c2b7";
-const MUTED_TEXT = "#898781";
-const PRIMARY_TEXT = "#0b0b0b";
+// Colors come from the page's tokens in index.css, which follow the dataviz skill's reference
+// palette (references/palette.md) in light and dark mode: the line in the accent, gridlines as
+// solid hairlines one step off the surface, the zero baseline one step darker, axis text in muted
+// ink. Strokes do not scale with the drawing, so a hairline stays 1px and the line 2px at any width.
 
 interface Point {
   index: number;
@@ -44,18 +41,28 @@ function buildPoints(series: DayValueRecord[]): Point[] {
   return points;
 }
 
-/** A small SVG line chart of the daily portfolio value (plan 5.10), `GET /portfolio/value`. */
+/**
+ * A small SVG line chart of the daily portfolio value (plan 5.10), `GET /portfolio/value`.
+ *
+ * The y axis has three or four round amounts, each on a gridline (QA P0 round 2: a day's value could
+ * be read only by hovering). The labels sit in their own column beside the drawing, as HTML text, so
+ * they keep their size when the drawing shrinks to fit a phone.
+ */
 export function ValueChart({ series, currency, from, to }: ValueChartProps): JSX.Element {
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   const points = useMemo(() => buildPoints(series), [series]);
   const latest = points.length > 0 ? points[points.length - 1] : null;
+  const ticks = useMemo(() => {
+    const values = points.map((p) => p.value);
+    return values.length > 0 ? valueTicks(Math.min(...values), Math.max(...values)) : [0, 1];
+  }, [points]);
 
   const plotWidth = WIDTH - PADDING.left - PADDING.right;
   const plotHeight = HEIGHT - PADDING.top - PADDING.bottom;
-  const minValue = points.length > 0 ? Math.min(0, ...points.map((p) => p.value)) : 0;
-  const maxValue = points.length > 0 ? Math.max(0, ...points.map((p) => p.value)) : 1;
+  const minValue = ticks[0];
+  const maxValue = ticks[ticks.length - 1];
   const valueSpan = maxValue - minValue || 1;
 
   const xForIndex = (index: number): number =>
@@ -63,6 +70,10 @@ export function ValueChart({ series, currency, from, to }: ValueChartProps): JSX
   const yForValue = (value: number): number => PADDING.top + plotHeight - ((value - minValue) / valueSpan) * plotHeight;
 
   const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${xForIndex(p.index).toFixed(2)},${yForValue(p.value).toFixed(2)}`).join(" ");
+
+  // Top to bottom, the order the eye reads the axis in.
+  const axis = [...ticks].reverse().map((tick) => ({ tick, y: yForValue(tick), label: formatTick(tick, currency) }));
+  const widestLabel = axis.reduce((widest, { label }) => (label.length > widest.length ? label : widest), "");
 
   const handleMove = (event: MouseEvent<SVGRectElement>): void => {
     const svg = svgRef.current;
@@ -94,59 +105,72 @@ export function ValueChart({ series, currency, from, to }: ValueChartProps): JSX
           <p className="hint">
             {formatDate(from)} to {formatDate(to)}
           </p>
-          <svg
-            ref={svgRef}
-            viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-            role="img"
-            aria-label={`Portfolio value from ${formatDate(from)} to ${formatDate(to)}, ending at ${
-              latest ? formatMoney(latest.raw, currency) : "-"
-            }`}
-          >
-            <line
-              x1={PADDING.left}
-              y1={yForValue(minValue < 0 ? 0 : minValue)}
-              x2={WIDTH - PADDING.right}
-              y2={yForValue(minValue < 0 ? 0 : minValue)}
-              stroke={AXIS_COLOR}
-              strokeWidth={1}
-            />
-            <line
-              x1={PADDING.left}
-              y1={PADDING.top}
-              x2={WIDTH - PADDING.right}
-              y2={PADDING.top}
-              stroke={GRID_COLOR}
-              strokeWidth={1}
-            />
-            <path d={linePath} fill="none" stroke={LINE_COLOR} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            {latest && (
-              <circle cx={xForIndex(latest.index)} cy={yForValue(latest.value)} r={3.5} fill={LINE_COLOR} />
-            )}
-            {hovered && (
-              <g data-testid="value-chart-hover">
+          <div className="value-chart-plot">
+            <div className="value-chart-y-axis" aria-hidden="true">
+              {/* Invisible, in the flow: gives the column the width of its widest label. */}
+              <span className="value-chart-tick-sizer">{widestLabel}</span>
+              {axis.map(({ tick, y, label }) => (
+                <span
+                  key={tick}
+                  className="value-chart-tick"
+                  data-testid="value-chart-tick"
+                  style={{ top: `${(y / HEIGHT) * 100}%` }}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+            <svg
+              ref={svgRef}
+              viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+              role="img"
+              aria-label={`Portfolio value from ${formatDate(from)} to ${formatDate(to)}, ending at ${
+                latest ? formatMoney(latest.raw, currency) : "-"
+              }`}
+            >
+              {axis.map(({ tick, y }) => (
                 <line
-                  x1={xForIndex(hovered.index)}
-                  y1={PADDING.top}
-                  x2={xForIndex(hovered.index)}
-                  y2={HEIGHT - PADDING.bottom}
-                  stroke={AXIS_COLOR}
-                  strokeWidth={1}
-                  strokeDasharray="2,2"
+                  key={tick}
+                  className={tick === 0 ? "value-chart-grid value-chart-baseline" : "value-chart-grid"}
+                  x1={PADDING.left}
+                  y1={y}
+                  x2={WIDTH - PADDING.right}
+                  y2={y}
                 />
-                <circle cx={xForIndex(hovered.index)} cy={yForValue(hovered.value)} r={3.5} fill={PRIMARY_TEXT} />
-              </g>
-            )}
-            <rect
-              x={PADDING.left}
-              y={PADDING.top}
-              width={plotWidth}
-              height={plotHeight}
-              fill="transparent"
-              onMouseMove={handleMove}
-              onMouseLeave={() => setHoverIndex(null)}
-            />
-          </svg>
-          <p className="hint" style={{ color: MUTED_TEXT }} data-testid="value-chart-tooltip">
+              ))}
+              <path className="value-chart-line" d={linePath} />
+              {latest && (
+                <circle className="value-chart-dot" cx={xForIndex(latest.index)} cy={yForValue(latest.value)} r={4} />
+              )}
+              {hovered && (
+                <g data-testid="value-chart-hover">
+                  <line
+                    className="value-chart-crosshair"
+                    x1={xForIndex(hovered.index)}
+                    y1={PADDING.top}
+                    x2={xForIndex(hovered.index)}
+                    y2={HEIGHT - PADDING.bottom}
+                  />
+                  <circle
+                    className="value-chart-hover-dot"
+                    cx={xForIndex(hovered.index)}
+                    cy={yForValue(hovered.value)}
+                    r={4}
+                  />
+                </g>
+              )}
+              <rect
+                x={PADDING.left}
+                y={PADDING.top}
+                width={plotWidth}
+                height={plotHeight}
+                fill="transparent"
+                onMouseMove={handleMove}
+                onMouseLeave={() => setHoverIndex(null)}
+              />
+            </svg>
+          </div>
+          <p className="hint" data-testid="value-chart-tooltip">
             {hovered ? `${formatDate(hovered.date)}: ${formatMoney(hovered.raw, currency)}` : "Hover the line for a day's value."}
           </p>
           <p data-testid="value-chart-latest">

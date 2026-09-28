@@ -32,6 +32,22 @@ describe("ValueChart", () => {
     expect(screen.getByTestId("value-chart-latest")).toHaveTextContent("2024-12-31");
   });
 
+  it("labels the y axis with round amounts in EUR, one per gridline (QA P0 round 2)", () => {
+    // A day's value could be read only by hovering: the axis had no values at all.
+    render(<ValueChart series={VALUE.series} currency={VALUE.currency} from={VALUE.from} to={VALUE.to} />);
+
+    const labels = screen.getAllByTestId("value-chart-tick").map((tick) => tick.textContent);
+    expect(labels).toEqual(["7,500 EUR", "5,000 EUR", "2,500 EUR", "0 EUR"]);
+    const chart = screen.getByTestId("value-chart");
+    expect(chart.querySelectorAll("line.value-chart-grid")).toHaveLength(4);
+    // Each label sits at the height of its gridline: the top one at the top of the plot.
+    const tops = screen.getAllByTestId("value-chart-tick").map((tick) => parseFloat(tick.style.top));
+    const gridYs = Array.from(chart.querySelectorAll("line.value-chart-grid")).map(
+      (line) => (Number(line.getAttribute("y1")) / 220) * 100,
+    );
+    tops.forEach((top, index) => expect(top).toBeCloseTo(gridYs[index], 3));
+  });
+
   it("labels the chart, for assistive technology, with the same figure it shows visually", () => {
     render(<ValueChart series={VALUE.series} currency={VALUE.currency} from={VALUE.from} to={VALUE.to} />);
     expect(screen.getByRole("img")).toHaveAccessibleName(/6,146\.85 EUR/);
