@@ -13,15 +13,25 @@ Every error, from a bad request to a batch that does not exist, comes back as
 `{"error": {"code": ..., "message": ...}}` (plan 5.8): each domain error defined here or raised by
 the services below is translated by a small handler registered in `_register_exception_handlers`,
 never as a bare traceback or FastAPI's own `{"detail": ...}` shape.
+
+`create_app` also serves the built import page (plan 5.10, WP12): when `web/dist` exists, it is
+mounted at `/` last, after every API route, so a request that matches one of those (`/health`,
+`/portfolio/...`, and so on) is always answered by that route first (Starlette tries routes in the
+order they were added and stops at the first match) and only a path none of them own falls through
+to the static files (the page itself at `/`, and its built JS and CSS under `/assets/...`). When
+`web/dist` does not exist (every test run, and a fresh clone before `npm run build`), nothing is
+mounted and `/` behaves as it always did: not found, like any other unknown path.
 """
 
 from collections.abc import Iterator
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import Connection, Engine
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -46,12 +56,18 @@ from playground.valuation.portfolio import MarketData
 __all__ = [
     "ApiState",
     "BadRequestError",
+    "DEFAULT_WEB_DIST_DIR",
     "NotFoundError",
     "PortfolioNotInitialisedError",
     "create_app",
     "get_state",
     "portfolio_conn",
 ]
+
+#: The built import page (plan 5.10): `web/dist` at the repository root, exactly where `(cd web &&
+#: npm run build)` writes it. `app.py` lives at src/playground/api/app.py, so parents[3] is the
+#: repository root (the same reckoning `marketdata/benchmarks.py` uses for configs/benchmarks.yaml).
+DEFAULT_WEB_DIST_DIR = Path(__file__).resolve().parents[3] / "web" / "dist"
 
 
 # --- Errors this layer owns (a service's own errors are mapped where they are raised) -----------
@@ -169,13 +185,21 @@ def _register_exception_handlers(app: FastAPI) -> None:
 # --- The app --------------------------------------------------------------------------------------
 
 
-def create_app(settings: Settings, *, clock: Clock | None = None, http_client: HttpClient | None = None) -> FastAPI:
-    """Build the API of plan 5.8 for `settings.data_dir`.
+def create_app(
+    settings: Settings,
+    *,
+    clock: Clock | None = None,
+    http_client: HttpClient | None = None,
+    web_dist_dir: Path | None = None,
+) -> FastAPI:
+    """Build the API of plan 5.8 for `settings.data_dir`, and serve the built import page if there is one.
 
     Binds to nothing by itself (`pg serve` does that, on `127.0.0.1` only): this only wires the
     routes to the registry and the market data of one data directory. `clock` and `http_client`
     default to what `settings` says (3.3, 5.4); `pg serve` passes its own so the API shares the
-    same clock and HTTP mode as the rest of that `pg` invocation.
+    same clock and HTTP mode as the rest of that `pg` invocation. `web_dist_dir` defaults to
+    `DEFAULT_WEB_DIST_DIR`; tests pass their own so they never depend on whether `web/dist` happens
+    to exist in the working tree.
     """
     engine = open_registry(settings.data_dir)
     ensure_schema(engine)
@@ -214,4 +238,12 @@ def create_app(settings: Settings, *, clock: Clock | None = None, http_client: H
     app.include_router(benchmarks_router)
 
     _register_exception_handlers(app)
+
+    # Mounted last (see the module docstring): every API route above is tried first, and only a
+    # path none of them own falls through to the page's own files. A `Mount` is plain Starlette
+    # routing, not a `fastapi.routing.APIRoute`, so it never adds an entry to `/openapi.json`.
+    dist_dir = web_dist_dir if web_dist_dir is not None else DEFAULT_WEB_DIST_DIR
+    if dist_dir.is_dir():
+        app.mount("/", StaticFiles(directory=dist_dir, html=True), name="web")
+
     return app
