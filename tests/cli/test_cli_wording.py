@@ -161,6 +161,59 @@ def test_lots_show_euro_amounts_to_the_cent(data_dir: str, tmp_path: Path) -> No
     assert '"realised_eur": "5.66666667"' in as_json.stdout
 
 
+# --- pg transactions (QA P0 round 2, minor 5) ----------------------------------------------------
+
+DEPOSIT = "02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;w-6"
+
+
+def test_transactions_show_types_and_kinds_of_file_in_plain_words(data_dir: str, tmp_path: Path) -> None:
+    import_rows(data_dir, tmp_path, DEPOSIT, ONE_SHARE_BUY, TRANSFER_IN)
+
+    result = pg("--data-dir", data_dir, "transactions")
+
+    assert result.exit_code == 0, result.output
+    assert "2024-01-02 deposit: 5000.00 EUR [accepted] ref w-6 from CSV export" in result.stdout
+    assert "2024-01-15 purchase SAP SE, 1 share: -141.00 EUR [accepted] ref w-1 from CSV export" in result.stdout
+    assert "2024-06-20 transfer in Allianz SE, 4 shares: no cash [accepted] ref w-3 from CSV export" in result.stdout
+    for code in ("transfer_in", "csv_export", " :"):
+        assert code not in result.stdout
+
+
+def test_transactions_name_every_kind_of_file_and_a_held_back_one(data_dir: str) -> None:
+    files = [
+        GOLDEN_INPUTS / "tr_transactions_2024.csv",
+        GOLDEN_INPUTS / "pdf" / "2024-01-15_kauf_sap.pdf",
+        GOLDEN_INPUTS / "statement" / "kontoauszug_2024_h1.pdf",
+    ]
+    assert pg("--data-dir", data_dir, "import", *map(str, files)).exit_code == 0
+
+    result = pg("--data-dir", data_dir, "transactions")
+
+    assert result.exit_code == 0, result.output
+    assert (
+        "2024-01-15 purchase SAP SE, 10 shares: -1401.00 EUR [staged] ref 5d0a-93f1 "
+        "from PDF document, CSV export, account statement"
+    ) in result.stdout
+    # The purchase of 2024-04-10 is known only from its statement line, which gives no quantity.
+    assert "2024-04-10 purchase SAP SE: -801.00 EUR [held back]" in result.stdout
+    assert "from account statement" in result.stdout
+    for code in ("pdf_document", "pdf_statement", "csv_export", "[held]"):
+        assert code not in result.stdout
+
+
+def test_the_confirmed_holdings_comparison_says_its_status_in_words(data_dir: str, tmp_path: Path) -> None:
+    assert pg("--data-dir", data_dir, "import", str(GOLDEN_INPUTS / "pdf" / "2024-01-15_kauf_sap.pdf")).exit_code == 0
+    confirmed = tmp_path / "confirmed.csv"
+    confirmed.write_text("isin;quantity;as_of\nIE00B4L5Y983;5;2024-12-31\n", encoding="utf-8")
+
+    result = pg("--data-dir", data_dir, "reconcile", "latest", "--confirmed", str(confirmed), "--as-of", "2024-12-31")
+
+    assert result.exit_code == 0, result.output
+    assert "computed 10, yours 0 on 2024-12-31: missing in confirmed" in result.stdout
+    assert "computed 0, yours 5 on 2024-12-31: missing in import" in result.stdout
+    assert "missing_in" not in result.stdout
+
+
 # --- An empty file --------------------------------------------------------------------------------
 
 

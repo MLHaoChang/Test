@@ -33,7 +33,8 @@ from playground.importer.pipeline import (
     resolve_batch_ref,
     stage_files,
 )
-from playground.importer.reconcile import build_diff, render_diff_text, transaction_records
+from playground.importer.reconcile import SOURCE_KIND_NAMES, build_diff, render_diff_text, transaction_records
+from playground.importer.review import TYPE_LABELS
 from playground.storage import repos
 
 imports_app = typer.Typer(help="Import batches and their diffs.", no_args_is_help=True)
@@ -211,14 +212,23 @@ def transactions(
     if not records:
         typer.echo("No transactions.")
     for record in records:
-        what = record["name"] or record["isin"] or ""
-        amount = f"{record['amount_eur']} EUR" if record["amount_eur"] is not None else "no cash"
-        quantity = f", {shares(record['quantity'])}" if record["quantity"] is not None else ""
-        kinds = ", ".join(source["kind"] for source in record["sources"])
-        typer.echo(
-            f"{record['date']} {record['type']} {what}{quantity}: {amount} [{record['state']}] "
-            f"ref {record['source_ref'] or '-'} from {kinds}"
-        )
+        typer.echo(_transaction_line(record))
+
+
+# A transaction's state in plain words (the stored values are ids).
+_STATE_WORDS = {"accepted": "accepted", "held": "held back", "staged": "staged"}
+
+
+def _transaction_line(record: dict[str, Any]) -> str:
+    """One line of `pg transactions`, in the words the diff and the page use (QA P0 round 2)."""
+    label = TYPE_LABELS[TxnType(record["type"])]
+    what = record["name"] or record["isin"]
+    subject = f"{label} {what}" if what else label
+    quantity = f", {shares(record['quantity'])}" if record["quantity"] is not None else ""
+    amount = f"{record['amount_eur']} EUR" if record["amount_eur"] is not None else "no cash"
+    state = _STATE_WORDS.get(record["state"], record["state"])
+    kinds = ", ".join(SOURCE_KIND_NAMES.get(source["kind"], source["kind"]) for source in record["sources"])
+    return f"{record['date']} {subject}{quantity}: {amount} [{state}] ref {record['source_ref'] or '-'} from {kinds}"
 
 
 def status(ctx: typer.Context, json_output: bool = _JSON) -> None:

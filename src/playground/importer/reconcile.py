@@ -304,6 +304,22 @@ DOC_TYPE_NAMES = {
     "manual_transaction": "manual CSV file",
 }
 
+# What reported a transaction, in plain words, for `pg transactions` (the stored kinds are ids).
+SOURCE_KIND_NAMES = {
+    "pdf_document": "PDF document",
+    "csv_export": "CSV export",
+    "pdf_statement": "account statement",
+    "manual_csv": "manual CSV file",
+}
+
+# How a confirmed holding compares, in the words the import page uses.
+_MATCH_TEXT = {
+    "match": "match",
+    "mismatch": "mismatch",
+    "missing_in_import": "missing in import",
+    "missing_in_confirmed": "missing in confirmed",
+}
+
 _STATUS_TEXT = {
     "parsed": "read",
     "partial": "read in part, see the review items",
@@ -377,7 +393,7 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
         for row in confirmed["rows"]:
             lines.append(
                 f"  {row['isin']} {row['name'] or ''}: computed {row['computed']}, yours {row['confirmed']} "
-                f"on {row['as_of']}: {row['status']}"
+                f"on {row['as_of']}: {_MATCH_TEXT.get(row['status'], row['status'])}"
             )
     if batch["status"] == "staged":
         lines.append(
