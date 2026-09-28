@@ -155,15 +155,28 @@ def test_reconcile_strict_exits_3_on_a_mismatch(data_dir: str, tmp_path: Path) -
     assert json.loads(strict.stdout)["confirmed"]["rows"][0]["status"] == "mismatch"
 
 
+def test_reconcile_reads_a_confirmed_file_without_the_decimal_line(data_dir: str, tmp_path: Path) -> None:
+    # QA P0 round 2, R2-D1: the header and one line per position, as the import page describes it.
+    assert pg(data_dir, "import", str(T2)).exit_code == 0
+    confirmed = tmp_path / "confirmed.csv"
+    confirmed.write_text("isin;quantity;as_of\nDE0007164600;10;2024-12-31\n", encoding="utf-8")
+
+    result = pg(data_dir, "reconcile", "latest", "--confirmed", str(confirmed), "--as-of", "2024-12-31")
+
+    assert result.exit_code == 0, result.output
+    assert "1 of 1 match" in result.stdout
+
+
 def test_reconcile_refuses_a_bad_confirmed_file(data_dir: str, tmp_path: Path) -> None:
     assert pg(data_dir, "import", str(T2)).exit_code == 0
     bad = tmp_path / "bad.csv"
-    bad.write_text("isin;quantity;as_of\n", encoding="utf-8")
+    bad.write_text("isin;quantity;as_of\nDE0007164600;1.234;2024-12-31\n", encoding="utf-8")
 
     result = pg(data_dir, "reconcile", "latest", "--confirmed", str(bad))
 
     assert result.exit_code == 1
-    assert "decimal" in result.output
+    assert 'the quantity "1.234" can be read as 1234 or as 1.234' in result.output
+    assert '"# decimal=,"' in result.output
 
     unreadable = tmp_path / "unreadable.csv"
     unreadable.write_bytes(b"# decimal=,\nisin;quantity;as_of\n\x81\n")

@@ -39,8 +39,9 @@ export function ConfirmedUpload({ batchId, onUpdated }: ConfirmedUploadProps): J
   return (
     <div className="confirmed-upload">
       <h3>Check against your confirmed holdings</h3>
-      <p className="hint">
-        Optional: a CSV of the holdings the Trade Republic app shows you (columns isin, quantity, as_of).
+      <p className="hint" data-testid="confirmed-upload-hint">
+        Optional: a CSV file of the holdings the Trade Republic app shows you. It starts with the header
+        isin;quantity;as_of, then one line per position, for example DE0007164600;3;2024-12-31.
       </p>
       <input
         type="file"

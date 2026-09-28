@@ -20,6 +20,14 @@ describe("ConfirmedUpload", () => {
     mockUpload.mockReset();
   });
 
+  it("describes the file layout the server reads: the header, then one line per position", () => {
+    // QA P0 round 2, R2-D1: the hint used to describe a layout the server refused.
+    render(<ConfirmedUpload batchId={1} onUpdated={vi.fn()} />);
+    const hint = screen.getByTestId("confirmed-upload-hint");
+    expect(hint).toHaveTextContent("isin;quantity;as_of");
+    expect(hint).toHaveTextContent("DE0007164600;3;2024-12-31");
+  });
+
   it("disables the button until a file is chosen", () => {
     render(<ConfirmedUpload batchId={1} onUpdated={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Upload confirmed holdings" })).toBeDisabled();

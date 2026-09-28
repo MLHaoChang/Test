@@ -101,7 +101,9 @@ def reconcile(
     ctx: typer.Context,
     batch: str = typer.Argument(..., help='The batch number, or "latest".'),
     confirmed: Path | None = typer.Option(  # noqa: B008
-        None, "--confirmed", help="Your holdings as isin;quantity;as_of, with a # decimal= line first."
+        None,
+        "--confirmed",
+        help="A CSV file of your holdings: the header isin;quantity;as_of, then one line per position.",
     ),
     as_of: str | None = typer.Option(None, "--as-of", help="Compare holdings on this day (YYYY-MM-DD)."),
     strict: bool = typer.Option(False, "--strict", help="Exit with status 3 if any holding differs."),

@@ -1,12 +1,14 @@
 """Tests that show defects found in P0 QA round 2.
 
-Each test here fails today and is marked `xfail(strict=True)`, so the suite stays green while the
-defect is open. Once the defect is fixed the test passes, strict xfail turns that into a failure,
-and whoever fixes it removes the marker.
+QA wrote each test here as a strict xfail (`xfail(strict=True)`), so the suite stayed green while
+the defect was open. Once a defect is fixed its test passes, strict xfail turns that into a
+failure, and whoever fixes it removes the marker; the test then guards the fix. R2-D1 is fixed;
+R2-D2 and R2-D3 are still open.
 
-- R2-D1: the UAT guide (docs/uat/P0-macos.md, step 5) tells you to start the confirmed-holdings
-  file with the header `isin;quantity;as_of`, but the parser refuses any file whose first line is
-  not the `# decimal=,` or `# decimal=.` comment. Step 5 fails as written (AC15).
+- R2-D1 (fixed): the UAT guide (docs/uat/P0-macos.md, step 5) told you to start the
+  confirmed-holdings file with the header `isin;quantity;as_of`, but the parser refused any file
+  whose first line was not the `# decimal=,` or `# decimal=.` comment, so step 5 failed as written
+  (AC15). That line is now optional (see `test_confirmed_csv.py`), and the guide shows it.
 - R2-D2: `pg benchmarks series` with a currency it cannot convert to prints the internal function
   name `benchmark_series` (and the API answers with the same text).
 - R2-D3: an `unparsed_row` review item from a CSV export stores the whole file as its text, so
@@ -41,7 +43,6 @@ def _reconcile_example_from_guide() -> str:
     return match.group(1)
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 2, R2-D1: the UAT guide's confirmed-holdings layout is refused")
 def test_uat_guide_confirmed_holdings_layout_is_accepted() -> None:
     example = _reconcile_example_from_guide()
     data = example + "DE0007164600;3;2024-12-31\n"

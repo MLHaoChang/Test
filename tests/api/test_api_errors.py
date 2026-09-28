@@ -200,9 +200,26 @@ def test_a_bad_confirmed_holdings_csv_is_400(client: TestClient) -> None:
     batch_id = client.post("/portfolio/imports", files=files).json()["batch"]["id"]
 
     response = client.post(
-        f"/portfolio/imports/{batch_id}/confirmed-holdings", files={"file": ("bad.csv", b"isin;quantity;as_of\n")}
+        f"/portfolio/imports/{batch_id}/confirmed-holdings",
+        files={"file": ("bad.csv", b"isin;quantity;as_of\nDE0007164600;1.234;2024-12-31\n")},
     )
     assert_error(response, 400, "invalid_request")
+    assert "can be read as 1234 or as 1.234" in response.json()["error"]["message"]
+
+
+def test_a_confirmed_holdings_csv_without_the_decimal_line_is_read(client: TestClient) -> None:
+    # QA P0 round 2, R2-D1: the layout the page's hint describes, with no "# decimal=" line.
+    files = [("files", (ONE_TRADE_PDF.name, ONE_TRADE_PDF.read_bytes()))]
+    batch_id = client.post("/portfolio/imports", files=files).json()["batch"]["id"]
+
+    response = client.post(
+        f"/portfolio/imports/{batch_id}/confirmed-holdings",
+        files={"file": ("confirmed.csv", b"isin;quantity;as_of\nDE0007164600;10;2024-12-31\n")},
+    )
+
+    assert response.status_code == 200, response.json()
+    rows = response.json()["confirmed"]["rows"]
+    assert [(row["isin"], row["confirmed"]) for row in rows] == [("DE0007164600", "10")]
 
 
 # --- A data directory nobody ran `pg init` on ---------------------------------------------------

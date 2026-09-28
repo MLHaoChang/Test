@@ -97,11 +97,17 @@ import again.
 ## 5. Reconcile
 
 Open the Trade Republic app and write down what it shows you hold today. Put it in
-`~/pg-private/confirmed.csv`, semicolon-separated, one line per position:
+`~/pg-private/confirmed.csv`: the two lines below, then one line per position with its ISIN, the
+quantity and the date you read it (YYYY-MM-DD), separated by semicolons.
 
 ```
+# decimal=,
 isin;quantity;as_of
 ```
+
+For example, `DE0007164600;3;2024-12-31` says you held 3 SAP shares on 31 December 2024. The first
+line says that you write a fractional quantity with a decimal comma, as the app shows it (`0,4534`).
+If you write a decimal point instead (`0.4534`), make that line `# decimal=.`.
 
 Then:
 
