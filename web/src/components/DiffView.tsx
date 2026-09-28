@@ -10,7 +10,7 @@ import {
   type MergedRecord,
 } from "../api";
 import { formatMoney, formatQuantity } from "../format";
-import { plural, ruleLabel, typeLabel } from "../labels";
+import { nameLabel, plural, ruleLabel, typeLabel } from "../labels";
 import { ConfirmedUpload } from "./ConfirmedUpload";
 
 export interface DiffViewProps {
@@ -193,7 +193,7 @@ export function DiffView({ diff, onDiffChanged, onAccepted, onDiscarded }: DiffV
               {diff.holdings.map((change) => (
                 <tr key={change.isin}>
                   <td>{change.isin}</td>
-                  <td>{change.name ?? change.isin}</td>
+                  <td>{nameLabel(change.isin, change.name)}</td>
                   <td>{formatQuantity(change.before)}</td>
                   <td>{formatQuantity(change.after)}</td>
                   <td>{formatQuantity(change.change)}</td>
@@ -226,7 +226,7 @@ export function DiffView({ diff, onDiffChanged, onAccepted, onDiscarded }: DiffV
                   {diff.confirmed.rows.map((row) => (
                     <tr key={`${row.isin}-${row.as_of}`}>
                       <td>{row.isin}</td>
-                      <td>{row.name ?? row.isin}</td>
+                      <td>{nameLabel(row.isin, row.name)}</td>
                       <td>{row.as_of}</td>
                       <td>{formatQuantity(row.computed)}</td>
                       <td>{formatQuantity(row.confirmed)}</td>

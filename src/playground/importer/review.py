@@ -61,6 +61,7 @@ from sqlalchemy import Connection
 from playground.core.clock import Clock
 from playground.core.dates import format_ts_utc
 from playground.core.errors import PlaygroundError
+from playground.core.text import name_and_isin
 from playground.core.types import TxnType
 from playground.importer import persist
 from playground.importer.keys import quantity_text
@@ -390,8 +391,7 @@ def subject(txn: Txn) -> str:
     fields = txn.fields
     label = TYPE_LABELS[fields.type]
     if fields.isin:
-        name = txn.view.name or fields.isin
-        return f"the {label} of {name} ({fields.isin}) on {txn.day.isoformat()}"
+        return f"the {label} of {name_and_isin(fields.isin, txn.view.name)} on {txn.day.isoformat()}"
     return f"the {label} on {txn.day.isoformat()}"
 
 
@@ -421,10 +421,10 @@ def _missing_message(txn: Txn, missing: list[str]) -> str:
 
 def _cost_message(txn: Txn, quantity: str) -> str:
     fields = txn.fields
-    name = txn.view.name or fields.isin or "a security"
+    security = name_and_isin(fields.isin, txn.view.name) if fields.isin else "a security"
     isin = fields.isin or "ISIN"
     return (
-        f"{quantity} shares of {name} ({isin}) were transferred in on {txn.day.isoformat()} without a cost basis. "
+        f"{quantity} shares of {security} were transferred in on {txn.day.isoformat()} without a cost basis. "
         "They count in your holdings and value, but their cost and any gain stay unknown until you enter "
         f"the cost with: pg transfers set-cost --isin {isin} --acquired YYYY-MM-DD --cost-eur AMOUNT"
     )

@@ -33,6 +33,15 @@ export function typeLabel(type: string): string {
   return TYPE_LABELS[type] ?? words(type);
 }
 
+/**
+ * An instrument's name for a table that also has an ISIN column: "-" when no document has named it
+ * yet. Such an instrument (known only from a manual CSV row or a mapping file) is stored with its
+ * ISIN as its name, so a name equal to the ISIN counts as no name (QA P0 round 2).
+ */
+export function nameLabel(isin: string, name: string | null): string {
+  return name && name !== isin ? name : "-";
+}
+
 /** How a report matched a known transaction, in plain words. */
 export function ruleLabel(rule: string): string {
   return RULE_LABELS[rule] ?? words(rule);

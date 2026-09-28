@@ -36,7 +36,7 @@ from sqlalchemy import Connection
 
 from playground.core.clock import Clock
 from playground.core.dates import format_ts_utc
-from playground.core.text import plural
+from playground.core.text import isin_and_name, name_and_isin, plural
 from playground.core.types import TxnType
 from playground.importer.confirmed_csv import ConfirmedHolding
 from playground.importer.keys import quantity_text
@@ -384,15 +384,13 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
     if not data["holdings"]:
         lines.append("  none")
     for change in data["holdings"]:
-        lines.append(
-            f"  {change['isin']} {change['name'] or ''}: {change['before']} -> {change['after']}".replace("  :", ":")
-        )
+        lines.append(f"  {isin_and_name(change['isin'], change['name'])}: {change['before']} -> {change['after']}")
     confirmed = data["confirmed"]
     if confirmed is not None:
         lines.append(f"Your confirmed holdings: {confirmed['message']}")
         for row in confirmed["rows"]:
             lines.append(
-                f"  {row['isin']} {row['name'] or ''}: computed {row['computed']}, yours {row['confirmed']} "
+                f"  {isin_and_name(row['isin'], row['name'])}: computed {row['computed']}, yours {row['confirmed']} "
                 f"on {row['as_of']}: {_MATCH_TEXT.get(row['status'], row['status'])}"
             )
     if batch["status"] == "staged":
@@ -412,5 +410,4 @@ def _what(txn: Mapping[str, Any] | None) -> str:
     isin = txn.get("isin")
     if not isin:
         return f"{article} {label}"
-    name = txn.get("name")
-    return f"{article} {label} of {name} ({isin})" if name and name != isin else f"{article} {label} of {isin}"
+    return f"{article} {label} of {name_and_isin(isin, txn.get('name'))}"

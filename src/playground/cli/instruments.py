@@ -12,7 +12,7 @@ import typer
 
 from playground.cli.context import AppContext, fail, portfolio_transaction, print_json
 from playground.core.isin import InvalidIsinError, normalise_isin
-from playground.core.text import plural
+from playground.core.text import isin_and_name, plural
 from playground.marketdata.instruments import (
     InstrumentMappingError,
     get_instrument,
@@ -51,7 +51,7 @@ def list_command(ctx: typer.Context, json_output: bool = _JSON) -> None:
             mapping = f"{record['data_source']} {record['data_symbol']} ({record['currency']})"
         else:
             mapping = "unmapped"
-        typer.echo(f"{record['isin']} {record['name']}: {mapping}")
+        typer.echo(f"{isin_and_name(record['isin'], record['name'])}: {mapping}")
 
 
 @instruments_app.command(name="map")

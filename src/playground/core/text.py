@@ -1,7 +1,8 @@
-"""Counts in plain English: a number and the noun that agrees with it ("1 lot", "2 lots").
+"""Counts and names in plain English: "1 lot", "2 lots", "DE0007164600 SAP SE".
 
 Every command and message that counts something uses these, so no output says "1 lots" or
-"1 new items need your review".
+"1 new items need your review". Every line that names an instrument uses `isin_and_name` or
+`name_and_isin`, so an instrument no document has named yet is shown by its ISIN once.
 """
 
 from decimal import Decimal, InvalidOperation
@@ -20,3 +21,18 @@ def shares(quantity: str | Decimal) -> str:
     except InvalidOperation:
         one = False
     return f"{quantity} {'share' if one else 'shares'}"
+
+
+def isin_and_name(isin: str, name: str | None) -> str:
+    """ "DE0007164600 SAP SE" at the start of a line, or the ISIN alone when there is no name.
+
+    An instrument known only from a manual CSV row or a mapping file is stored with its ISIN as its
+    name until a document names it, so a name equal to the ISIN counts as no name
+    (QA P0 round 2, minor 7: it printed "DE0005557508 DE0005557508").
+    """
+    return f"{isin} {name}" if name and name != isin else isin
+
+
+def name_and_isin(isin: str, name: str | None) -> str:
+    """ "SAP SE (DE0007164600)" inside a sentence, or the ISIN alone when there is no name."""
+    return f"{name} ({isin})" if name and name != isin else isin

@@ -238,6 +238,41 @@ def test_status_shows_the_last_import_in_berlin_time(tmp_path: Path, today: str,
     assert ":00Z" not in result.stdout
 
 
+# --- An instrument no document has named (QA P0 round 2, minor 7) ----------------------------------
+
+MANUAL_HEADER = "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note"
+UNNAMED_BUY = "2024-09-02;10:00;buy;DE0005557508;10;20.00;EUR;-201.00;1.00;;x"
+UNNAMED_TRANSFER_IN = "2024-09-03;;transfer_in;DE000BASF111;5;;EUR;;;;moved from my old broker"
+UNNAMED_BUY_WITHOUT_QUANTITY = "2024-09-04;;buy;DE0007100000;;;EUR;-100.00;;;no quantity"
+UNNAMED = ("DE0005557508", "DE000BASF111", "DE0007100000")
+
+
+def test_an_instrument_without_a_name_is_shown_by_its_isin_once(data_dir: str, tmp_path: Path) -> None:
+    # A manual CSV row names no instrument, so the instrument is stored with its ISIN as its name.
+    manual = tmp_path / "manual.csv"
+    rows = [MANUAL_HEADER, UNNAMED_BUY, UNNAMED_TRANSFER_IN, UNNAMED_BUY_WITHOUT_QUANTITY]
+    manual.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    staged = pg("--data-dir", data_dir, "import", str(manual))
+    assert staged.exit_code == 0, staged.output
+    assert pg("--data-dir", data_dir, "accept", "latest").exit_code == 0
+    commands = ["holdings", "instruments list", "lots", "transfers list", "review list", "value --from 2024-09-02"]
+    outputs = {command: pg("--data-dir", data_dir, *command.split()).stdout for command in commands}
+    outputs["import"] = staged.stdout
+
+    assert "  DE0005557508: 0 -> 10" in outputs["import"]
+    assert "DE0005557508: 10 shares, cost 201.00 EUR" in outputs["holdings"]
+    assert "DE0005557508: unmapped" in outputs["instruments list"]
+    assert "DE0005557508: purchase, booked 2024-09-02" in outputs["lots"]
+    assert "DE000BASF111: 5 shares booked 2024-09-03" in outputs["transfers list"]
+    assert "5 shares of DE000BASF111 were transferred in on 2024-09-03" in outputs["review list"]
+    assert "The purchase of DE0007100000 on 2024-09-04 has no quantity" in outputs["review list"]
+    assert "unmapped, DE0005557508, 2024-09-02" in outputs["value --from 2024-09-02"]
+    for command, output in outputs.items():
+        for isin in UNNAMED:
+            assert f"{isin} {isin}" not in output, command
+            assert f"{isin} ({isin})" not in output, command
+
+
 # --- An empty file --------------------------------------------------------------------------------
 
 

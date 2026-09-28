@@ -1,5 +1,6 @@
 import type { HoldingRecord } from "../api";
 import { formatMoney, formatQuantity } from "../format";
+import { nameLabel } from "../labels";
 
 export interface HoldingsTableProps {
   holdings: HoldingRecord[];
@@ -30,7 +31,7 @@ export function HoldingsTable({ holdings, currency }: HoldingsTableProps): JSX.E
           {holdings.map((holding) => (
             <tr key={holding.isin} data-testid={`holdings-row-${holding.isin}`}>
               <td>{holding.isin}</td>
-              <td>{holding.name}</td>
+              <td>{nameLabel(holding.isin, holding.name)}</td>
               <td>{formatQuantity(holding.quantity)}</td>
               <td>{formatMoney(holding.cost_eur, currency)}</td>
               <td>{formatMoney(holding.value_eur, currency)}</td>

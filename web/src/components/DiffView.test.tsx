@@ -146,11 +146,29 @@ describe("DiffView", () => {
     expect(sapRow).toHaveTextContent("4");
     expect(sapRow).toHaveTextContent("-1");
     expect(sapRow).toHaveTextContent("mismatch");
-    // An ISIN the import does not know falls back to showing the ISIN itself, like the holdings table.
-    expect(table).toHaveTextContent("US5949181045");
+    // An ISIN the import does not know has no name: its ISIN is shown once, in the ISIN column.
+    const unknownRow = within(table).getByText("US5949181045").closest("tr");
+    if (unknownRow === null) {
+      throw new Error("expected a table row for US5949181045");
+    }
+    expect(within(unknownRow).getAllByRole("cell")[1]).toHaveTextContent(/^-$/);
 
     expect(screen.getByTestId("confirmed-message")).toHaveTextContent("1 of 4 match");
     expect(screen.getByTestId("confirmed-message")).toHaveTextContent("Check the rows above before you accept.");
+  });
+
+  it("shows a dash, not the ISIN a second time, for an instrument no document has named (QA P0 round 2)", () => {
+    // An instrument known only from a manual CSV row is stored with its ISIN as its name.
+    const unnamed: ImportDiff = {
+      ...IMPORT1,
+      holdings: [{ isin: "DE0005557508", name: "DE0005557508", before: "0", after: "10", change: "10" }],
+    };
+    render(<DiffView diff={unnamed} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const row = within(screen.getByTestId("diff-holdings")).getAllByRole("row")[1];
+    const cells = within(row).getAllByRole("cell");
+    expect(cells[0]).toHaveTextContent(/^DE0005557508$/);
+    expect(cells[1]).toHaveTextContent(/^-$/);
   });
 
   it("shows a plain-English reason for a held-back transaction, not the internal review-kind slug", () => {

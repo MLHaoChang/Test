@@ -32,6 +32,17 @@ describe("HoldingsTable", () => {
     expect(within(row).getByText("-")).toBeInTheDocument();
   });
 
+  it("shows a dash, not the ISIN a second time, for a holding no document has named (QA P0 round 2)", () => {
+    // An instrument known only from a manual CSV row is stored with its ISIN as its name.
+    const unnamed: HoldingsResponse["holdings"] = [
+      { ...HOLDINGS.holdings[0], isin: "DE0005557508", name: "DE0005557508" },
+    ];
+    render(<HoldingsTable holdings={unnamed} currency="EUR" />);
+    const cells = within(screen.getByTestId("holdings-row-DE0005557508")).getAllByRole("cell");
+    expect(cells[0]).toHaveTextContent(/^DE0005557508$/);
+    expect(cells[1]).toHaveTextContent(/^-$/);
+  });
+
   it("shows each holding's mapped price symbol", () => {
     render(<HoldingsTable holdings={HOLDINGS.holdings} currency={HOLDINGS.currency} />);
     const nvdaRow = screen.getByTestId("holdings-row-US67066G1040");

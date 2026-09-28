@@ -26,7 +26,7 @@ from playground.core.errors import NumberFormatError
 from playground.core.isin import InvalidIsinError, normalise_isin
 from playground.core.money import eur2
 from playground.core.numbers import parse_en_decimal
-from playground.core.text import plural, shares
+from playground.core.text import isin_and_name, plural, shares
 from playground.importer.transfers import list_transfers, set_cost
 from playground.storage import repos
 from playground.valuation.portfolio import ValueReport, compute_values, flag_summaries, holdings_report, money
@@ -92,7 +92,7 @@ def _holding_line(record: Mapping[str, Any]) -> str:
     cost = (
         f"cost {record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
     )
-    line = f"{record['isin']} {record['name']}: {shares(record['quantity'])}, {cost}"
+    line = f"{isin_and_name(record['isin'], record['name'])}: {shares(record['quantity'])}, {cost}"
     kinds = [flag["kind"] for flag in record["flags"]]
     if record["value_eur"] is None:
         reason = next((_NO_VALUE[kind] for kind in kinds if kind in _NO_VALUE), "no value")
@@ -164,7 +164,8 @@ def lot_line(record: Mapping[str, Any]) -> str:
         cost = "cost unknown"
     origin = _ORIGIN_WORDS.get(record["origin"], str(record["origin"]).replace("_", " "))
     return (
-        f"{record['isin']} {record['name']}: {origin}, booked {berlin_day(record['booked_ts']).isoformat()}, "
+        f"{isin_and_name(record['isin'], record['name'])}: {origin}, "
+        f"booked {berlin_day(record['booked_ts']).isoformat()}, "
         f"{record['quantity_open']} of {record['quantity_initial']} open, {cost}"
     )
 
@@ -187,7 +188,7 @@ def disposal_line(record: Mapping[str, Any]) -> str:
     kind = _DISPOSAL_WORDS.get(record["kind"], str(record["kind"]).replace("_", " "))
     realised = f", realised {_shown_eur(record['realised_eur'])} EUR" if record["realised_eur"] is not None else ""
     day = berlin_day(record["ts_utc"]).isoformat()
-    return f"{record['isin']} {record['name']}: {kind} on {day}, {shares(record['quantity'])}{realised}"
+    return f"{isin_and_name(record['isin'], record['name'])}: {kind} on {day}, {shares(record['quantity'])}{realised}"
 
 
 def lots(
@@ -234,7 +235,6 @@ def transfers_list(ctx: typer.Context, json_output: bool = _JSON) -> None:
     if not records:
         typer.echo("No transfers in.")
     for record in records:
-        name = record["name"] or record["isin"]
         if record["cost_basis"] is None:
             cost = (
                 f"no cost basis yet: pg transfers set-cost --isin {record['isin']} "
@@ -243,7 +243,8 @@ def transfers_list(ctx: typer.Context, json_output: bool = _JSON) -> None:
         else:
             cost = f"acquired {record['cost_basis']['acquired_on']}, cost {record['cost_basis']['cost_eur']} EUR"
         typer.echo(
-            f"[{record['id']}] {record['isin']} {name}: {shares(record['quantity'])} booked {record['booked_on']}: {cost}"
+            f"[{record['id']}] {isin_and_name(record['isin'], record['name'])}: {shares(record['quantity'])} "
+            f"booked {record['booked_on']}: {cost}"
         )
 
 
@@ -358,7 +359,7 @@ def _value_lines(report: ValueReport, csv_file: Path | None) -> list[str]:
     if summaries:
         lines.append("Flags (notes on the values: a holding left out, an old price or rate, or a failed check):")
         for summary in summaries:
-            who = f"{summary['isin']} {summary['name']}" if summary["isin"] is not None else "the portfolio"
+            who = isin_and_name(summary["isin"], summary["name"]) if summary["isin"] is not None else "the portfolio"
             span = summary["first"] if summary["days"] == 1 else f"{summary['first']} to {summary['last']}"
             count = plural(summary["days"], "day")
             lines.append(f"  {summary['kind']}, {who}, {span} ({count}): {summary['detail']}")
