@@ -137,6 +137,30 @@ def test_lots_show_local_dates_and_plain_origins(data_dir: str, tmp_path: Path) 
     assert "transfer_in" not in result.stdout
 
 
+# 3 shares for 100.00 EUR, then 1 of them sold for 39.00 EUR: the sold share's cost is a third of
+# 100.00, which the ledger keeps to 8 decimals (plan 3.3).
+THREE_SHARE_BUY = "15.01.2024;10:05;Kauf;DE0007164600;SAP SE;3;33,00;-100,00;1,00;;EUR;;w-4"
+ONE_OF_THREE_SELL = "20.02.2024;10:05;Verkauf;DE0007164600;SAP SE;1;40,00;39,00;1,00;;EUR;;w-5"
+
+
+def test_lots_show_euro_amounts_to_the_cent(data_dir: str, tmp_path: Path) -> None:
+    import_rows(data_dir, tmp_path, THREE_SHARE_BUY, ONE_OF_THREE_SELL)
+
+    result = pg("--data-dir", data_dir, "lots")
+
+    # Plan 3.3: EUR figures are rounded to 2 decimals, half up, when displayed.
+    assert result.exit_code == 0, result.output
+    assert "SAP SE: purchase, booked 2024-01-15, 2 of 3 open, cost 66.67 EUR open of 100.00 EUR initial" in (
+        result.stdout
+    )
+    assert "SAP SE: sale on 2024-02-20, 1 share, realised 5.67 EUR" in result.stdout
+    assert "6666" not in result.stdout
+    # The JSON output keeps the stored figures, so totals are still made from unrounded parts.
+    as_json = pg("--data-dir", data_dir, "lots", "--json")
+    assert '"cost_eur_open": "66.66666667"' in as_json.stdout
+    assert '"realised_eur": "5.66666667"' in as_json.stdout
+
+
 # --- An empty file --------------------------------------------------------------------------------
 
 

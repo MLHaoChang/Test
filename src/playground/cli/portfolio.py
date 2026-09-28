@@ -14,6 +14,7 @@ the value series at once (`importer.transfers`).
 """
 
 from collections.abc import Mapping
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,7 @@ from playground.cli.context import AppContext, fail, parse_day, portfolio_transa
 from playground.core.dates import berlin_day
 from playground.core.errors import NumberFormatError
 from playground.core.isin import InvalidIsinError, normalise_isin
+from playground.core.money import eur2
 from playground.core.numbers import parse_en_decimal
 from playground.core.text import plural, shares
 from playground.importer.transfers import list_transfers, set_cost
@@ -151,7 +153,8 @@ def _disposal_record(row: Any, names: Mapping[str, str]) -> dict[str, Any]:
 def lot_line(record: Mapping[str, Any]) -> str:
     """One lot of `pg lots` in plain text. An unknown cost says how to enter it, where you can."""
     if not record["cost_missing"]:
-        cost = f"cost {record['cost_eur_open']} EUR open of {record['cost_eur_initial']} EUR initial"
+        still_open, initial = _shown_eur(record["cost_eur_open"]), _shown_eur(record["cost_eur_initial"])
+        cost = f"cost {still_open} EUR open of {initial} EUR initial"
     elif record["origin"] == "transfer_in":
         cost = (
             f"cost unknown (enter it with pg transfers set-cost --isin {record['isin']} "
@@ -166,6 +169,14 @@ def lot_line(record: Mapping[str, Any]) -> str:
     )
 
 
+def _shown_eur(stored: str) -> str:
+    """A stored EUR figure, kept to 8 decimals, as `pg lots` shows it: to the cent (plan 3.3).
+
+    `pg lots --json` keeps the stored figure, so a total is still made from unrounded parts.
+    """
+    return format(eur2(Decimal(stored)), "f")
+
+
 # A lot's origin and a disposal's kind in plain words (the stored values are ids).
 _ORIGIN_WORDS = {"buy": "purchase", "transfer_in": "transfer in"}
 _DISPOSAL_WORDS = {"sell": "sale", "transfer_out": "transfer out"}
@@ -174,7 +185,7 @@ _DISPOSAL_WORDS = {"sell": "sale", "transfer_out": "transfer out"}
 def disposal_line(record: Mapping[str, Any]) -> str:
     """One disposal of `pg lots` in plain text, on its Berlin date."""
     kind = _DISPOSAL_WORDS.get(record["kind"], str(record["kind"]).replace("_", " "))
-    realised = f", realised {record['realised_eur']} EUR" if record["realised_eur"] is not None else ""
+    realised = f", realised {_shown_eur(record['realised_eur'])} EUR" if record["realised_eur"] is not None else ""
     day = berlin_day(record["ts_utc"]).isoformat()
     return f"{record['isin']} {record['name']}: {kind} on {day}, {shares(record['quantity'])}{realised}"
 
