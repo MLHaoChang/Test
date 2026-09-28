@@ -23,7 +23,7 @@ const ROUND_ONE_FILES = [
 ];
 const CONFIRMED_HOLDINGS = path.join(FIXTURES, "confirmed_holdings_2024-12-31.csv");
 
-// Both tests below share one `pg serve` and one data directory (scripts/e2e_web_server.sh starts
+// The tests below share one `pg serve` and one data directory (scripts/e2e_web_server.sh starts
 // it once for the whole file, seeded with nothing accepted yet), and Playwright runs a file's
 // tests in declaration order with workers: 1 (playwright.config.ts), so they run in the order
 // written here, each depending on the portfolio state the one before it left behind:
@@ -31,7 +31,8 @@ const CONFIRMED_HOLDINGS = path.join(FIXTURES, "confirmed_holdings_2024-12-31.cs
 // 1. discard leaves the portfolio exactly as empty as it started (a discarded batch's
 //    transactions are removed, not just hidden), so
 // 2. the import test below can still expect a pristine "0 accepted" portfolio before it accepts
-//    anything itself.
+//    anything itself, and
+// 3. the phone-width test finds the holdings table the import test accepted.
 
 test("discarding a staged batch leaves nothing accepted", async ({ page }) => {
   await page.goto("/");
@@ -47,6 +48,15 @@ test("discarding a staged batch leaves nothing accepted", async ({ page }) => {
   await expect(page.getByTestId("holdings-table")).toHaveCount(0);
   // Importing is available again immediately: nothing is left staged.
   await expect(page.getByTestId("import-file-input")).toBeEnabled();
+  // The input no longer shows the uploaded files, so choosing the same files again, without a
+  // reload, is a new choice and enables Upload (QA P0 round 1, M1).
+  await expect(page.getByTestId("import-file-input")).toHaveValue("");
+  await page.getByTestId("import-file-input").setInputFiles(ROUND_ONE_FILES);
+  await expect(page.getByRole("button", { name: "Upload", exact: true })).toBeEnabled();
+  // Still nothing accepted, so the reminder to import stays, worded for this page.
+  await expect(page.getByTestId("import-reminder")).toHaveText(
+    "Nothing has been imported yet. Choose your Trade Republic files below.",
+  );
 });
 
 test("import, diff, accept, holdings and the value chart", async ({ page }) => {
@@ -61,7 +71,9 @@ test("import, diff, accept, holdings and the value chart", async ({ page }) => {
 
   await expect(page.getByTestId("diff-summary")).toContainText("14 new transactions");
   await expect(page.getByTestId("diff-summary")).toContainText("2 need your review");
-  await expect(page.getByTestId("diff-review-items")).toContainText("No parser recognises this document layout");
+  await expect(page.getByTestId("diff-review-items")).toContainText(
+    "unbekannt_kosteninformation.pdf: No parser recognises this document layout",
+  );
 
   // Check the rebuilt holdings against what the Trade Republic app would show (plan 7.6 step 7).
   await page.getByTestId("confirmed-holdings-input").setInputFiles(CONFIRMED_HOLDINGS);
@@ -74,6 +86,10 @@ test("import, diff, accept, holdings and the value chart", async ({ page }) => {
   // The diff and its actions are gone once the batch is accepted; the holdings and chart replace it.
   await expect(page.getByTestId("diff-view")).toHaveCount(0);
   await expect(page.getByTestId("holdings-table")).toBeVisible();
+  // Something is accepted now: the reminder to import is gone without a reload (QA P0 round 1, M2),
+  // and the file input is empty again (M1).
+  await expect(page.getByTestId("import-reminder")).toHaveCount(0);
+  await expect(page.getByTestId("import-file-input")).toHaveValue("");
 
   const rows = page.getByTestId("holdings-table").locator("tbody tr");
   await expect(rows).toHaveCount(5);
@@ -97,8 +113,23 @@ test("import, diff, accept, holdings and the value chart", async ({ page }) => {
   await page.getByTestId("import-file-input").setInputFiles(ROUND_ONE_FILES);
   await page.getByRole("button", { name: "Upload", exact: true }).click();
   await expect(page.getByTestId("diff-summary")).toContainText("0 new transactions");
+  await expect(page.getByTestId("diff-summary")).toContainText("10 files already imported, skipped");
 
   // Nowhere on the page does the app call itself a live-trading system (spec section 7).
   const bodyText = (await page.locator("body").innerText()).toLowerCase();
   expect(bodyText).not.toContain("live trading");
+});
+
+test("the page does not scroll sideways on a phone", async ({ page }) => {
+  // Runs after the import test above, so the holdings table and the chart are on the page. A table
+  // wider than the screen scrolls inside its own box instead (QA P0 round 1, M4).
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.getByTestId("holdings-table")).toBeVisible();
+
+  const widths = await page.evaluate(() => ({
+    page: document.documentElement.scrollWidth,
+    screen: window.innerWidth,
+  }));
+  expect(widths.page).toBeLessThanOrEqual(widths.screen);
 });

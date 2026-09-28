@@ -5,7 +5,14 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { acceptBatch, ApiError, type ConfirmedComparison, discardBatch, type HeldBackTransaction, type ImportDiff } from "../api";
+import {
+  acceptBatch,
+  ApiError,
+  type ConfirmedComparison,
+  discardBatch,
+  type HeldBackTransaction,
+  type ImportDiff,
+} from "../api";
 import { DiffView } from "./DiffView";
 
 vi.mock("../api", async (importOriginal) => {
@@ -20,6 +27,12 @@ const mockDiscard = vi.mocked(discardBatch);
 // fails the moment the diff view stops rendering what the backend actually sends.
 const IMPORT1: ImportDiff = JSON.parse(
   readFileSync(path.resolve(__dirname, "../../../tests/fixtures/golden/expected/import1.json"), "utf-8"),
+) as ImportDiff;
+
+// The golden round 2 (plan 7.6 step 11): ten files already imported, the statement's eleven
+// lines all already known, nothing new.
+const IMPORT2: ImportDiff = JSON.parse(
+  readFileSync(path.resolve(__dirname, "../../../tests/fixtures/golden/expected/import2.json"), "utf-8"),
 ) as ImportDiff;
 
 // The golden confirmed-holdings comparison (plan 7.6 step 7): every row matches, the same fixture
@@ -190,5 +203,65 @@ describe("DiffView", () => {
     fireEvent.click(screen.getByRole("button", { name: "Accept these transactions into my portfolio copy" }));
 
     await waitFor(() => expect(screen.getByTestId("diff-error")).toHaveTextContent("This batch is not staged."));
+  });
+
+  // --- What the CLI and the API say, the page says too (QA P0 round 1, M3 and M4) --------------
+
+  it("names the file of every review item", () => {
+    render(<DiffView diff={IMPORT1} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const items = within(screen.getByTestId("diff-review-items")).getAllByRole("listitem");
+    expect(items[0]).toHaveTextContent("unbekannt_kosteninformation.pdf: No parser recognises this document layout");
+    expect(items[1]).toHaveTextContent("tr_transactions_2024.csv:");
+  });
+
+  it("counts the already-known transactions and the files skipped as already imported", () => {
+    render(<DiffView diff={IMPORT2} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const summary = screen.getByTestId("diff-summary");
+    expect(summary).toHaveTextContent("0 new transactions");
+    expect(summary).toHaveTextContent("11 already known");
+    expect(summary).toHaveTextContent("10 files already imported, skipped");
+    const known = screen.getByTestId("diff-already-known-transactions");
+    expect(known).toHaveTextContent("kontoauszug_2024_h1.pdf");
+    expect(within(known).getAllByRole("row")).toHaveLength(IMPORT2.already_known.length + 1);
+  });
+
+  it("shows plain words, never an internal id, for the match rule and the type", () => {
+    render(<DiffView diff={IMPORT1} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const merged = screen.getByTestId("diff-merged-transactions");
+    expect(merged).toHaveTextContent("same day, type and amount");
+    expect(merged.textContent).not.toContain("same_key");
+    const added = screen.getByTestId("diff-new-transactions");
+    expect(added).toHaveTextContent("transfer in");
+    expect(added).toHaveTextContent("purchase");
+    expect(added.textContent).not.toContain("transfer_in");
+  });
+
+  it("counts one of a kind in the singular", () => {
+    const one: ImportDiff = {
+      ...IMPORT1,
+      counts: { ...IMPORT1.counts, new: 1, review_new: 1, duplicate_files: 1 },
+    };
+    render(<DiffView diff={one} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const summary = screen.getByTestId("diff-summary");
+    expect(summary).toHaveTextContent("1 new transaction,");
+    expect(summary).toHaveTextContent("1 needs your review");
+    expect(summary).toHaveTextContent("1 file already imported, skipped");
+  });
+
+  it("puts every table in a container that scrolls sideways on a narrow screen", () => {
+    const withConfirmed: ImportDiff = { ...IMPORT1, confirmed: RECONCILE_CONFIRMED };
+    const { container } = render(
+      <DiffView diff={withConfirmed} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />,
+    );
+
+    const tables = container.querySelectorAll("table");
+    expect(tables.length).toBeGreaterThan(0);
+    for (const table of Array.from(tables)) {
+      expect(table.parentElement).toHaveClass("table-scroll");
+    }
   });
 });

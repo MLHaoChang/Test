@@ -12,46 +12,50 @@ export interface HoldingsTableProps {
  */
 export function HoldingsTable({ holdings, currency }: HoldingsTableProps): JSX.Element {
   return (
-    <table data-testid="holdings-table">
-      <caption>Your holdings</caption>
-      <thead>
-        <tr>
-          <th>ISIN</th>
-          <th>Name</th>
-          <th>Quantity</th>
-          <th>Cost</th>
-          <th>Value</th>
-          <th>Price source</th>
-          <th>Flags</th>
-        </tr>
-      </thead>
-      <tbody>
-        {holdings.map((holding) => (
-          <tr key={holding.isin} data-testid={`holdings-row-${holding.isin}`}>
-            <td>{holding.isin}</td>
-            <td>{holding.name}</td>
-            <td>{formatQuantity(holding.quantity)}</td>
-            <td>{formatMoney(holding.cost_eur, currency)}</td>
-            <td>{formatMoney(holding.value_eur, currency)}</td>
-            <td>
-              {holding.mapping.symbol ? `${holding.mapping.symbol} (${holding.mapping.status})` : holding.mapping.status}
-            </td>
-            <td>
-              {holding.flags.length > 0 ? (
-                <ul className="flag-list">
-                  {holding.flags.map((flag) => (
-                    <li key={flag.kind} title={flag.detail}>
-                      {flag.kind.replace(/_/g, " ")}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                "-"
-              )}
-            </td>
+    <div className="table-scroll">
+      <table data-testid="holdings-table">
+        <caption>Your holdings</caption>
+        <thead>
+          <tr>
+            <th>ISIN</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Cost</th>
+            <th>Value</th>
+            <th>Price source</th>
+            <th>Flags</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {holdings.map((holding) => (
+            <tr key={holding.isin} data-testid={`holdings-row-${holding.isin}`}>
+              <td>{holding.isin}</td>
+              <td>{holding.name}</td>
+              <td>{formatQuantity(holding.quantity)}</td>
+              <td>{formatMoney(holding.cost_eur, currency)}</td>
+              <td>{formatMoney(holding.value_eur, currency)}</td>
+              <td>
+                {holding.mapping.symbol
+                  ? `${holding.mapping.symbol} (${holding.mapping.status})`
+                  : holding.mapping.status}
+              </td>
+              <td>
+                {holding.flags.length > 0 ? (
+                  <ul className="flag-list">
+                    {holding.flags.map((flag) => (
+                      <li key={flag.kind} title={flag.detail}>
+                        {flag.kind.replace(/_/g, " ")}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  "-"
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

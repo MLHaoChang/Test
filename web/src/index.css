@@ -93,6 +93,17 @@ table {
   margin: 12px 0;
 }
 
+/* A table wider than the screen scrolls inside its own box instead of making the whole page
+   scroll sideways (QA P0 round 1, M4: the holdings table made a 390 px phone page 737 px wide). */
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.review-file {
+  font-weight: 600;
+}
+
 caption {
   text-align: left;
   font-weight: 600;

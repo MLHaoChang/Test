@@ -15,6 +15,10 @@ export interface ImportPanelProps {
  */
 export function ImportPanel({ onImported, disabled }: ImportPanelProps): JSX.Element {
   const [files, setFiles] = useState<File[]>([]);
+  // Changed after each upload, so React puts a fresh, empty input in place of the one that still
+  // shows the uploaded files. Chromium fires no change event when you choose exactly the files an
+  // input already shows, so without this the same files could not be chosen again (QA P0 round 1).
+  const [inputKey, setInputKey] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,6 +28,7 @@ export function ImportPanel({ onImported, disabled }: ImportPanelProps): JSX.Ele
     try {
       const diff = await uploadImportFiles(files);
       setFiles([]);
+      setInputKey((key) => key + 1);
       onImported(diff);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "The upload failed. Check your connection and try again.");
@@ -42,6 +47,7 @@ export function ImportPanel({ onImported, disabled }: ImportPanelProps): JSX.Ele
         </p>
       )}
       <input
+        key={inputKey}
         type="file"
         multiple
         accept=".csv,.pdf,application/pdf,text/csv"

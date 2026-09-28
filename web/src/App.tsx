@@ -38,6 +38,16 @@ export function App(): JSX.Element {
     setValue(nextValue);
   }
 
+  // The reminder and the last import change with every accept (and a discard may leave the
+  // portfolio as empty as before), so the status is read again after each (QA P0 round 1, M2).
+  async function refreshStatus(): Promise<void> {
+    try {
+      setStatus(await getPortfolioStatus());
+    } catch {
+      // The status shown so far stays; the next page load reads it again.
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -76,18 +86,29 @@ export function App(): JSX.Element {
   const handleAccepted = (_result: AcceptResponse): void => {
     setDiff(null);
     void refreshHoldingsAndValue();
+    void refreshStatus();
   };
 
   const handleDiscarded = (_result: DiscardResponse): void => {
     setDiff(null);
+    void refreshStatus();
   };
+
+  // The API words the empty-portfolio reminder for the CLI ("pg import FILE..."); on the page the
+  // way to import is right below it. No reminder while a batch waits: that is an import going on.
+  const reminder =
+    status?.reminder.due && diff === null
+      ? status.reminder.days_since_last_import === null
+        ? "Nothing has been imported yet. Choose your Trade Republic files below."
+        : status.reminder.message
+      : null;
 
   return (
     <div className="app">
       <Badge />
-      {status?.reminder.due && (
+      {reminder && (
         <p className="reminder" data-testid="import-reminder">
-          {status.reminder.message}
+          {reminder}
         </p>
       )}
       {loadError && (
@@ -96,7 +117,9 @@ export function App(): JSX.Element {
         </p>
       )}
       <ImportPanel onImported={setDiff} disabled={loading || diff !== null} />
-      {diff && <DiffView diff={diff} onDiffChanged={setDiff} onAccepted={handleAccepted} onDiscarded={handleDiscarded} />}
+      {diff && (
+        <DiffView diff={diff} onDiffChanged={setDiff} onAccepted={handleAccepted} onDiscarded={handleDiscarded} />
+      )}
       {loading ? (
         <p data-testid="app-loading">Loading your portfolio...</p>
       ) : (

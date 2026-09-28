@@ -109,6 +109,7 @@ export interface ImportDiff {
   files: StagedFile[];
   new: DiffTransaction[];
   merged: MergedRecord[];
+  already_known: MergedRecord[];
   held_back: HeldBackTransaction[];
   holdings: HoldingChange[];
   review_new: ReviewItem[];

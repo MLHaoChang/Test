@@ -26,9 +26,7 @@ describe("HoldingsTable", () => {
   });
 
   it("shows an unknown cost as a dash rather than as a number", () => {
-    const withMissingCost: HoldingsResponse["holdings"] = [
-      { ...HOLDINGS.holdings[0], cost_eur: null },
-    ];
+    const withMissingCost: HoldingsResponse["holdings"] = [{ ...HOLDINGS.holdings[0], cost_eur: null }];
     render(<HoldingsTable holdings={withMissingCost} currency="EUR" />);
     const row = screen.getByTestId(`holdings-row-${withMissingCost[0].isin}`);
     expect(within(row).getByText("-")).toBeInTheDocument();
@@ -45,5 +43,10 @@ describe("HoldingsTable", () => {
     render(<HoldingsTable holdings={noFlags} currency="EUR" />);
     const row = screen.getByTestId(`holdings-row-${noFlags[0].isin}`);
     expect(row).toHaveTextContent("-");
+  });
+
+  it("sits in a container that scrolls sideways on a narrow screen (QA P0 round 1, M4)", () => {
+    render(<HoldingsTable holdings={HOLDINGS.holdings} currency={HOLDINGS.currency} />);
+    expect(screen.getByTestId("holdings-table").parentElement).toHaveClass("table-scroll");
   });
 });

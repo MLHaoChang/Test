@@ -659,7 +659,7 @@ One page, plain English, built with Vite, React and TypeScript under `web/`:
 
 - A fixed red badge at the top: **NO REAL ORDERS · portfolio read-only** (`data-testid="no-real-orders-badge"`).
 - Upload: a file input for several CSV and PDF files and an Upload button (`POST /portfolio/imports`).
-- The diff: counts, the new, merged and held-back transactions, review items with the reason, holdings before and after, and an optional confirmed-holdings upload with the match table.
+- The diff: counts (new, merged, already known, held back, and files skipped as already imported), the new, merged, already-known and held-back transactions, review items with their file and reason, holdings before and after, and an optional confirmed-holdings upload with the match table. Types and match rules are shown in plain words, never as ids. Every table scrolls sideways inside its own box on a narrow screen, so the page itself never does.
 - Accept and Discard buttons. Accept is worded "Accept these transactions into my portfolio copy".
 - After accept: the holdings table (ISIN, name, quantity, cost, value in EUR, mapping symbol and status, flags) and a small SVG line chart of `GET /portfolio/value` over the range of 5.7.
 - No other navigation; the P1 screens replace this page's shell later.
