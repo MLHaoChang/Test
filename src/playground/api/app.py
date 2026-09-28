@@ -23,7 +23,7 @@ to the static files (the page itself at `/`, and its built JS and CSS under `/as
 mounted and `/` behaves as it always did: not found, like any other unknown path.
 """
 
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -61,6 +61,7 @@ __all__ = [
     "PortfolioNotInitialisedError",
     "create_app",
     "get_state",
+    "plain_validation_message",
     "portfolio_conn",
 ]
 
@@ -133,6 +134,47 @@ def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
     return JSONResponse(status_code=status_code, content={"error": {"code": code, "message": message}})
 
 
+_RANGE_TYPES = frozenset({"greater_than", "greater_than_equal", "less_than", "less_than_equal"})
+_OUTSIDE_THE_BODY = frozenset({"query", "path", "header", "cookie"})
+
+
+def plain_validation_message(errors: Sequence[Mapping[str, Any]]) -> str:
+    """One plain sentence for each problem FastAPI or pydantic found in a request.
+
+    Built from each error's location, type and the value given, never from the error's own text
+    dump, which carries the server's file path, a line number and a link. For example: "The from
+    date 2024-13-01 could not be read. Use YYYY-MM-DD."
+    """
+    sentences = [_plain_sentence(error) for error in errors]
+    return " ".join(sentences) if sentences else "The request could not be read."
+
+
+def _plain_sentence(error: Mapping[str, Any]) -> str:
+    loc = [str(part) for part in error.get("loc", ())]
+    where = loc[0] if loc and loc[0] in _OUTSIDE_THE_BODY else "body"
+    names = [part for part in loc if part not in _OUTSIDE_THE_BODY and part != "body" and not part.isdigit()]
+    name = names[-1] if names else "value"
+    kind = str(error.get("type", ""))
+    given = error.get("input")
+    shown = f" {given}" if isinstance(given, str | int | float) and not isinstance(given, bool) else ""
+    if kind == "json_invalid":
+        return "The request body is not valid JSON."
+    if kind == "missing":
+        if where == "body":
+            return f"The request body has no {name}."
+        return f"The {name} {'query parameter' if where == 'query' else where + ' value'} is missing."
+    if kind.startswith(("date", "datetime")):
+        return f"The {name} date{shown} could not be read. Use YYYY-MM-DD."
+    if kind.startswith("int"):
+        return f"The {name} value{shown} is not a whole number."
+    detail = str(error.get("msg", "")).strip().rstrip(".")
+    if detail.startswith("Input should"):
+        detail = "it should" + detail.removeprefix("Input should")
+    if kind in _RANGE_TYPES or detail.startswith("it should"):
+        return f"The {name} value{shown} is not valid: {detail}."
+    return f"The {name} value{shown} could not be read."
+
+
 def _register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(BatchNotFoundError)
     async def _batch_not_found(request: Request, exc: BatchNotFoundError) -> JSONResponse:
@@ -175,7 +217,7 @@ def _register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(RequestValidationError)
     async def _validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
-        return _error_response(422, "invalid_request", f"The request could not be read: {exc}")
+        return _error_response(422, "invalid_request", plain_validation_message(exc.errors()))
 
     @app.exception_handler(StarletteHTTPException)
     async def _http_error(request: Request, exc: StarletteHTTPException) -> JSONResponse:

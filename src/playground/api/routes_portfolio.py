@@ -14,7 +14,7 @@ from pydantic import ValidationError
 from sqlalchemy import Connection
 
 from playground.api import schemas
-from playground.api.app import BadRequestError, get_state, portfolio_conn
+from playground.api.app import BadRequestError, get_state, plain_validation_message, portfolio_conn
 from playground.core.dates import format_ts_utc
 from playground.core.errors import InvalidIsinError
 from playground.core.isin import normalise_isin
@@ -135,7 +135,7 @@ async def upload_confirmed_holdings(
         try:
             body = schemas.ConfirmedHoldingsRequest.model_validate(await request.json())
         except ValidationError as exc:
-            raise BadRequestError(f"The request body could not be read: {exc}") from exc
+            raise BadRequestError(plain_validation_message(exc.errors())) from exc
         rows = _rows_from_json(body.rows)
         top_as_of = _parse_date(body.as_of, "as_of")
         source = "typed"

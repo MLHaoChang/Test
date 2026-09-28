@@ -219,3 +219,66 @@ def test_before_pg_init_every_portfolio_route_says_so_plainly(tmp_path: Path) ->
     assert "pg init" in body["error"]["message"]
     assert_error(client.get("/portfolio/holdings"), 400, "not_initialised")
     assert_error(client.get("/instruments"), 400, "not_initialised")
+
+
+# --- A request FastAPI cannot read: one plain sentence per problem (QA P0 round 1, M6) -----------
+
+
+def assert_plain(message: str) -> None:
+    """No pydantic dump, no server path, no line number, no link."""
+    for leak in ("File ", ".py", "line ", "/home/", "validation error", "{'type'", "pydantic"):
+        assert leak not in message, (leak, message)
+
+
+@pytest.mark.parametrize(
+    ("url", "message"),
+    [
+        ("/portfolio/value?from=2024-13-01", "The from date 2024-13-01 could not be read. Use YYYY-MM-DD."),
+        ("/portfolio/holdings?as_of=garbage", "The as_of date garbage could not be read. Use YYYY-MM-DD."),
+        (
+            "/benchmarks/sp500/series",
+            "The from query parameter is missing. The to query parameter is missing.",
+        ),
+        (
+            "/portfolio/transactions?limit=0",
+            "The limit value 0 is not valid: it should be greater than or equal to 1.",
+        ),
+        ("/portfolio/transactions?limit=abc", "The limit value abc is not a whole number."),
+    ],
+    ids=["bad_date", "not_a_date", "missing", "out_of_range", "not_a_number"],
+)
+def test_an_unreadable_query_value_is_one_plain_sentence(client: TestClient, url: str, message: str) -> None:
+    body = assert_error(client.get(url), 422, "invalid_request")
+
+    assert body["error"]["message"] == message
+    assert_plain(body["error"]["message"])
+
+
+def test_a_mapping_body_with_missing_fields_is_one_plain_sentence_per_field(client: TestClient) -> None:
+    body = assert_error(
+        client.put("/instruments/DE0007164600/mapping", json={"source": "stooq"}), 422, "invalid_request"
+    )
+
+    assert body["error"]["message"] == "The request body has no symbol. The request body has no currency."
+
+
+def test_a_body_that_is_not_json_says_so(client: TestClient) -> None:
+    response = client.put(
+        "/instruments/DE0007164600/mapping", content=b"not json", headers={"content-type": "application/json"}
+    )
+
+    body = assert_error(response, 422, "invalid_request")
+    assert body["error"]["message"] == "The request body is not valid JSON."
+
+
+def test_a_confirmed_holdings_row_without_its_isin_is_a_plain_400(client: TestClient) -> None:
+    files = [("files", (ONE_TRADE_PDF.name, ONE_TRADE_PDF.read_bytes()))]
+    batch_id = client.post("/portfolio/imports", files=files).json()["batch"]["id"]
+
+    response = client.post(
+        f"/portfolio/imports/{batch_id}/confirmed-holdings", json={"rows": [{"quantity": "10", "as_of": "2024-12-31"}]}
+    )
+
+    body = assert_error(response, 400, "invalid_request")
+    assert body["error"]["message"] == "The request body has no isin."
+    assert_plain(body["error"]["message"])
