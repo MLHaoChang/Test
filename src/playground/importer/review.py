@@ -143,14 +143,20 @@ def evaluate(ws: Workspace, cause: Cause, *, now: str, reparsed: Mapping[int, st
             plan.new_items.append(item)
 
     plan.held = {item.txn_key for item in _evaluated(ws) if ws.holds(item) and item.txn_key is not None}
-    plan.book = build_lots([ledger_txn(txn) for txn in ws.alive() if txn.key not in plan.held])
+    names = _document_names(ws)
+    plan.book = build_lots([ledger_txn(txn, names) for txn in ws.alive() if txn.key not in plan.held])
     _check_ledger_items(ws, cause, plan, now)
     return plan
 
 
-def ledger_txn(txn: Txn) -> LedgerTxn:
-    """A transaction as the ledger sees it (plan 5.5); its id is the workspace key."""
+def ledger_txn(txn: Txn, names: Mapping[str, str] | None = None) -> LedgerTxn:
+    """A transaction as the ledger sees it (plan 5.5); its id is the workspace key.
+
+    Its `name`, which only words the ledger's messages, is the one its own documents give, else
+    the one `names` has for its ISIN (a manual CSV row names no instrument).
+    """
     fields = txn.fields
+    name = txn.view.name or (names or {}).get(fields.isin or "")
     return LedgerTxn(
         id=txn.key,
         type=fields.type,
@@ -162,7 +168,17 @@ def ledger_txn(txn: Txn) -> LedgerTxn:
         tax_eur=fields.tax_eur,
         split_new_quantity=fields.split_new_quantity,
         cost_input=txn.cost_input if fields.type is TxnType.TRANSFER_IN else None,
+        name=name,
     )
+
+
+def _document_names(ws: Workspace) -> dict[str, str]:
+    """The instrument name each ISIN's documents give, from the first transaction that has one."""
+    names: dict[str, str] = {}
+    for txn in ws.alive():
+        if txn.fields.isin and txn.view.name:
+            names.setdefault(txn.fields.isin, txn.view.name)
+    return names
 
 
 def _evaluated(ws: Workspace) -> Iterator[Item]:

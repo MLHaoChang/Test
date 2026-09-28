@@ -74,6 +74,7 @@ from typing import Literal
 
 from playground.core.dates import berlin_to_utc
 from playground.core.money import allocate, q8
+from playground.core.text import name_and_isin
 from playground.core.types import TxnType
 from playground.ledger.holdings import (
     PositionPoint,
@@ -126,7 +127,9 @@ class LedgerTxn:
     `tax_eur` are the fees and the taxes withheld, `None` when no source says. The ledger needs
     `tax_eur` to get a sale's proceeds (booking amount plus taxes withheld), which is why it is
     here in addition to the fields plan 5.5 lists. `split_new_quantity` is the quantity held
-    after a split. `cost_input` is the cost you entered, for a transfer in only.
+    after a split. `cost_input` is the cost you entered, for a transfer in only. `name` is the
+    instrument's name, `None` when no document names it: it is used only to word a
+    `LedgerIssue`'s message ("SAP SE (DE0007164600)"), never to book anything.
     """
 
     id: int
@@ -139,6 +142,7 @@ class LedgerTxn:
     tax_eur: Decimal | None
     split_new_quantity: Decimal | None
     cost_input: CostInput | None = None
+    name: str | None = None
 
 
 @dataclass(frozen=True)
@@ -439,7 +443,7 @@ class _Builder:
         held = sum((lot.quantity_open for lot in open_lots), start=_ZERO)
 
         def unclear(reason: str) -> None:
-            message = f"The split of {isin} on {day.isoformat()} {reason}"
+            message = f"The split of {name_and_isin(isin, txn.name)} on {day.isoformat()} {reason}"
             self._issues.append(LedgerIssue(kind="split_unclear", txn_id=txn.id, isin=isin, message=message))
 
         if new_total is None or new_total <= 0:
@@ -496,7 +500,8 @@ def _quantity(txn: LedgerTxn) -> Decimal:
 
 def _oversell(txn: LedgerTxn, isin: str, kind: DisposalKind, *, wanted: Decimal, held: Decimal) -> LedgerIssue:
     what = "sale" if kind == "sell" else "transfer out"
-    booked = f"On {booking_date(txn.ts_utc).isoformat()} a {what} of {_show(wanted)} shares of {isin} was booked"
+    security = name_and_isin(isin, txn.name)
+    booked = f"On {booking_date(txn.ts_utc).isoformat()} a {what} of {_show(wanted)} shares of {security} was booked"
     if held == 0:
         message = f"{booked}, but none were held then. A purchase or a transfer in may be missing from your imports."
     else:

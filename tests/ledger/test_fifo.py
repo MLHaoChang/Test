@@ -502,6 +502,13 @@ class TestSplit:
         assert "3 shares" in book.issues[0].message
         assert "the ledger holds 2" in book.issues[0].message
 
+    def test_an_unclear_split_message_names_the_security(self) -> None:
+        # QA P0 round 2, minor 8: like the oversell message, it gave the ISIN alone.
+        named = replace(split(1, NVDA, berlin(2024, 6, 10), "20"), name="NVIDIA Corp.")
+        book = build_lots([named])
+
+        assert book.issues[0].message.startswith("The split of NVIDIA Corp. (US67066G1040) on 2024-06-10 books in 20")
+
     def test_a_split_when_nothing_is_held_is_unclear(self) -> None:
         book = build_lots([split(1, NVDA, berlin(2024, 6, 10), "20")])
 
@@ -794,6 +801,16 @@ class TestOversell:
         assert SAP in message
         assert "\u2014" not in message  # no em dash
         assert "\u2013" not in message  # no en dash
+
+    def test_the_oversell_message_names_the_security_like_the_other_messages(self) -> None:
+        # QA P0 round 2, minor 8: "a sale of 12 shares of DE0007164600", where the other review
+        # messages say "SAP SE (DE0007164600)". The name is for the message only.
+        named = replace(sell(2, SAP, berlin(2024, 6, 12, 11, 20), "12", "1199.00"), name="SAP SE")
+        book = build_lots([buy(1, SAP, berlin(2024, 1, 10, 10, 0), "10", "-1000.00"), named])
+
+        assert book.issues[0].message.startswith(
+            "On 2024-06-12 a sale of 12 shares of SAP SE (DE0007164600) was booked"
+        )
 
 
 class TestOrder:

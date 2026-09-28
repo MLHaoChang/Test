@@ -273,6 +273,19 @@ def test_an_instrument_without_a_name_is_shown_by_its_isin_once(data_dir: str, t
             assert f"{isin} ({isin})" not in output, command
 
 
+# --- A sale of more than is held (QA P0 round 2, minor 8) -----------------------------------------
+
+
+def test_the_oversell_item_names_the_security_like_the_other_items(data_dir: str) -> None:
+    # The golden CSV alone lacks the purchase of 2024-04-10, which only its PDF reports, so the
+    # sale of 12 SAP shares on 2024-06-12 finds only 10.
+    result = pg("--data-dir", data_dir, "import", str(GOLDEN_INPUTS / "tr_transactions_2024.csv"))
+
+    assert result.exit_code == 0, result.output
+    assert "On 2024-06-12 a sale of 12 shares of SAP SE (DE0007164600) was booked" in result.stdout
+    assert "shares of DE0007164600" not in result.stdout
+
+
 # --- An empty file --------------------------------------------------------------------------------
 
 
