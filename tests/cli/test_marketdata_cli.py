@@ -186,3 +186,112 @@ def test_benchmarks_series_unknown_id_is_a_plain_error(data_dir: str) -> None:
 def test_benchmarks_series_requires_from_and_to(data_dir: str) -> None:
     result = pg(data_dir, "benchmarks", "series", "sp500")
     assert result.exit_code == 1
+
+
+# --- A fetch that fails: reported per symbol, the rest still fetched (QA P0 round 1, D3) ----------
+
+
+def _refuse(request):
+    import httpx
+
+    raise httpx.ConnectError("[Errno 111] Connection refused", request=request)
+
+
+@pytest.fixture
+def no_network(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every `pg` command below gets a network client whose connections are refused (no real socket)."""
+    import httpx
+
+    import playground.cli.main as cli_main
+    from playground.http.client import NetworkHttpClient
+
+    monkeypatch.setattr(
+        cli_main,
+        "make_http_client",
+        lambda settings: NetworkHttpClient(transport=httpx.MockTransport(_refuse), sleep=lambda seconds: None),
+    )
+
+
+def _map_allianz_to_an_unrecorded_stooq_symbol(data_dir: str) -> None:
+    result = pg(data_dir, "instruments", "map", ALV, "--source", "stooq", "--symbol", "alv.de", "--currency", "EUR")
+    assert result.exit_code == 0, result.output
+
+
+def test_prices_fetch_reports_an_unrecorded_symbol_and_still_fetches_the_rest(data_dir: str) -> None:
+    _map_allianz_to_an_unrecorded_stooq_symbol(data_dir)
+
+    result = pg(data_dir, "prices", "fetch", "--from", "2024-01-01", "--to", "2024-12-31", http_replay=HTTP_FIXTURES)
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit), repr(result.exception)
+    lines = result.stdout.splitlines()
+    assert next(line for line in lines if line.startswith(ALV)).startswith(f"{ALV} (alv.de): No recorded response")
+    # The instruments after the failing one (ISIN order) are fetched too.
+    for isin in (SAP, "IE00B4L5Y983", AAPL, "US67066G1040"):
+        assert "daily closes stored" in next(line for line in lines if line.startswith(isin))
+    assert "1 of 5 instruments could not be fetched." in result.stderr
+    assert pg(data_dir, "prices", "show", "nvda.us").exit_code == 0
+
+
+def test_prices_fetch_json_lists_the_failure_and_exits_1(data_dir: str) -> None:
+    _map_allianz_to_an_unrecorded_stooq_symbol(data_dir)
+
+    result = pg(
+        data_dir, "prices", "fetch", "--from", "2024-01-01", "--to", "2024-12-31", "--json", http_replay=HTTP_FIXTURES
+    )
+
+    assert result.exit_code == 1
+    fetched = {row["isin"]: row for row in json.loads(result.stdout)["fetched"]}
+    assert fetched[ALV]["error"].startswith("No recorded response")
+    assert fetched[SAP]["points"] > 0
+
+
+def test_prices_fetch_without_a_network_reports_every_symbol_plainly(data_dir: str, no_network: None) -> None:
+    result = pg(data_dir, "prices", "fetch", "--from", "2024-12-01", "--to", "2024-12-31")
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit), repr(result.exception)
+    assert f"{SAP} (sap.de): Could not reach stooq.com to fetch sap.de: the connection failed" in result.stdout
+    assert "Check your connection, or load its closes from a file with pg prices import-file." in result.stdout
+    assert "4 of 4 instruments could not be fetched." in result.stderr
+    assert "Traceback" not in result.output
+
+
+def test_fx_fetch_without_a_network_is_one_plain_message(data_dir: str, no_network: None) -> None:
+    result = pg(data_dir, "fx", "fetch")
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit), repr(result.exception)
+    assert result.stderr.strip() == (
+        "Could not reach www.ecb.europa.eu to fetch the ECB rates: the connection failed ([Errno 111] Connection "
+        "refused). Check your connection, or load the rates CSV from a file with pg fx import-file."
+    )
+
+
+def test_benchmarks_fetch_reports_each_benchmark_that_could_not_be_fetched(data_dir: str, no_network: None) -> None:
+    result = pg(data_dir, "benchmarks", "fetch", "--from", "2024-12-01", "--to", "2024-12-31")
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit), repr(result.exception)
+    assert "msci_world_eur: Could not reach stooq.com to fetch eunl.de" in result.stdout
+    assert "sp500: Could not reach stooq.com to fetch ^spx" in result.stdout
+    assert "2 of 2 benchmarks could not be fetched." in result.stderr
+    # A benchmark is read from its configured series, so the manual price file is no way out here.
+    assert "import-file" not in result.output
+
+
+def test_benchmarks_fetch_json_lists_the_errors(data_dir: str) -> None:
+    result = pg(
+        data_dir,
+        "benchmarks",
+        "fetch",
+        "--from",
+        "2024-01-01",
+        "--to",
+        "2024-12-31",
+        "--json",
+        http_replay=HTTP_FIXTURES,
+    )
+
+    assert result.exit_code == 0, result.output
+    assert json.loads(result.stdout)["errors"] == {}

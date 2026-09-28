@@ -131,3 +131,22 @@ def test_client_against_the_golden_fixture(replay_http_client: ReplayHttpClient)
     # the 24th, which is what "the ECB rate from 2024-12-24" (1.2) then falls back to.
     assert (date(2024, 12, 25), "USD") not in by_key
     assert (date(2024, 12, 24), "USD") in by_key
+
+
+class _UnreachableClient:
+    """An `HttpClient` that never gets a response: the network cannot be reached."""
+
+    def send(self, request: HttpRequest) -> HttpResponse:
+        from playground.http.client import NetworkError
+
+        raise NetworkError("www.ecb.europa.eu", "no answer within 20 seconds, 4 times")
+
+
+def test_a_network_failure_is_a_plain_error_with_the_import_file_hint() -> None:
+    with pytest.raises(EcbSourceError) as info:
+        EcbClient(_UnreachableClient()).history()
+
+    assert str(info.value) == (
+        "Could not reach www.ecb.europa.eu to fetch the ECB rates: no answer within 20 seconds, 4 times. "
+        "Check your connection, or load the rates CSV from a file with pg fx import-file."
+    )

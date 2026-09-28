@@ -15,7 +15,7 @@ from datetime import date
 
 from playground.core.errors import NumberFormatError, PlaygroundError
 from playground.core.numbers import parse_en_decimal
-from playground.http.client import HttpClient, HttpRequest
+from playground.http.client import HttpClient, HttpRequest, NetworkError, NoResponseError
 from playground.marketdata.lake import FxPoint, FxTable
 
 DEFAULT_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"
@@ -36,10 +36,18 @@ class EcbClient:
     def history(self) -> FxTable:
         """Fetch and unzip the ECB's historical reference rates.
 
-        Raises `EcbSourceError` for a non-200 status, a response that is not a zip file, or a zip
-        with no files in it.
+        Raises `EcbSourceError` for a non-200 status, a response that is not a zip file, a zip
+        with no files in it, or no response at all.
         """
-        response = self.http.send(HttpRequest(method="GET", url=self.url))
+        try:
+            response = self.http.send(HttpRequest(method="GET", url=self.url))
+        except NetworkError as exc:
+            raise EcbSourceError(
+                f"Could not reach {exc.host} to fetch the ECB rates: {exc.detail}. "
+                "Check your connection, or load the rates CSV from a file with pg fx import-file."
+            ) from exc
+        except NoResponseError as exc:
+            raise EcbSourceError(str(exc)) from exc
         if response.status != 200:
             raise EcbSourceError(f"The ECB returned status {response.status}.")
         try:

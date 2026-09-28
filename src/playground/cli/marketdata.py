@@ -3,6 +3,11 @@
 Every command that reaches outside the machine (`prices fetch`, `fx fetch`, `benchmarks fetch`)
 goes through `ctx.obj.http_client` -- built once in `cli/main.py` from `--http-replay` /
 `--http-record` / the network default (plan 5.4) -- and never opens one itself.
+
+A source that cannot be reached is reported in plain English, never as a traceback. `prices
+fetch` and `benchmarks fetch` report each symbol that could not be fetched, fetch the rest, and
+then stop with exit status 1 (a symbol the source has no data for is reported, but is not an
+error).
 """
 
 from datetime import date
@@ -20,7 +25,7 @@ from playground.marketdata.benchmarks import (
     BenchmarkConfigError,
     SeriesPoint,
     benchmark_series,
-    fetch_benchmarks,
+    fetch_benchmark,
     find_benchmark,
     load_benchmarks,
 )
@@ -99,6 +104,7 @@ def prices_fetch(
     store = PriceStore(app_ctx.data_dir)
     fetched_at = app_ctx.clock.now_utc()
     results: list[dict[str, Any]] = []
+    failed = 0
     for row in candidates:
         try:
             series = client.daily_bars(row["data_symbol"], start, end, currency=row["currency"])
@@ -106,20 +112,28 @@ def prices_fetch(
             results.append({"isin": row["isin"], "symbol": row["data_symbol"], "error": str(exc)})
             continue
         except SourceUnavailable as exc:
-            fail(str(exc))
+            # Reported, and the other instruments are still fetched (QA P0 round 1, D3).
+            results.append({"isin": row["isin"], "symbol": row["data_symbol"], "error": str(exc)})
+            failed += 1
+            continue
         store.upsert(series, fetched_at=fetched_at)
         results.append({"isin": row["isin"], "symbol": row["data_symbol"], "points": len(series.points)})
 
     if json_output:
         print_json({"from": start.isoformat(), "to": end.isoformat(), "fetched": results})
-        return
-    if not results:
-        typer.echo("No stooq-mapped instruments to fetch. See pg instruments map.")
-    for result in results:
-        if "error" in result:
-            typer.echo(f"{result['isin']} ({result['symbol']}): {result['error']}")
-        else:
-            typer.echo(f"{result['isin']} ({result['symbol']}): {result['points']} daily closes stored.")
+    else:
+        if not results:
+            typer.echo("No stooq-mapped instruments to fetch. See pg instruments map.")
+        for result in results:
+            if "error" in result:
+                typer.echo(f"{result['isin']} ({result['symbol']}): {result['error']}")
+            else:
+                typer.echo(f"{result['isin']} ({result['symbol']}): {result['points']} daily closes stored.")
+    if failed:
+        fail(
+            f"{failed} of {len(candidates)} instruments could not be fetched. Run pg prices fetch again later, "
+            "or load their closes from a file with pg prices import-file."
+        )
 
 
 def prices_import_file(
@@ -272,19 +286,30 @@ def benchmarks_fetch(
     start = _required_day(date_from, "--from")
     end = parse_day(date_to, "--to") or app_ctx.clock.today()
     benchmarks = load_benchmarks()
+    counts: dict[str, int] = {}
+    errors: dict[str, str] = {}
     with portfolio_transaction(app_ctx):
         store = PriceStore(app_ctx.data_dir)
-        try:
-            counts = fetch_benchmarks(
-                app_ctx.http_client, store, benchmarks, start=start, end=end, fetched_at=app_ctx.clock.now_utc()
-            )
-        except (SourceNoData, SourceUnavailable) as exc:
-            fail(str(exc))
+        for benchmark in benchmarks:
+            try:
+                counts[benchmark.id] = fetch_benchmark(
+                    app_ctx.http_client, store, benchmark, start=start, end=end, fetched_at=app_ctx.clock.now_utc()
+                )
+            except (SourceNoData, SourceUnavailable) as exc:
+                # Reported, and the other benchmarks are still fetched (QA P0 round 1, D3).
+                errors[benchmark.id] = str(exc)
     if json_output:
-        print_json({"from": start.isoformat(), "to": end.isoformat(), "fetched": counts})
-        return
-    for benchmark_id, count in counts.items():
-        typer.echo(f"{benchmark_id}: {count} daily closes stored.")
+        print_json({"from": start.isoformat(), "to": end.isoformat(), "fetched": counts, "errors": errors})
+    else:
+        for benchmark in benchmarks:
+            if benchmark.id in counts:
+                typer.echo(f"{benchmark.id}: {counts[benchmark.id]} daily closes stored.")
+            else:
+                typer.echo(f"{benchmark.id}: {errors[benchmark.id]}")
+    if errors:
+        fail(
+            f"{len(errors)} of {len(benchmarks)} benchmarks could not be fetched. Run pg benchmarks fetch again later."
+        )
 
 
 def _find_benchmark_or_fail(benchmarks: list[Benchmark], benchmark_id: str) -> Benchmark:

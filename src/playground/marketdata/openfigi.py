@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from playground.core.errors import PlaygroundError
-from playground.http.client import HttpClient, HttpRequest
+from playground.http.client import HttpClient, HttpRequest, NetworkError, NoResponseError
 
 DEFAULT_URL = "https://api.openfigi.com/v3/mapping"
 API_KEY_HEADER = "X-OPENFIGI-APIKEY"
@@ -57,7 +57,16 @@ class OpenFigiClient:
             headers[API_KEY_HEADER] = self.api_key
         body = json.dumps([{"idType": "ID_ISIN", "idValue": isin}]).encode("utf-8")
 
-        response = self.http.send(HttpRequest(method="POST", url=self.url, headers=headers, body=body))
+        try:
+            response = self.http.send(HttpRequest(method="POST", url=self.url, headers=headers, body=body))
+        except NetworkError as exc:
+            raise OpenFigiError(
+                f"Could not reach {exc.host} to look up {isin}: {exc.detail}. Check your connection. "
+                f"You can map the instrument without a suggestion: pg instruments map {isin} --source stooq "
+                "--symbol SYMBOL --currency CCY"
+            ) from exc
+        except NoResponseError as exc:
+            raise OpenFigiError(str(exc)) from exc
         if response.status == 429:
             raise OpenFigiError("OpenFIGI rate-limited this request. Wait a while, then try again.")
         if response.status != 200:

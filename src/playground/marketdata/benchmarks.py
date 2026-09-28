@@ -77,6 +77,27 @@ def find_benchmark(benchmarks: list[Benchmark], benchmark_id: str) -> Benchmark:
     raise BenchmarkConfigError(f"Unknown benchmark {benchmark_id!r}. Known benchmarks: {known}.")
 
 
+def fetch_benchmark(
+    http: HttpClient,
+    price_store: PriceStore,
+    benchmark: Benchmark,
+    *,
+    start: date,
+    end: date,
+    fetched_at: datetime,
+) -> int:
+    """Fetch and store one benchmark's daily series over `[start, end]`; return the points stored.
+
+    Uses `StooqClient` (6.8: P0 has no other benchmark client) and raises what it raises
+    (`SourceNoData`, `SourceUnavailable`). The benchmark's own `currency` is stored alongside its
+    closes, so `benchmark_series` can convert from it later.
+    """
+    client = StooqClient(http, manual_file_hint=False)
+    series = client.daily_bars(benchmark.data_symbol, start, end, currency=benchmark.currency)
+    price_store.upsert(series, fetched_at=fetched_at)
+    return len(series.points)
+
+
 def fetch_benchmarks(
     http: HttpClient,
     price_store: PriceStore,
@@ -86,19 +107,15 @@ def fetch_benchmarks(
     end: date,
     fetched_at: datetime,
 ) -> dict[str, int]:
-    """Fetch and store every benchmark's daily series over `[start, end]` (`pg benchmarks fetch`).
+    """Fetch and store every benchmark's daily series over `[start, end]` (`fetch_benchmark`).
 
-    Returns the number of points stored per benchmark id. Uses `StooqClient` (6.8: P0 has no
-    other benchmark client); each benchmark's own `currency` is stored alongside its closes, so
-    `benchmark_series` can convert from it later.
+    Returns the number of points stored per benchmark id, and stops at the first that fails.
+    `pg benchmarks fetch` calls `fetch_benchmark` itself, so it can report a failure and go on.
     """
-    client = StooqClient(http)
-    counts: dict[str, int] = {}
-    for benchmark in benchmarks:
-        series = client.daily_bars(benchmark.data_symbol, start, end, currency=benchmark.currency)
-        price_store.upsert(series, fetched_at=fetched_at)
-        counts[benchmark.id] = len(series.points)
-    return counts
+    return {
+        benchmark.id: fetch_benchmark(http, price_store, benchmark, start=start, end=end, fetched_at=fetched_at)
+        for benchmark in benchmarks
+    }
 
 
 def benchmark_series(

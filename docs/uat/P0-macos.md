@@ -153,6 +153,10 @@ uv run pg fx fetch
 uv run pg benchmarks fetch --from 2019-01-01
 ```
 
+If a source cannot be reached (no network, a proxy or firewall that refuses, no answer in time),
+each command says so in one plain sentence per symbol, still fetches the others, and ends with exit
+status 1. Check your connection and run it again.
+
 If a source has no data for one of your instruments (a European listing is the most likely case),
 download its daily closes from anywhere you trust into the manual price format described in
 `pg prices import-file --help`, map that ISIN to `--source manual`, then:

@@ -123,3 +123,44 @@ def test_the_no_data_html_and_500_fixtures_raise_the_right_error(replay_http_cli
         client.daily_bars("html-block.invalid", date(2024, 1, 1), date(2024, 12, 31), currency="EUR")
     with pytest.raises(SourceUnavailable):
         client.daily_bars("http-500.invalid", date(2024, 1, 1), date(2024, 12, 31), currency="EUR")
+
+
+class _UnreachableClient:
+    """An `HttpClient` that never gets a response: the network cannot be reached."""
+
+    def send(self, request: HttpRequest) -> HttpResponse:
+        from playground.http.client import NetworkError
+
+        raise NetworkError("stooq.com", "the connection failed ([Errno 111] Connection refused)")
+
+
+def test_a_network_failure_is_source_unavailable_with_the_manual_file_hint() -> None:
+    client = StooqClient(_UnreachableClient())
+
+    with pytest.raises(SourceUnavailable) as info:
+        client.daily_bars("sap.de", date(2024, 1, 1), date(2024, 1, 31), currency="EUR")
+
+    assert str(info.value) == (
+        "Could not reach stooq.com to fetch sap.de: the connection failed ([Errno 111] Connection refused). "
+        "Check your connection, or load its closes from a file with pg prices import-file."
+    )
+
+
+def test_an_unrecorded_replay_request_is_source_unavailable(tmp_path) -> None:
+    (tmp_path / "index.yaml").write_text("requests: []\n", encoding="utf-8")
+    client = StooqClient(ReplayHttpClient(tmp_path))
+
+    with pytest.raises(SourceUnavailable, match="No recorded response"):
+        client.daily_bars("alv.de", date(2024, 1, 1), date(2024, 1, 31), currency="EUR")
+
+
+def test_a_client_without_the_manual_file_hint_says_only_to_try_again() -> None:
+    client = StooqClient(_UnreachableClient(), manual_file_hint=False)
+
+    with pytest.raises(SourceUnavailable) as info:
+        client.daily_bars("^spx", date(2024, 1, 1), date(2024, 1, 31), currency="USD")
+
+    assert str(info.value) == (
+        "Could not reach stooq.com to fetch ^spx: the connection failed ([Errno 111] Connection refused). "
+        "Check your connection and try again."
+    )

@@ -8,7 +8,8 @@ plain-English message. Plan 6.4 says a source that cannot be reached is `SourceU
 a message that points to the manual price file.
 
 The test builds a `NetworkHttpClient` on an httpx mock transport that fails to connect, so no
-socket is ever opened. It is marked `xfail(strict=True)` while the defect is open.
+socket is ever opened. QA wrote it as a strict xfail while the defect was open; D3 is fixed, the
+marker is gone, and it now guards the fix (see also `test_marketdata_cli.py`).
 """
 
 from pathlib import Path
@@ -46,7 +47,6 @@ def data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> str:
     return path
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 1, D3: a connection error escapes as a traceback")
 @pytest.mark.parametrize(
     "command",
     [

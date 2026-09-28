@@ -14,7 +14,7 @@ from datetime import date
 from decimal import Decimal, InvalidOperation
 
 from playground.core.errors import PlaygroundError
-from playground.http.client import HttpClient, HttpRequest
+from playground.http.client import HttpClient, HttpRequest, NetworkError, NoResponseError
 from playground.marketdata.lake import PricePoint, PriceSeries
 
 DEFAULT_BASE_URL = "https://stooq.com/q/d/l/"
@@ -27,15 +27,22 @@ class SourceNoData(PlaygroundError):
 
 
 class SourceUnavailable(PlaygroundError):
-    """Stooq's response could not be read as daily bars: a non-200 status, or an HTML body."""
+    """Stooq could not be reached, or its response could not be read as daily bars (a non-200 status,
+    or an HTML body). The message says what to do instead."""
 
 
 @dataclass(frozen=True)
 class StooqClient:
-    """`daily_bars` never guesses a symbol: it fetches exactly the one it is given (plan 5.6)."""
+    """`daily_bars` never guesses a symbol: it fetches exactly the one it is given (plan 5.6).
+
+    `manual_file_hint` says whether a `SourceUnavailable` message points to the manual price file
+    (6.5). It does for an instrument's prices; a benchmark is read from its configured series, so
+    `benchmarks.fetch_benchmark` turns the hint off.
+    """
 
     http: HttpClient
     base_url: str = DEFAULT_BASE_URL
+    manual_file_hint: bool = True
 
     def daily_bars(
         self, symbol: str, start: date, end: date, *, currency: str, adjustment: str = "split_dividend"
@@ -48,30 +55,41 @@ class StooqClient:
         `split_dividend` assumption for Stooq, confirmed or corrected at UAT).
 
         Raises `SourceNoData` when Stooq's body is exactly `"No data"`, and `SourceUnavailable`
-        for anything else that is not a 200 with a CSV body.
+        for anything else that is not a 200 with a CSV body, and when no response came at all.
         """
-        response = self.http.send(
-            HttpRequest(
-                method="GET",
-                url=self.base_url,
-                params={"s": symbol, "d1": start.strftime(_DATE_FORMAT), "d2": end.strftime(_DATE_FORMAT), "i": "d"},
-            )
+        request = HttpRequest(
+            method="GET",
+            url=self.base_url,
+            params={"s": symbol, "d1": start.strftime(_DATE_FORMAT), "d2": end.strftime(_DATE_FORMAT), "i": "d"},
         )
+        try:
+            response = self.http.send(request)
+        except NetworkError as exc:
+            if self.manual_file_hint:
+                advice = "Check your connection, or load its closes from a file with pg prices import-file."
+            else:
+                advice = "Check your connection and try again."
+            raise SourceUnavailable(f"Could not reach {exc.host} to fetch {symbol}: {exc.detail}. {advice}") from exc
+        except NoResponseError as exc:
+            raise SourceUnavailable(str(exc)) from exc
         if response.status != 200:
-            raise SourceUnavailable(
-                f"Stooq returned status {response.status} for {symbol}. "
-                "Try the manual price file instead (pg prices import-file)."
-            )
+            raise SourceUnavailable(f"Stooq returned status {response.status} for {symbol}. {self._instead()}")
         text = response.body.decode("utf-8", errors="replace").strip()
         if text == _NO_DATA_BODY or text.startswith(_NO_DATA_BODY):
             raise SourceNoData(f"Stooq has no data for {symbol}.")
         if text.startswith("<"):
             raise SourceUnavailable(
                 f"Stooq's response for {symbol} was not the expected CSV (it looks like an HTML page). "
-                "Try the manual price file instead (pg prices import-file)."
+                f"{self._instead()}"
             )
         points = _parse_csv(text, symbol=symbol)
         return PriceSeries(source="stooq", symbol=symbol, currency=currency, adjustment=adjustment, points=points)
+
+    def _instead(self) -> str:
+        """What to do when Stooq answers with something other than daily bars."""
+        if self.manual_file_hint:
+            return "Try the manual price file instead (pg prices import-file)."
+        return "Try again later."
 
 
 def _parse_csv(text: str, *, symbol: str) -> tuple[PricePoint, ...]:

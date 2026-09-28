@@ -13,9 +13,16 @@ import httpx
 import pytest
 
 from playground.config import Settings
-from playground.http.client import HttpConfigurationError, HttpRequest, NetworkHttpClient, make_http_client
+from playground.http.client import (
+    HttpConfigurationError,
+    HttpRequest,
+    NetworkError,
+    NetworkHttpClient,
+    NoResponseError,
+    make_http_client,
+)
 from playground.http.record import RecordingHttpClient
-from playground.http.replay import ReplayHttpClient
+from playground.http.replay import ReplayHttpClient, UnrecordedRequestError
 
 
 def _client(handler: Callable[[httpx.Request], httpx.Response], sleeps: list[float] | None = None) -> NetworkHttpClient:
@@ -122,6 +129,64 @@ def test_does_not_throttle_requests_to_different_hosts() -> None:
     client.send(HttpRequest(method="GET", url="https://two.example.com/b"))
 
     assert sleeps == []
+
+
+# --- No response at all: a plain error, never an httpx exception (QA P0 round 1, D3) -------------
+
+
+def test_a_refused_connection_is_a_plain_network_error_and_is_not_retried() -> None:
+    calls = {"count": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        raise httpx.ConnectError("[Errno 111] Connection refused", request=request)
+
+    with pytest.raises(NetworkError) as info:
+        _client(handler, []).send(HttpRequest(method="GET", url="https://stooq.com/q/d/l/"))
+
+    assert calls["count"] == 1
+    assert info.value.host == "stooq.com"
+    assert info.value.detail == "the connection failed ([Errno 111] Connection refused)"
+    assert str(info.value) == "Could not reach stooq.com: the connection failed ([Errno 111] Connection refused)."
+
+
+def test_a_proxy_that_refuses_the_connection_is_a_plain_network_error() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ProxyError("403 Forbidden", request=request)
+
+    with pytest.raises(
+        NetworkError, match=r"^Could not reach stooq.com: the proxy refused the connection \(403 Forbidden\)\.$"
+    ):
+        _client(handler, []).send(HttpRequest(method="GET", url="https://stooq.com/q/d/l/"))
+
+
+def test_a_timeout_is_retried_and_then_a_plain_network_error() -> None:
+    calls = {"count": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        raise httpx.ReadTimeout("timed out", request=request)
+
+    sleeps: list[float] = []
+    with pytest.raises(NetworkError) as info:
+        _client(handler, sleeps).send(HttpRequest(method="GET", url="https://www.ecb.europa.eu/x.zip"))
+
+    assert calls["count"] == 4  # the first attempt plus MAX_RETRIES (3)
+    assert len(sleeps) == 3
+    assert str(info.value) == "Could not reach www.ecb.europa.eu: no answer within 20 seconds, 4 times."
+
+
+def test_any_other_transport_failure_is_a_plain_network_error() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.RemoteProtocolError("Server disconnected without sending a response.", request=request)
+
+    with pytest.raises(NetworkError, match=r"Server disconnected without sending a response"):
+        _client(handler, []).send(HttpRequest(method="GET", url="https://api.openfigi.com/v3/mapping"))
+
+
+def test_a_network_error_and_an_unrecorded_replay_request_are_both_no_response_errors() -> None:
+    assert issubclass(NetworkError, NoResponseError)
+    assert issubclass(UnrecordedRequestError, NoResponseError)
 
 
 # --- make_http_client -------------------------------------------------------------------------

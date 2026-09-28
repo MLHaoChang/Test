@@ -34,13 +34,17 @@ from typing import Any
 import yaml
 
 from playground.core.errors import PlaygroundError
-from playground.http.client import HttpRequest, HttpResponse
+from playground.http.client import HttpRequest, HttpResponse, NoResponseError
 
 INDEX_FILE_NAME = "index.yaml"
 
 
-class UnrecordedRequestError(PlaygroundError):
-    """A request was sent to `ReplayHttpClient` that `index.yaml` has no matching entry for."""
+class UnrecordedRequestError(NoResponseError):
+    """A request was sent to `ReplayHttpClient` that `index.yaml` has no matching entry for.
+
+    Like a network that cannot be reached, it is a request without a response
+    (`NoResponseError`), so the data clients report it the same plain way.
+    """
 
 
 class FixtureIndexError(PlaygroundError):

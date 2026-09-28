@@ -110,3 +110,23 @@ def test_against_the_golden_fixtures(replay_http_client: ReplayHttpClient) -> No
 
     with pytest.raises(OpenFigiError):
         client.suggest("US9999999991")
+
+
+class _UnreachableClient:
+    """An `HttpClient` that never gets a response: the network cannot be reached."""
+
+    def send(self, request: HttpRequest) -> HttpResponse:
+        from playground.http.client import NetworkError
+
+        raise NetworkError("api.openfigi.com", "the proxy refused the connection (403 Forbidden)")
+
+
+def test_a_network_failure_is_a_plain_error_that_says_mapping_needs_no_suggestion() -> None:
+    with pytest.raises(OpenFigiError) as info:
+        OpenFigiClient(_UnreachableClient()).suggest("US0378331005")
+
+    assert str(info.value) == (
+        "Could not reach api.openfigi.com to look up US0378331005: the proxy refused the connection "
+        "(403 Forbidden). Check your connection. You can map the instrument without a suggestion: "
+        "pg instruments map US0378331005 --source stooq --symbol SYMBOL --currency CCY"
+    )
