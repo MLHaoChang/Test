@@ -58,7 +58,7 @@ from playground.importer.tr.csv_parser import parse_csv
 from playground.importer.tr.csv_profiles import CsvProfile
 from playground.importer.tr.layouts.common import DocumentParser
 from playground.importer.tr.pdf_text import PdfTextError, extract_text
-from playground.importer.workspace import Cause, ImportInfo, Item, Plan, Source, Txn, Workspace
+from playground.importer.workspace import Cause, ImportInfo, Item, Plan, Source, Txn, Workspace, report_item_key
 from playground.storage import repos
 from playground.storage.schema import (
     cost_basis_inputs,
@@ -486,6 +486,7 @@ def _match(ws: Workspace, results: Sequence[_FileResult], batch_id: int, cause: 
         parsed = reading.result
         attach_to: Txn | None = None
         keys: list[str] = []
+        rows: dict[tuple[int, int], tuple[Txn, str]] = {}
         if parsed is not None:
             keys = report_keys(parsed.transactions, text=reading.text)
             result.candidates = len(parsed.transactions)
@@ -510,12 +511,13 @@ def _match(ws: Workspace, results: Sequence[_FileResult], batch_id: int, cause: 
                         ws.add_item(possible_duplicate_item(ws, txn, match.near, cause=cause, now=now))
                 outcomes.append(_Outcome(result, source, txn.key, match.rule, matched_date))
                 attach_to = txn
+                rows[candidate.evidence] = (txn, report_key)
             one_document = (
                 len(parsed.transactions) == 1 and parsed.transactions[0].source_kind is SourceKind.PDF_DOCUMENT
             )
             if not one_document:
                 attach_to = None
-        _add_parser_items(ws, result, reading, attach_to, keys, cause, now)
+        _add_parser_items(ws, result, reading, attach_to, keys, rows, cause, now)
     return outcomes
 
 
@@ -525,19 +527,33 @@ def _add_parser_items(
     reading: _Reading,
     attach_to: Txn | None,
     keys: Sequence[str],
+    by_evidence: Mapping[tuple[int, int], tuple[Txn, str]],
     cause: Cause,
     now: str,
 ) -> None:
-    """Turn what a parser could not read into review items, each at most once (its dedupe key)."""
+    """Turn what a parser could not read into review items, each at most once (its dedupe key).
+
+    An item concerns a transaction, and holds it back while it is open, when the file is one
+    document with one transaction (`attach_to`), or when it names the lines of one transaction of
+    a file that lists many (`ReviewNeeded.evidence`, looked up in `by_evidence`). Such an item's
+    dedupe key names the report, so the same report in another file does not raise it again.
+    """
     rows: dict[tuple[str, str], int] = {}
+    per_report: dict[str, int] = {}
     for index, needed in enumerate(reading.review):
         kind = needed.kind.value
-        if reading.failed:
+        target = attach_to
+        if target is not None:
+            dedupe_key = report_item_key(needed.kind, keys[0], index)
+        elif needed.evidence is not None and needed.evidence in by_evidence:
+            target, report_key = by_evidence[needed.evidence]
+            ordinal = per_report.get(report_key, 0)
+            per_report[report_key] = ordinal + 1
+            dedupe_key = report_item_key(needed.kind, report_key, ordinal)
+        elif reading.failed:
             dedupe_key = f"{kind}|file|{result.file.sha256}"
         elif not reading.recognised:
             dedupe_key = f"{kind}|content|{sha256_text(reading.text or '')}"
-        elif attach_to is not None:
-            dedupe_key = f"{kind}|report|{keys[0]}|{index}"
         elif "line_text" in needed.fields:
             row = sha256_text(needed.fields["line_text"])
             rows[(kind, row)] = rows.get((kind, row), 0) + 1
@@ -554,7 +570,7 @@ def _add_parser_items(
                 dedupe_key=dedupe_key,
                 message=needed.message,
                 fields=dict(needed.fields),
-                txn_key=attach_to.key if attach_to is not None else None,
+                txn_key=target.key if target is not None else None,
                 import_id=result.import_id,
                 batch_id=cause.batch_id,
                 extracted_text=needed.extracted_text,

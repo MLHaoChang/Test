@@ -410,10 +410,14 @@ def test_sources_of_two_kinds_that_disagree_raise_a_field_conflict_naming_both_v
 
 def test_between_two_files_of_the_same_kind_the_later_import_wins_without_a_review_item(harness, docs) -> None:
     harness.run(docs.csv("export_1.csv", [T2_ROW]))
-    harness.run(docs.csv("export_2.csv", [T2_ROW.replace(";1,00;", ";1,50;").replace("csv-0002", "neu-0002")]))
+    # A corrected re-export: the fee was 1.50 and the price 139.95. It still books 1,401.00, so its
+    # amounts add up and it is the same report.
+    corrected = T2_ROW.replace(";140,00;", ";139,95;").replace(";1,00;", ";1,50;").replace("csv-0002", "neu-0002")
+    harness.run(docs.csv("export_2.csv", [corrected]))
 
     txn = only(harness.transactions())
     assert txn.fees_eur == Decimal("1.50")
+    assert txn.price == Decimal("139.95")
     assert txn.source_ref == "neu-0002"
     assert harness.items() == []
 

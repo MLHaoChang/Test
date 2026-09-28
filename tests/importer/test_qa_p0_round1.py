@@ -35,7 +35,6 @@ def only(items):
     return items[0]
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 1, D1: the CSV parser never checks that a row's amounts add up")
 @pytest.mark.parametrize("row", [BUY_DOES_NOT_ADD_UP, SELL_DOES_NOT_ADD_UP], ids=["buy", "sell"])
 def test_parse_csv_flags_a_trade_whose_amounts_do_not_add_up(row: str) -> None:
     result = parse_csv(csv_bytes(row))
@@ -43,7 +42,6 @@ def test_parse_csv_flags_a_trade_whose_amounts_do_not_add_up(row: str) -> None:
     assert [review.kind for review in result.review] == [ReviewKind.AMOUNTS_DO_NOT_ADD_UP]
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 1, D1: a CSV buy whose amounts do not add up is accepted as is")
 def test_a_csv_buy_whose_amounts_do_not_add_up_is_held_back(harness, docs) -> None:
     harness.stage(docs.csv("mismatch.csv", [BUY_DOES_NOT_ADD_UP]))
 

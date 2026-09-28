@@ -395,8 +395,9 @@ class Workspace:
         It holds while its problem remains. For two kinds a later file can remove the problem,
         and then the item holds no more, even once you dismissed it: a pipeline `missing_field`
         holds only while the transaction still lacks the field (plan 5.3.4), and a parser's
-        `amounts_do_not_add_up` only while the fields in use still come from that document, not
-        from a manual CSV row (plan 5.3.5).
+        `amounts_do_not_add_up` only while the fields in use still come from the report whose
+        numbers do not add up (`in_use`), not from a report of higher precedence such as a manual
+        CSV row, or the document for a CSV row (plan 5.3.5).
         """
         if not item.may_hold or item.txn_key is None or item.txn_key not in self.txns:
             return False
@@ -404,7 +405,7 @@ class Workspace:
         if item.origin == "pipeline" and item.kind is ReviewKind.MISSING_FIELD:
             return bool(missing_fields(txn.fields))
         if item.origin == "parser" and item.kind is ReviewKind.AMOUNTS_DO_NOT_ADD_UP:
-            return txn.view.top.kind is not SourceKind.MANUAL_CSV
+            return in_use(item, txn)
         return True
 
     def active_import_for(self, file_hash: str) -> ImportInfo | None:
@@ -596,6 +597,32 @@ def _txn_order(txn: Txn) -> tuple[int, int]:
 def _occurrence_order(txn: Txn) -> tuple[int, int, int]:
     first, second = _txn_order(txn)
     return (txn.occurrence, first, second)
+
+
+def report_item_key(kind: ReviewKind, report_key: str, index: int) -> str:
+    """The dedupe key of a parser's item about one report: the report key, and the item's index
+    among the items about that report. The same report in another file gives the same key, so
+    the item is raised once (plan 5.3.5)."""
+    return f"{kind.value}|report|{report_key}|{index}"
+
+
+def item_report_key(item: Item) -> str | None:
+    """The report key in the dedupe key of a parser's item about one report (`report_item_key`)."""
+    prefix = f"{item.kind.value}|report|"
+    if not item.dedupe_key.startswith(prefix):
+        return None
+    return item.dedupe_key.removeprefix(prefix).rsplit("|", 1)[0]
+
+
+def in_use(item: Item, txn: Txn) -> bool:
+    """True while the fields in use of `txn` come from the report `item` is about.
+
+    The fields in use come from the report of the highest precedence (`merge.py`). A report of
+    higher precedence for the same transaction takes over: a manual CSV row, or the PDF document
+    for a CSV row. An item that names no report counts as in use.
+    """
+    report = item_report_key(item)
+    return report is None or txn.view.top.report_key == report
 
 
 def touching(txns: Iterable[Txn], batch_id: int) -> list[str]:

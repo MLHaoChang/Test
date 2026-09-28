@@ -359,6 +359,19 @@ def position_tolerance(quantity: Decimal, price: Decimal) -> Decimal:
     return tolerance
 
 
+def converted_tolerance(quantity: Decimal, price: Decimal, rate: Decimal) -> Decimal:
+    """How far quantity x price / rate, in EUR, may be from a printed EUR amount.
+
+    `rate` is units of the price's currency per 1 EUR (plan 3.3). The rounding of the printed
+    quantity and price (`position_tolerance`, less its cent) is converted at `rate`, the rounding
+    of the printed rate itself is added (half a unit of its last digit, times the gross over the
+    rate squared), and 0.01 for the EUR amount. Real notes need this: 5 x 0.24 USD at 1.0800 is
+    1.1111 EUR and is printed as 1.11 EUR.
+    """
+    gross = abs(quantity * price)
+    return CENT + (position_tolerance(quantity, price) - CENT) / rate + gross * _half_unit(rate) / (rate * rate)
+
+
 def _exponent(value: Decimal) -> int:
     exponent = value.as_tuple().exponent
     return exponent if isinstance(exponent, int) else 0

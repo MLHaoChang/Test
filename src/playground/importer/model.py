@@ -90,12 +90,21 @@ class ReviewNeeded:
     `extracted_text` is the full text (or raw row) the problem came from,
     shown to you unedited next to `fields`, whatever could be read before
     the problem stopped the parser.
+
+    `evidence` links the item to one transaction of a file that lists
+    many, such as a CSV row whose amounts do not add up: it equals that
+    transaction's `evidence`, and the pipeline holds exactly that
+    transaction back while the item is open. It is `None` for an item
+    about a row that gave no transaction, or about the whole file. The
+    item of a document with one transaction concerns that transaction
+    without it.
     """
 
     kind: ReviewKind
     message: str
     extracted_text: str
     fields: Mapping[str, str]
+    evidence: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True)

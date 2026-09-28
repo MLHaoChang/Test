@@ -19,8 +19,8 @@ that concerns it holds it: a `missing_field` or `possible_duplicate` of the pipe
 parser's item about the transaction it came with. Dismissing such an item leaves the transaction
 out as it is; `resolve --use-parsed` (or `--merge` and `--keep-both` for a possible duplicate)
 releases it. A later file that removes the problem releases it even from a dismissed item: the
-missing field arrives, or a manual CSV row sets the amounts that did not add up
-(`Workspace.holds`).
+missing field arrives, or a report of higher precedence (a manual CSV row, or the document for a
+CSV row) sets the amounts that did not add up (`Workspace.holds`).
 
 **Checked again.** `evaluate` runs on every stage, accept and resolution. An item whose
 condition no longer holds is resolved as superseded by the file whose data removed the problem:
@@ -28,7 +28,7 @@ condition no longer holds is resolved as superseded by the file whose data remov
 | Kind | Stays open while |
 |---|---|
 | `missing_field` | the merged transaction still lacks the field |
-| `amounts_do_not_add_up` | the fields in use still come from that document (a manual CSV row supersedes it) |
+| `amounts_do_not_add_up` | the fields in use still come from that document or row (a report of higher precedence, such as a manual CSV row, supersedes it) |
 | `field_conflict` | the sources still disagree on the field and no manual CSV row sets it |
 | `possible_duplicate` | the held transaction still has a near-date match (rule c) and no exact one |
 | `missing_cost_basis` | the transfer in still has no cost input (then it is resolved as "cost entered") |
@@ -73,6 +73,7 @@ from playground.importer.workspace import (
     Plan,
     Txn,
     Workspace,
+    in_use,
     touching,
 )
 from playground.ledger.fifo import LedgerTxn, build_lots
@@ -347,7 +348,7 @@ def _resolution(
         return None
     if item.kind is ReviewKind.AMOUNTS_DO_NOT_ADD_UP and item.txn_key is not None:
         txn = ws.txns[item.txn_key]
-        if txn.view.top.kind is SourceKind.MANUAL_CSV:
+        if not in_use(item, txn):
             return {"how": "superseded", "by": _by(ws, cause, [txn], txn.view.top)}
     return None
 
