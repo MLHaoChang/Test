@@ -179,3 +179,11 @@ def test_suggest_reports_a_rate_limit_as_an_input_error(data_dir: str) -> None:
     result = pg(data_dir, "instruments", "suggest", "US9999999991", http_replay=HTTP_FIXTURES)
     assert result.exit_code == 1
     assert "rate" in result.output.lower()
+
+
+def test_map_refuses_a_currency_it_cannot_convert_and_stores_nothing(data_dir: str) -> None:
+    result = pg(data_dir, "instruments", "map", AAPL, "--source", "stooq", "--symbol", "aapl.us", "--currency", "XYZ")
+
+    assert result.exit_code == 1
+    assert "XYZ is not a currency the app can convert to EUR" in result.output
+    assert json.loads(pg(data_dir, "instruments", "list", "--json").stdout)["instruments"] == []

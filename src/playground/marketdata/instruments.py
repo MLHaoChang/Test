@@ -28,6 +28,19 @@ CHANGED_BY_VALUES = frozenset({"cli", "api", "file"})
 
 MAPPING_FILE_HEADER = ("isin", "data_source", "data_symbol", "currency", "note")
 
+#: The ISO 4217 codes the ECB publishes a daily reference rate for (plus BGN, HRK and RUB, which
+#: it published until recently): a listing in one of these can be valued in EUR (plan 3.3, 6.6).
+ECB_CURRENCIES = frozenset(
+    {
+        "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS",
+        "INR", "ISK", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD",
+        "THB", "TRY", "USD", "ZAR",
+    }
+)  # fmt: skip
+#: Every listing currency a mapping may name: EUR itself, pence (GBX, converted through GBP by
+#: dividing by 100, plan 3.3) and the ECB currencies. Anything else could never be valued.
+LISTING_CURRENCIES = frozenset({"EUR", "GBX"}) | ECB_CURRENCIES
+
 
 class InstrumentMappingError(PlaygroundError):
     """A mapping command or a mapping file row is invalid (plan 5.6)."""
@@ -49,7 +62,8 @@ def set_mapping(
     Creates the instrument, named by its own ISIN, if no document has reported it yet -- so a
     mapping file can map an ISIN before any import (WP9's e2e step 18 runs on a data directory
     with none). Returns the instrument's id. Raises `InstrumentMappingError` for an unknown
-    `source`, a `currency` that is not a 3-letter code, or an unknown `changed_by`.
+    `source`, a `currency` that is not a 3-letter code or not one the app can convert to EUR
+    (`LISTING_CURRENCIES`), or an unknown `changed_by`. Nothing is stored then.
     """
     if source not in VALID_SOURCES:
         raise InstrumentMappingError(f"Unknown data source {source!r}. Use one of: {', '.join(sorted(VALID_SOURCES))}.")
@@ -57,7 +71,15 @@ def set_mapping(
         raise InstrumentMappingError(f"Unknown changed_by {changed_by!r}.")
     if len(currency) != 3 or not currency.isalpha():
         raise InstrumentMappingError(f"Not a 3-letter currency code: {currency!r}.")
+    if currency == "GBp":
+        # Some sources write pence as "GBp"; upper case would silently turn it into pounds.
+        raise InstrumentMappingError("GBp is not clear here. Use GBX for pence or GBP for pounds.")
     currency = currency.upper()
+    if currency not in LISTING_CURRENCIES:
+        raise InstrumentMappingError(
+            f"{currency} is not a currency the app can convert to EUR. Use EUR, GBX (pence) or a currency "
+            "the ECB publishes a reference rate for, such as USD, GBP or CHF."
+        )
     if not symbol:
         raise InstrumentMappingError("A data symbol is required.")
 

@@ -565,7 +565,7 @@ Rules:
 
 ### 5.6 `marketdata`: instrument master, prices, FX, benchmarks
 
-- `instruments.py`: `upsert_from_documents(isin, name)` creates an instrument as `unmapped` and never sets a price symbol. `set_mapping(isin, source, symbol, currency, note, changed_by)` validates the source name and currency, writes the log row and sets `mapping_status = confirmed`. `load_mapping_file(path)` applies `isin;data_source;data_symbol;currency;note` rows through `set_mapping` and creates instruments that do not exist yet. `list_instruments()` returns the mapping with status.
+- `instruments.py`: `upsert_from_documents(isin, name)` creates an instrument as `unmapped` and never sets a price symbol. `set_mapping(isin, source, symbol, currency, note, changed_by)` validates the source name and currency (EUR, GBX for pence, or a currency the ECB publishes a reference rate for, so every mapped listing can be valued in EUR; anything else is refused at once, and "GBp" is refused rather than read as pence or pounds), writes the log row and sets `mapping_status = confirmed`. `load_mapping_file(path)` applies `isin;data_source;data_symbol;currency;note` rows through `set_mapping` and creates instruments that do not exist yet. `list_instruments()` returns the mapping with status.
 - `stooq.py`: `StooqClient(http).daily_bars(symbol, start, end) -> PriceSeries` (section 6.4).
 - `manual_prices.py`: `load_price_file(path) -> list[PriceSeries]` (section 6.5).
 - `ecb.py`: `EcbClient(http).history() -> FxTable` and `load_fx_file(path) -> FxTable` (section 6.6).

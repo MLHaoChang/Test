@@ -130,6 +130,12 @@ def test_an_unknown_mapping_source_is_400(client: TestClient) -> None:
     assert_error(client.put("/instruments/DE0007164600/mapping", json=body), 400, "invalid_request")
 
 
+def test_a_listing_currency_the_app_cannot_convert_is_400(client: TestClient) -> None:
+    body = {"source": "stooq", "symbol": "aapl.us", "currency": "XYZ"}
+    error = assert_error(client.put("/instruments/US0378331005/mapping", json=body), 400, "invalid_request")
+    assert error["error"]["message"].startswith("XYZ is not a currency the app can convert to EUR.")
+
+
 def test_a_mapping_request_missing_a_required_field_is_422(client: TestClient) -> None:
     # `symbol` and `currency` are required (plan schemas.MappingRequest, AC10: nothing is guessed).
     response = client.put("/instruments/DE0007164600/mapping", json={"source": "stooq"})

@@ -238,3 +238,33 @@ def test_load_mapping_file_defaults_changed_by_to_file(engine: Engine) -> None:
     with engine.connect() as conn:
         changed_by = conn.execute(sa.select(instrument_mapping_log.c.changed_by)).scalar_one()
     assert changed_by == "file"
+
+
+# --- The listing currency must be one the app can convert to EUR (QA P0 round 1, M7) ------------
+
+
+@pytest.mark.parametrize("currency", ["XYZ", "ABC", "EUX"])
+def test_set_mapping_refuses_a_currency_it_cannot_convert_to_eur(engine: Engine, currency: str) -> None:
+    with engine.begin() as conn, pytest.raises(InstrumentMappingError) as info:
+        set_mapping(conn, isin=SAP, source="stooq", symbol="sap.de", currency=currency, changed_by="cli", clock=CLOCK)
+
+    assert str(info.value) == (
+        f"{currency} is not a currency the app can convert to EUR. Use EUR, GBX (pence) or a currency "
+        "the ECB publishes a reference rate for, such as USD, GBP or CHF."
+    )
+    with engine.connect() as conn:
+        assert conn.execute(sa.select(sa.func.count()).select_from(instrument_mapping_log)).scalar_one() == 0
+
+
+def test_set_mapping_refuses_gbp_in_mixed_case_rather_than_guess_pence_or_pounds(engine: Engine) -> None:
+    with engine.begin() as conn, pytest.raises(InstrumentMappingError, match="GBX for pence or GBP for pounds"):
+        set_mapping(conn, isin=SAP, source="stooq", symbol="x.uk", currency="GBp", changed_by="cli", clock=CLOCK)
+
+
+@pytest.mark.parametrize("currency", ["EUR", "USD", "GBP", "GBX", "gbx", "CHF", "JPY", "SEK", "DKK", "NOK"])
+def test_set_mapping_accepts_eur_pence_and_the_ecb_currencies(engine: Engine, currency: str) -> None:
+    with engine.begin() as conn:
+        set_mapping(conn, isin=SAP, source="stooq", symbol="sap.de", currency=currency, changed_by="cli", clock=CLOCK)
+    with engine.connect() as conn:
+        stored = conn.execute(sa.select(instruments.c.currency).where(instruments.c.isin == SAP)).scalar_one()
+    assert stored == currency.upper()
