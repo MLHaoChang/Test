@@ -145,6 +145,16 @@ def format_ts_utc(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def berlin_day(ts_utc: str) -> date:
+    """The Europe/Berlin calendar date of a stored UTC timestamp (3.3).
+
+    "2024-06-19T22:00:00Z" gives 2024-06-20: a day-precision entry is placed at 00:00 Berlin time,
+    which is the evening before in UTC, so the first ten characters of the string are the wrong
+    day to show.
+    """
+    return datetime.fromisoformat(ts_utc.replace("Z", "+00:00")).astimezone(BERLIN).date()
+
+
 @dataclass(frozen=True)
 class SourceTime:
     """A transaction's time, in both forms the registry stores (3.3)."""

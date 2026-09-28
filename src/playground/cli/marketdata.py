@@ -20,6 +20,7 @@ import typer
 from playground.cli.context import AppContext, fail, parse_day, portfolio_transaction, print_json
 from playground.core.errors import InvalidIsinError
 from playground.core.isin import normalise_isin
+from playground.core.text import plural
 from playground.marketdata.benchmarks import (
     Benchmark,
     BenchmarkConfigError,
@@ -128,10 +129,10 @@ def prices_fetch(
             if "error" in result:
                 typer.echo(f"{result['isin']} ({result['symbol']}): {result['error']}")
             else:
-                typer.echo(f"{result['isin']} ({result['symbol']}): {result['points']} daily closes stored.")
+                typer.echo(f"{result['isin']} ({result['symbol']}): {plural(result['points'], 'daily close')} stored.")
     if failed:
         fail(
-            f"{failed} of {len(candidates)} instruments could not be fetched. Run pg prices fetch again later, "
+            f"{failed} of {plural(len(candidates), 'instrument')} could not be fetched. Run pg prices fetch again later, "
             "or load their closes from a file with pg prices import-file."
         )
 
@@ -141,7 +142,8 @@ def prices_import_file(
     file: Path = typer.Argument(..., help="A manual price file: date;data_symbol;close;currency;adjustment."),  # noqa: B008
     json_output: bool = _JSON,
 ) -> None:
-    """Load a manual price file and store its series (the price-source fallback, plan 6.5)."""
+    """Load a manual price file and store its series: the fallback when a price source cannot help."""
+    # The price-source fallback of plan 6.5.
     app_ctx: AppContext = ctx.obj
     try:
         data = file.read_bytes()
@@ -168,7 +170,8 @@ def prices_import_file(
         return
     for series in series_list:
         typer.echo(
-            f"{series.symbol} ({series.currency}, {series.adjustment}): {len(series.points)} prices stored from {file}."
+            f"{series.symbol} ({series.currency}, {series.adjustment}): {plural(len(series.points), 'price')} "
+            f"stored from {file}."
         )
 
 
@@ -196,7 +199,8 @@ def prices_show(
         return
     for src, points in found.items():
         typer.echo(
-            f"{symbol} ({src}): {len(points)} prices, {points[0].date.isoformat()} to {points[-1].date.isoformat()}."
+            f"{symbol} ({src}): {plural(len(points), 'price')}, {points[0].date.isoformat()} to "
+            f"{points[-1].date.isoformat()}."
         )
         for point in points:
             typer.echo(f"  {point.date.isoformat()} close {point.close}")
@@ -206,7 +210,8 @@ def prices_show(
 
 
 def fx_fetch(ctx: typer.Context, json_output: bool = _JSON) -> None:
-    """Fetch the ECB's full historical reference rates and store them (no date range: 6.6)."""
+    """Fetch the ECB's full history of reference rates and store it. There is no date range to choose."""
+    # Plan 6.6: the ECB publishes one file with the whole history.
     app_ctx: AppContext = ctx.obj
     client = EcbClient(app_ctx.http_client)
     try:
@@ -218,7 +223,7 @@ def fx_fetch(ctx: typer.Context, json_output: bool = _JSON) -> None:
     if json_output:
         print_json({"points": len(table.points)})
         return
-    typer.echo(f"Stored {len(table.points)} ECB rates.")
+    typer.echo(f"Stored {plural(len(table.points), 'ECB rate')}.")
 
 
 def fx_import_file(
@@ -226,7 +231,8 @@ def fx_import_file(
     file: Path = typer.Argument(..., help="The ECB CSV, unzipped."),  # noqa: B008
     json_output: bool = _JSON,
 ) -> None:
-    """Load the ECB rates CSV unzipped: the fallback when the network is unreachable (plan 6.6)."""
+    """Load the ECB rates CSV, unzipped: the fallback when the ECB cannot be reached."""
+    # Plan 6.6.
     app_ctx: AppContext = ctx.obj
     try:
         data = file.read_bytes()
@@ -241,7 +247,7 @@ def fx_import_file(
     if json_output:
         print_json({"file": str(file), "points": len(table.points)})
         return
-    typer.echo(f"Stored {len(table.points)} ECB rates from {file}.")
+    typer.echo(f"Stored {plural(len(table.points), 'ECB rate')} from {file}.")
 
 
 def fx_show(
@@ -281,7 +287,8 @@ def benchmarks_fetch(
     date_to: str | None = typer.Option(None, "--to", help="Last day to fetch (YYYY-MM-DD). Today by default."),
     json_output: bool = _JSON,
 ) -> None:
-    """Fetch every benchmark's daily series from configs/benchmarks.yaml and store it (plan 6.8)."""
+    """Fetch the daily series of every benchmark in configs/benchmarks.yaml and store it."""
+    # Plan 6.8.
     app_ctx: AppContext = ctx.obj
     start = _required_day(date_from, "--from")
     end = parse_day(date_to, "--to") or app_ctx.clock.today()
@@ -303,12 +310,13 @@ def benchmarks_fetch(
     else:
         for benchmark in benchmarks:
             if benchmark.id in counts:
-                typer.echo(f"{benchmark.id}: {counts[benchmark.id]} daily closes stored.")
+                typer.echo(f"{benchmark.id}: {plural(counts[benchmark.id], 'daily close')} stored.")
             else:
                 typer.echo(f"{benchmark.id}: {errors[benchmark.id]}")
     if errors:
         fail(
-            f"{len(errors)} of {len(benchmarks)} benchmarks could not be fetched. Run pg benchmarks fetch again later."
+            f"{len(errors)} of {plural(len(benchmarks), 'benchmark')} could not be fetched. "
+            "Run pg benchmarks fetch again later."
         )
 
 
@@ -352,7 +360,8 @@ def benchmarks_series_command(
         )
         return
     typer.echo(
-        f"{benchmark.name} ({wanted_currency}): {len(points)} points from {start.isoformat()} to {end.isoformat()}."
+        f"{benchmark.name} ({wanted_currency}): {plural(len(points), 'point')} from {start.isoformat()} to "
+        f"{end.isoformat()}."
     )
 
 

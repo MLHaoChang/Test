@@ -36,6 +36,7 @@ from sqlalchemy import Connection
 
 from playground.core.clock import Clock
 from playground.core.dates import format_ts_utc
+from playground.core.text import plural
 from playground.core.types import TxnType
 from playground.importer.confirmed_csv import ConfirmedHolding
 from playground.importer.keys import quantity_text
@@ -289,6 +290,20 @@ def transaction_records(
 
 # --- Plain text -------------------------------------------------------------------------------
 
+# What each kind of file is, in plain words, for the file lines of the diff (not the parser ids).
+DOC_TYPE_NAMES = {
+    "trade_confirmation": "trade confirmation",
+    "savings_plan_confirmation": "savings plan execution",
+    "dividend_note": "dividend note",
+    "split_notice": "split notice",
+    "tax_notice": "tax notice",
+    "interest_statement": "interest statement",
+    "account_statement": "account statement",
+    "corporate_action_notice": "corporate action notice",
+    "csv_export": "Trade Republic CSV export",
+    "manual_transaction": "manual CSV file",
+}
+
 _STATUS_TEXT = {
     "parsed": "read",
     "partial": "read in part, see the review items",
@@ -311,11 +326,12 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
     lines.append(f"Import batch {batch['id']}: {state}.")
     lines.append(f"Files: {counts.get('files', 0)} ({counts.get('duplicate_files', 0)} already imported, skipped)")
     for entry in data["files"]:
-        parser = f", {entry['parser_id']}" if entry.get("parser_id") and entry["status"] != "duplicate_file" else ""
-        found = f", {_count(entry['candidates'], 'transaction')}" if entry.get("candidates") else ""
-        lines.append(f"  {entry['file_name']}: {_STATUS_TEXT.get(entry['status'], entry['status'])}{parser}{found}")
+        kind = DOC_TYPE_NAMES.get(entry.get("doc_type") or "") if entry.get("parser_id") else None
+        name = f"{entry['file_name']} ({kind})" if kind else entry["file_name"]
+        found = f", {plural(entry['candidates'], 'transaction')}" if entry.get("candidates") else ""
+        lines.append(f"  {name}: {_STATUS_TEXT.get(entry['status'], entry['status'])}{found}")
     lines.append(f"Transactions read: {counts.get('candidates', 0)}")
-    lines.append(f"  {_count(counts.get('new', 0), 'new transaction')}")
+    lines.append(f"  {plural(counts.get('new', 0), 'new transaction')}")
     lines.append(f"  {counts.get('merged', 0)} merged with a report in another file of this import")
     lines.append(f"  {counts.get('already_known', 0)} already known from earlier imports")
     lines.append(
@@ -329,8 +345,10 @@ def render_diff_text(diff: ReconciliationDiff) -> str:
                 f"  Note: {entry['file_name']} dates {_what(entry['transaction'])} on {entry['candidate_date']}, "
                 f"matched to the one on {entry['matched_date']}."
             )
+    review_new = counts.get("review_new", 0)
+    needs = "needs" if review_new == 1 else "need"
     lines.append(
-        f"Review: {counts.get('review_new', 0)} new items need your review, {counts.get('review_closed', 0)} will close"
+        f"Review: {plural(review_new, 'new item')} {needs} your review, {counts.get('review_closed', 0)} will close"
     )
     for item in data["review_new"]:
         where = f" ({item['file_name']})" if item.get("file_name") else ""
@@ -380,8 +398,3 @@ def _what(txn: Mapping[str, Any] | None) -> str:
         return f"{article} {label}"
     name = txn.get("name")
     return f"{article} {label} of {name} ({isin})" if name and name != isin else f"{article} {label} of {isin}"
-
-
-def _count(number: int, noun: str) -> str:
-    """ "1 transaction", "2 transactions"."""
-    return f"{number} {noun}" if number == 1 else f"{number} {noun}s"

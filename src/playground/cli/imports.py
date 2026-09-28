@@ -21,6 +21,7 @@ from playground.cli.context import (
     values_line,
 )
 from playground.core.dates import format_ts_utc
+from playground.core.text import plural, shares
 from playground.core.types import TxnType
 from playground.importer.confirmed_csv import ConfirmedCsvError, parse_confirmed_csv
 from playground.importer.pipeline import (
@@ -73,8 +74,8 @@ def list_command(ctx: typer.Context, json_output: bool = _JSON) -> None:
     for batch in batches:
         counts = batch["counts"] or {}
         typer.echo(
-            f"Batch {batch['id']}: {batch['status']}, {counts.get('files', 0)} files, "
-            f"{counts.get('new', 0)} new transactions, {counts.get('review_new', 0)} new review items"
+            f"Batch {batch['id']}: {batch['status']}, {plural(counts.get('files', 0), 'file')}, "
+            f"{plural(counts.get('new', 0), 'new transaction')}, {plural(counts.get('review_new', 0), 'new review item')}"
         )
 
 
@@ -150,10 +151,10 @@ def accept(
         print_json(result)
         return
     typer.echo(
-        f"Accepted import batch {batch_id}: {result['accepted']} transactions, "
+        f"Accepted import batch {batch_id}: {plural(result['accepted'], 'transaction')}, "
         f"{result['held_back']} held back, {result['released']} released."
     )
-    typer.echo(f"Lots rebuilt: {result['lots']} lots, {result['disposals']} disposals.")
+    typer.echo(f"Lots rebuilt: {plural(result['lots'], 'lot')}, {plural(result['disposals'], 'disposal')}.")
     line = values_line(result["values"])
     if line is not None:
         typer.echo(line)
@@ -178,8 +179,8 @@ def discard(
         print_json(result)
         return
     typer.echo(
-        f"Discarded import batch {batch_id}: {result['removed_transactions']} staged transactions removed, "
-        f"{result['review_closed']} review items closed."
+        f"Discarded import batch {batch_id}: {plural(result['removed_transactions'], 'staged transaction')} "
+        f"removed, {plural(result['review_closed'], 'review item')} closed."
     )
 
 
@@ -210,7 +211,7 @@ def transactions(
     for record in records:
         what = record["name"] or record["isin"] or ""
         amount = f"{record['amount_eur']} EUR" if record["amount_eur"] is not None else "no cash"
-        quantity = f", {record['quantity']} shares" if record["quantity"] is not None else ""
+        quantity = f", {shares(record['quantity'])}" if record["quantity"] is not None else ""
         kinds = ", ".join(source["kind"] for source in record["sources"])
         typer.echo(
             f"{record['date']} {record['type']} {what}{quantity}: {amount} [{record['state']}] "

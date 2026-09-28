@@ -48,13 +48,13 @@ def main(
     http_replay: Path | None = typer.Option(  # noqa: B008
         None,
         "--http-replay",
-        help="Serve market-data responses recorded under DIR instead of the network (plan 5.4).",
+        help="Serve market-data responses recorded under DIR instead of the network.",
         envvar="PG_HTTP_REPLAY",
     ),
     http_record: Path | None = typer.Option(  # noqa: B008
         None,
         "--http-record",
-        help="Fetch over the network and also record the responses under DIR (plan 5.4).",
+        help="Fetch over the network and also record the responses under DIR.",
         envvar="PG_HTTP_RECORD",
     ),
 ) -> None:

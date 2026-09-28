@@ -20,9 +20,11 @@ from typing import Any
 import typer
 
 from playground.cli.context import AppContext, fail, parse_day, portfolio_transaction, print_json, values_line
+from playground.core.dates import berlin_day
 from playground.core.errors import NumberFormatError
 from playground.core.isin import InvalidIsinError, normalise_isin
 from playground.core.numbers import parse_en_decimal
+from playground.core.text import plural, shares
 from playground.importer.transfers import list_transfers, set_cost
 from playground.storage import repos
 from playground.valuation.portfolio import ValueReport, compute_values, flag_summaries, holdings_report, money
@@ -88,7 +90,7 @@ def _holding_line(record: Mapping[str, Any]) -> str:
     cost = (
         f"cost {record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
     )
-    line = f"{record['isin']} {record['name']}: {record['quantity']} shares, {cost}"
+    line = f"{record['isin']} {record['name']}: {shares(record['quantity'])}, {cost}"
     kinds = [flag["kind"] for flag in record["flags"]]
     if record["value_eur"] is None:
         reason = next((_NO_VALUE[kind] for kind in kinds if kind in _NO_VALUE), "no value")
@@ -98,7 +100,7 @@ def _holding_line(record: Mapping[str, Any]) -> str:
         evidence = f"close {price['close']} {price['currency']} on {price['date']}"
         if record["pricing_quantity"] != record["quantity"]:
             # A split-adjusted series quotes today's share basis (plan 5.7, quantity for pricing).
-            evidence = f"priced as {record['pricing_quantity']} shares after later splits, {evidence}"
+            evidence = f"priced as {shares(record['pricing_quantity'])} after later splits, {evidence}"
         if record["fx"] is not None:
             fx = record["fx"]
             evidence += f", at {fx['rate']} {fx['currency']} per EUR on {fx['date']}"
@@ -157,10 +159,24 @@ def lot_line(record: Mapping[str, Any]) -> str:
         )
     else:
         cost = "cost unknown"
+    origin = _ORIGIN_WORDS.get(record["origin"], str(record["origin"]).replace("_", " "))
     return (
-        f"{record['isin']} {record['name']}: {record['origin']}, booked {record['booked_ts'][:10]}, "
+        f"{record['isin']} {record['name']}: {origin}, booked {berlin_day(record['booked_ts']).isoformat()}, "
         f"{record['quantity_open']} of {record['quantity_initial']} open, {cost}"
     )
+
+
+# A lot's origin and a disposal's kind in plain words (the stored values are ids).
+_ORIGIN_WORDS = {"buy": "purchase", "transfer_in": "transfer in"}
+_DISPOSAL_WORDS = {"sell": "sale", "transfer_out": "transfer out"}
+
+
+def disposal_line(record: Mapping[str, Any]) -> str:
+    """One disposal of `pg lots` in plain text, on its Berlin date."""
+    kind = _DISPOSAL_WORDS.get(record["kind"], str(record["kind"]).replace("_", " "))
+    realised = f", realised {record['realised_eur']} EUR" if record["realised_eur"] is not None else ""
+    day = berlin_day(record["ts_utc"]).isoformat()
+    return f"{record['isin']} {record['name']}: {kind} on {day}, {shares(record['quantity'])}{realised}"
 
 
 def lots(
@@ -189,11 +205,7 @@ def lots(
     if not disposal_records:
         typer.echo("  none")
     for record in disposal_records:
-        realised = f", realised {record['realised_eur']} EUR" if record["realised_eur"] is not None else ""
-        typer.echo(
-            f"  {record['isin']} {record['name']}: {record['kind']} on {record['ts_utc']}, "
-            f"{record['quantity']} shares{realised}"
-        )
+        typer.echo(f"  {disposal_line(record)}")
 
 
 # --- transfers ------------------------------------------------------------------------------------
@@ -220,8 +232,7 @@ def transfers_list(ctx: typer.Context, json_output: bool = _JSON) -> None:
         else:
             cost = f"acquired {record['cost_basis']['acquired_on']}, cost {record['cost_basis']['cost_eur']} EUR"
         typer.echo(
-            f"[{record['id']}] {record['isin']} {name}: {record['quantity']} shares "
-            f"booked {record['booked_on']}: {cost}"
+            f"[{record['id']}] {record['isin']} {name}: {shares(record['quantity'])} booked {record['booked_on']}: {cost}"
         )
 
 
@@ -265,7 +276,7 @@ def transfers_set_cost(
     for item in result["review_closed"]:
         resolution = item.get("resolution") or {}
         typer.echo(f"Closed review item {item['id']} ({item['kind']}): {resolution.get('how')}.")
-    typer.echo(f"Lots rebuilt: {result['lots']} lots, {result['disposals']} disposals.")
+    typer.echo(f"Lots rebuilt: {plural(result['lots'], 'lot')}, {plural(result['disposals'], 'disposal')}.")
     line = values_line(result["values"])
     if line is not None:
         typer.echo(line)
@@ -321,7 +332,7 @@ def _value_lines(report: ValueReport, csv_file: Path | None) -> list[str]:
         return ["Nothing to value yet: no transaction has been accepted. Import your files with pg import FILE..."]
     lines = [
         f"Value in EUR from {report.start.isoformat()} to {report.end.isoformat()}: "
-        f"{len(report.days)} weekdays, {report.complete_days} complete."
+        f"{plural(len(report.days), 'weekday')}, {report.complete_days} complete."
     ]
     latest = report.latest
     if latest is not None:
@@ -338,11 +349,11 @@ def _value_lines(report: ValueReport, csv_file: Path | None) -> list[str]:
         for summary in summaries:
             who = f"{summary['isin']} {summary['name']}" if summary["isin"] is not None else "the portfolio"
             span = summary["first"] if summary["days"] == 1 else f"{summary['first']} to {summary['last']}"
-            count = "1 day" if summary["days"] == 1 else f"{summary['days']} days"
+            count = plural(summary["days"], "day")
             lines.append(f"  {summary['kind']}, {who}, {span} ({count}): {summary['detail']}")
     else:
         lines.append("No flags: every holding has a price source, a recent close and a recent rate.")
-    stored = f"Stored {len(report.days)} days."
+    stored = f"Stored {plural(len(report.days), 'day')}."
     lines.append(
         f"{stored} Wrote them to {csv_file}." if csv_file is not None else f"{stored} Add --csv FILE for a file."
     )

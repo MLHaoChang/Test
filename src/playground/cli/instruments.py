@@ -12,6 +12,7 @@ import typer
 
 from playground.cli.context import AppContext, fail, portfolio_transaction, print_json
 from playground.core.isin import InvalidIsinError, normalise_isin
+from playground.core.text import plural
 from playground.marketdata.instruments import (
     InstrumentMappingError,
     get_instrument,
@@ -87,7 +88,7 @@ def map_command(
         if json_output:
             print_json({"file": str(file), "mapped": len(mapped_ids)})
             return
-        typer.echo(f"Mapped {len(mapped_ids)} instrument(s) from {file}.")
+        typer.echo(f"Mapped {plural(len(mapped_ids), 'instrument')} from {file}.")
         return
 
     if isin is None or not source or not symbol or not currency:
@@ -120,7 +121,8 @@ def suggest_command(
     isin: str = typer.Argument(..., help="The ISIN to look up."),
     json_output: bool = _JSON,
 ) -> None:
-    """Ask OpenFIGI for this ISIN's listings. Prints only: nothing is stored (plan 5.6, 6.7)."""
+    """Ask OpenFIGI for this ISIN's listings. Prints only: nothing is stored."""
+    # Plan 5.6 and 6.7: a suggestion is never applied for you.
     app_ctx: AppContext = ctx.obj
     normalised = _normalised_isin(isin)
     client = OpenFigiClient(http=app_ctx.http_client, api_key=os.environ.get(API_KEY_ENV_VAR) or None)

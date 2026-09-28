@@ -14,6 +14,7 @@ from sqlalchemy import Connection, Engine
 from playground.config import Settings
 from playground.core.clock import Clock
 from playground.core.errors import PlaygroundError
+from playground.core.text import plural
 from playground.http.client import HttpClient
 from playground.storage import repos
 from playground.storage.db import open_registry
@@ -55,7 +56,7 @@ def values_line(summary: Mapping[str, Any] | None) -> str | None:
         return "Value series rebuilt: nothing to value yet."
     state = "" if latest["complete"] else ", incomplete (see pg value)"
     return (
-        f"Value series rebuilt: {summary['days']} weekdays from {summary['from']} to {summary['to']}. "
+        f"Value series rebuilt: {plural(summary['days'], 'weekday')} from {summary['from']} to {summary['to']}. "
         f"Latest value: {latest['value_eur']} EUR on {latest['date']}{state}."
     )
 

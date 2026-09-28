@@ -306,6 +306,8 @@ def stage_inputs(
 
 
 def _prepare(item: InputFile) -> _File:
+    if not item.data:
+        raise UnsupportedFileError(f"{item.name} is empty. Nothing was imported.")
     head = item.data[:_MAGIC_WINDOW]
     if _PDF_MAGIC in head:
         kind: Literal["pdf", "csv"] = "pdf"
