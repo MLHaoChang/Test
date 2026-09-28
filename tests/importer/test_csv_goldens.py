@@ -16,6 +16,7 @@ from typing import Any
 
 import pytest
 
+from playground.importer.model import ReviewKind
 from playground.importer.serialise import parse_result_to_dict
 from playground.importer.tr.csv_parser import parse_csv
 from playground.importer.tr.csv_profiles import PROFILES
@@ -167,3 +168,33 @@ def test_golden_csv_gives_eleven_candidates_matching_the_golden_portfolio() -> N
     ]
     assert all(txn.source_kind.value == "csv_export" for txn in result.transactions)
     assert all(txn.source_ref for txn in result.transactions)
+
+
+# --- A bad row's review item holds that row, not the whole export (QA P0 round 2, R2-D3) ----------
+
+
+@pytest.mark.parametrize("fixture", ["unknown_row_type.csv", "bad_number.csv"])
+def test_a_bad_row_item_holds_only_the_header_and_that_row(fixture: str) -> None:
+    # The item used to keep the whole file, so pg review show and pg review export printed every
+    # row of your export for one bad row, and each bad row stored its own copy of the file.
+    data = (CSV_DIR / "tr_csv_synthetic_v1" / fixture).read_bytes()
+    header = data.decode("utf-8-sig").splitlines()[0]
+
+    (item,) = parse_csv(data).review
+
+    assert item.kind is ReviewKind.UNPARSED_ROW
+    assert item.extracted_text == f"{header}\n{item.fields['line_text']}\n"
+
+
+def test_an_invalid_isin_or_a_short_row_holds_only_the_header_and_that_row() -> None:
+    header = ";".join(PROFILES[0].header)
+    good = "02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;r3-1"
+    bad_isin = "15.01.2024;10:05;Kauf;DE0007164601;SAP SE;10;140,00;-1401,00;1,00;;EUR;;r3-2"
+    short = "16.01.2024;10:05;Kauf"
+    data = ("\n".join([header, good, bad_isin, short]) + "\n").encode("utf-8")
+
+    result = parse_csv(data)
+
+    assert [item.kind for item in result.review] == [ReviewKind.INVALID_ISIN, ReviewKind.UNPARSED_ROW]
+    assert [item.extracted_text for item in result.review] == [f"{header}\n{bad_isin}\n", f"{header}\n{short}\n"]
+    assert len(result.transactions) == 1

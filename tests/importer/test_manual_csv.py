@@ -92,6 +92,20 @@ def test_bad_rows_are_reported_individually_and_the_good_rows_still_import() -> 
     assert kinds == ["invalid_isin", "unparsed_row", "unparsed_row", "unparsed_row"]
 
 
+def test_a_bad_row_item_holds_only_the_header_and_that_row() -> None:
+    # QA P0 round 2, R2-D3: the item used to keep the whole file, so pg review show and pg review
+    # export printed every row you typed for one bad row.
+    data = (FIXTURES_DIR / "bad_rows.csv").read_bytes()
+    lines = data.decode("utf-8").splitlines()
+
+    result = parse_manual_csv(data)
+
+    assert len(result.review) == 4
+    for item in result.review:
+        row = lines[int(item.fields["line"]) - 1]
+        assert item.extracted_text == f"{lines[0]}\n{row}\n"
+
+
 def test_an_unrecognised_header_gives_unknown_csv_header() -> None:
     data = (FIXTURES_DIR / "unknown_header.csv").read_bytes()
     result = parse_manual_csv(data)

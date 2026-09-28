@@ -11,7 +11,8 @@ item, showing the header and the first five data rows so a new profile can be wr
 you see. Given a matching header, an unknown `Typ` value or a row with a number, date or time
 that cannot be read becomes one `unparsed_row` review item for that row alone (or `invalid_isin`
 for an ISIN whose check digit is wrong); the rows before and after it still import (5.3.3): one
-bad row in an otherwise good export must not lose the rest of it.
+bad row in an otherwise good export must not lose the rest of it. Such an item shows that row
+under its header, never the whole file, so reviewing or sharing it shows none of your other rows.
 
 `Referenz`, the export's own per-row reference, becomes `source_ref` (5.3.2): matching (5.3.4,
 built in WP7) uses it only to tell rows of the same file apart, never to match a CSV row against
@@ -42,7 +43,7 @@ from playground.core.isin import normalise_isin
 from playground.core.money import eur2
 from playground.core.numbers import parse_de_decimal, parse_en_decimal
 from playground.core.types import TxnType
-from playground.importer.csv_common import decode_csv_bytes, parse_hh_mm
+from playground.importer.csv_common import decode_csv_bytes, parse_hh_mm, row_under_header
 from playground.importer.model import ParsedTransaction, ParseResult, ReviewKind, ReviewNeeded, SourceKind
 from playground.importer.tr.csv_profiles import NO_CASH_TYPES, PROFILES, CsvProfile, Locale
 from playground.importer.tr.layouts.common import (
@@ -78,7 +79,7 @@ def parse_csv(data: bytes, profiles: Sequence[CsvProfile] = PROFILES) -> ParseRe
     for profile in profiles:
         rows = _read_rows(text, profile.delimiter)
         if rows and tuple(rows[0]) == profile.header:
-            return _parse_rows(profile, rows[1:], text)
+            return _parse_rows(profile, rows[1:])
     return _result([], [_unknown_header_review(text)])
 
 
@@ -100,7 +101,7 @@ def _unknown_header_review(text: str) -> ReviewNeeded:
     )
 
 
-def _parse_rows(profile: CsvProfile, rows: list[list[str]], text: str) -> ParseResult:
+def _parse_rows(profile: CsvProfile, rows: list[list[str]]) -> ParseResult:
     transactions: list[ParsedTransaction] = []
     review: list[ReviewNeeded] = []
     width = len(profile.header)
@@ -108,12 +109,11 @@ def _parse_rows(profile: CsvProfile, rows: list[list[str]], text: str) -> ParseR
         if len(raw_row) != width:
             review.append(
                 _row_review(
-                    text,
+                    profile,
                     ReviewKind.UNPARSED_ROW,
                     f"Line {line_number} has {len(raw_row)} columns, but the header has {width}.",
                     line_number,
                     raw_row,
-                    profile.delimiter,
                 )
             )
             continue
@@ -121,19 +121,22 @@ def _parse_rows(profile: CsvProfile, rows: list[list[str]], text: str) -> ParseR
         try:
             transaction, currency = _read_row(profile, values, line_number)
         except _RowProblem as problem:
-            review.append(_row_review(text, problem.kind, problem.message, line_number, raw_row, profile.delimiter))
+            review.append(_row_review(profile, problem.kind, problem.message, line_number, raw_row))
             continue
         transactions.append(transaction)
         mismatch = _amount_problem(transaction, currency, line_number)
         if mismatch is not None:
             message, expected = mismatch
-            line_text = profile.delimiter.join(raw_row)
             review.append(
                 ReviewNeeded(
                     kind=ReviewKind.AMOUNTS_DO_NOT_ADD_UP,
                     message=message,
-                    extracted_text=f"{profile.delimiter.join(profile.header)}\n{line_text}\n",
-                    fields={"line": str(line_number), "line_text": line_text, "expected_amount": expected},
+                    extracted_text=row_under_header(profile.header, raw_row, profile.delimiter),
+                    fields={
+                        "line": str(line_number),
+                        "line_text": profile.delimiter.join(raw_row),
+                        "expected_amount": expected,
+                    },
                     evidence=transaction.evidence,
                 )
             )
@@ -141,13 +144,14 @@ def _parse_rows(profile: CsvProfile, rows: list[list[str]], text: str) -> ParseR
 
 
 def _row_review(
-    text: str, kind: ReviewKind, message: str, line_number: int, raw_row: Sequence[str], delimiter: str
+    profile: CsvProfile, kind: ReviewKind, message: str, line_number: int, raw_row: Sequence[str]
 ) -> ReviewNeeded:
+    """An item about one row that gave no transaction: it shows that row under its header, not the file."""
     return ReviewNeeded(
         kind=kind,
         message=message,
-        extracted_text=text,
-        fields={"line": str(line_number), "line_text": delimiter.join(raw_row)},
+        extracted_text=row_under_header(profile.header, raw_row, profile.delimiter),
+        fields={"line": str(line_number), "line_text": profile.delimiter.join(raw_row)},
     )
 
 

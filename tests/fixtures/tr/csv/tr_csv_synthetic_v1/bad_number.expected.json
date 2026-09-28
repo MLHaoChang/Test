@@ -68,7 +68,7 @@
         "line": "3",
         "line_text": "20.03.2024;15:45;Kauf;US67066G1040;NVIDIA Corp.;2;abc;-1701,00;1,00;;EUR;;bn-0002"
       },
-      "extracted_text": "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n15.01.2024;10:05;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;bn-0001\n20.03.2024;15:45;Kauf;US67066G1040;NVIDIA Corp.;2;abc;-1701,00;1,00;;EUR;;bn-0002\n02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;bn-0003\n"
+      "extracted_text": "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n20.03.2024;15:45;Kauf;US67066G1040;NVIDIA Corp.;2;abc;-1701,00;1,00;;EUR;;bn-0002\n"
     }
   ],
   "confirmed_holdings": []

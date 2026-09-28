@@ -245,6 +245,30 @@ def test_review_export_writes_the_extracted_text_and_can_anonymise(data_dir: str
     assert unknown_item.exit_code == 1
 
 
+def test_review_export_of_a_bad_csv_row_writes_only_the_header_and_that_row(data_dir: str, tmp_path: Path) -> None:
+    # QA P0 round 2, R2-D3: the export used to hold every row of the file, a privacy risk when
+    # you share it.
+    header = "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz"
+    deposit = "02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;x-1"
+    unknown_type = "03.01.2024;;Tauschgeschäft;DE0007164600;SAP SE;1;;;;;EUR;;x-2"
+    buy = "15.01.2024;10:05;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;x-3"
+    export = tmp_path / "export.csv"
+    export.write_text("\n".join([header, deposit, unknown_type, buy]) + "\n", encoding="utf-8")
+    assert pg(data_dir, "import", str(export)).exit_code == 0
+    (item,) = json.loads(pg(data_dir, "review", "list", "--json").stdout)["items"]
+    assert item["kind"] == "unparsed_row"
+
+    out = tmp_path / "x.txt"
+    exported = pg(data_dir, "review", "export", str(item["id"]), "--anonymise", "--out", str(out))
+
+    assert exported.exit_code == 0, exported.output
+    text = out.read_text(encoding="utf-8")
+    assert "Tauschgeschäft" in text
+    assert "Einzahlung" not in text
+    assert "Kauf" not in text
+    assert len(text.splitlines()) == 2
+
+
 def test_review_export_refuses_an_item_with_no_extracted_text(data_dir: str, tmp_path: Path) -> None:
     # missing_cost_basis is raised by the pipeline, not a parser, so it has no extracted text
     # (plan 5.3.5): only a document- or row-level item, such as unknown_layout, has one.

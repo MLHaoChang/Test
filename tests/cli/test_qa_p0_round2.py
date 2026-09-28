@@ -2,8 +2,8 @@
 
 QA wrote each test here as a strict xfail (`xfail(strict=True)`), so the suite stayed green while
 the defect was open. Once a defect is fixed its test passes, strict xfail turns that into a
-failure, and whoever fixes it removes the marker; the test then guards the fix. R2-D1 is fixed;
-R2-D2 and R2-D3 are still open.
+failure, and whoever fixes it removes the marker; the test then guards the fix. R2-D1 and R2-D3
+are fixed; R2-D2 is still open.
 
 - R2-D1 (fixed): the UAT guide (docs/uat/P0-macos.md, step 5) told you to start the
   confirmed-holdings file with the header `isin;quantity;as_of`, but the parser refused any file
@@ -11,8 +11,10 @@ R2-D2 and R2-D3 are still open.
   (AC15). That line is now optional (see `test_confirmed_csv.py`), and the guide shows it.
 - R2-D2: `pg benchmarks series` with a currency it cannot convert to prints the internal function
   name `benchmark_series` (and the API answers with the same text).
-- R2-D3: an `unparsed_row` review item from a CSV export stores the whole file as its text, so
-  `pg review show` and `pg review export` print every row of your export, not the row at fault.
+- R2-D3 (fixed): an `unparsed_row` review item from a CSV export stored the whole file as its
+  text, so `pg review show` and `pg review export` printed every row of your export, not the row at
+  fault. Such an item (and an `invalid_isin` one, in the export or a manual CSV) now holds the
+  header line and that row only (see `test_csv_goldens.py` and `test_manual_csv.py`).
 """
 
 import re
@@ -74,7 +76,6 @@ def test_benchmark_series_in_an_unsupported_currency_is_plain(tmp_path: Path, mo
     assert "benchmark_series" not in result.output
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 2, R2-D3: an unparsed_row item keeps the whole CSV as its text")
 def test_unparsed_row_review_text_holds_only_the_header_and_that_row() -> None:
     good_row = "02.01.2024;;Einzahlung;;;;;5000,00;;;EUR;;q-1"
     bad_row = "03.01.2024;;Tauschgeschäft;DE0007164600;SAP SE;1;;;;;EUR;;q-2"

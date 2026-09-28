@@ -8,6 +8,7 @@ format's own columns, row-type vocabulary and error handling stay in its own mod
 """
 
 import re
+from collections.abc import Sequence
 from datetime import time
 
 _HH_MM = re.compile(r"^(?P<hours>\d{2}):(?P<minutes>\d{2})$")
@@ -42,3 +43,12 @@ def parse_hh_mm(text: str) -> time:
     if hours > 23 or minutes > 59:
         raise ValueError(f"Not a valid time of day: {text!r}.")
     return time(hours, minutes)
+
+
+def row_under_header(header: Sequence[str], row: Sequence[str], delimiter: str) -> str:
+    """The text a row-level review item shows: the file's header line, then that one row.
+
+    Never the whole file (QA P0 round 2, R2-D3): `pg review show` and `pg review export` print an
+    item's text, and one bad row must not put every other row of your export into it.
+    """
+    return f"{delimiter.join(header)}\n{delimiter.join(row)}\n"

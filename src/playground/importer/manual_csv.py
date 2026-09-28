@@ -8,7 +8,7 @@ the values `core.types.TxnType` stores (`buy`, `sell`, ..., `transfer_in`, `tran
 source), so it goes through the same review queue as everything else: an unrecognised header is
 one `unknown_csv_header` item for the whole file, and an unknown `type` value or a number, date
 or time that cannot be read is one `unparsed_row` item for that row alone; the rows before and
-after it still import.
+after it still import. Such an item shows that row under the header, never the whole file.
 
 The shared parse model (5.3.1) has a field for an instrument's name, read from a document, but
 none for free text about a transaction; `note` is carried in `name`, exactly where a document's
@@ -25,7 +25,7 @@ from playground.core.errors import DateFormatError, InvalidIsinError, NonExisten
 from playground.core.isin import normalise_isin
 from playground.core.numbers import parse_en_decimal
 from playground.core.types import TxnType
-from playground.importer.csv_common import decode_csv_bytes, parse_hh_mm
+from playground.importer.csv_common import decode_csv_bytes, parse_hh_mm, row_under_header
 from playground.importer.model import ParsedTransaction, ParseResult, ReviewKind, ReviewNeeded, SourceKind
 from playground.importer.tr.layouts.common import berlin_source_time
 
@@ -71,7 +71,6 @@ def parse_manual_csv(data: bytes) -> ParseResult:
         if len(raw_row) != len(HEADER):
             review.append(
                 _row_review(
-                    text,
                     ReviewKind.UNPARSED_ROW,
                     f"Line {line_number} has {len(raw_row)} columns, but the header has {len(HEADER)}.",
                     line_number,
@@ -83,7 +82,7 @@ def parse_manual_csv(data: bytes) -> ParseResult:
         try:
             transactions.append(_read_row(values, line_number))
         except _RowProblem as problem:
-            review.append(_row_review(text, problem.kind, problem.message, line_number, raw_row))
+            review.append(_row_review(problem.kind, problem.message, line_number, raw_row))
     return _result(transactions, review)
 
 
@@ -106,11 +105,12 @@ def _unknown_header_review(text: str) -> ReviewNeeded:
     )
 
 
-def _row_review(text: str, kind: ReviewKind, message: str, line_number: int, raw_row: Sequence[str]) -> ReviewNeeded:
+def _row_review(kind: ReviewKind, message: str, line_number: int, raw_row: Sequence[str]) -> ReviewNeeded:
+    """An item about one row that gave no transaction: it shows that row under the header, not the file."""
     return ReviewNeeded(
         kind=kind,
         message=message,
-        extracted_text=text,
+        extracted_text=row_under_header(HEADER, raw_row, DELIMITER),
         fields={"line": str(line_number), "line_text": DELIMITER.join(raw_row)},
     )
 

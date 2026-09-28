@@ -68,7 +68,7 @@
         "line": "3",
         "line_text": "02.05.2024;;Bonuszahlung;;;;;50,00;;;EUR;;urt-0002"
       },
-      "extracted_text": "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n15.01.2024;10:05;Kauf;DE0007164600;SAP SE;10;140,00;-1401,00;1,00;;EUR;;urt-0001\n02.05.2024;;Bonuszahlung;;;;;50,00;;;EUR;;urt-0002\n01.07.2024;;Zinsen;;;;;3,12;;;EUR;;urt-0003\n"
+      "extracted_text": "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz\n02.05.2024;;Bonuszahlung;;;;;50,00;;;EUR;;urt-0002\n"
     }
   ],
   "confirmed_holdings": []

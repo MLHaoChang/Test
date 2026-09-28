@@ -87,9 +87,11 @@ class ParsedTransaction:
 class ReviewNeeded:
     """A problem a parser found that it cannot resolve on its own (5.3.5).
 
-    `extracted_text` is the full text (or raw row) the problem came from,
-    shown to you unedited next to `fields`, whatever could be read before
-    the problem stopped the parser.
+    `extracted_text` is the text the problem came from, shown to you
+    unedited next to `fields`, whatever could be read before the problem
+    stopped the parser: a document's full text, or, for one row of a file
+    that lists many, that row under the file's header line (never the
+    whole file, which would show every other row as well).
 
     `evidence` links the item to one transaction of a file that lists
     many, such as a CSV row whose amounts do not add up: it equals that
