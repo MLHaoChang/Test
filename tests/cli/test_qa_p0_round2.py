@@ -5,10 +5,11 @@ the defect was open. Once a defect is fixed its test passes, strict xfail turns 
 failure, and whoever fixes it removes the marker; the test then guards the fix. All three are
 fixed now, and the markers are gone.
 
-- R2-D1 (fixed): the UAT guide (docs/uat/P0-macos.md, step 5) told you to start the
-  confirmed-holdings file with the header `isin;quantity;as_of`, but the parser refused any file
-  whose first line was not the `# decimal=,` or `# decimal=.` comment, so step 5 failed as written
-  (AC15). That line is now optional (see `test_confirmed_csv.py`), and the guide shows it.
+- R2-D1 (fixed): the UAT guide (then docs/uat/P0-macos.md, step 5; now docs/uat/P0-uat.md,
+  step 10) told you to start the confirmed-holdings file with the header `isin;quantity;as_of`,
+  but the parser refused any file whose first line was not the `# decimal=,` or `# decimal=.`
+  comment, so the step failed as written (AC15). That line is now optional (see
+  `test_confirmed_csv.py`), and the guide shows it.
 - R2-D2 (fixed): `pg benchmarks series` with a currency it cannot convert to printed the internal
   function name `benchmark_series` (and the API answered with the same text). It now names the
   benchmark and the currencies it can be shown in (see `test_benchmarks.py`).
@@ -30,7 +31,7 @@ from playground.importer.model import ReviewKind
 from playground.importer.tr.csv_parser import parse_csv
 
 REPO = Path(__file__).resolve().parents[2]
-UAT_GUIDE = REPO / "docs" / "uat" / "P0-macos.md"
+UAT_GUIDE = REPO / "docs" / "uat" / "P0-uat.md"
 HTTP_FIXTURES = REPO / "tests" / "fixtures" / "http"
 CSV_HEADER = "Datum;Uhrzeit;Typ;ISIN;Name;Anzahl;Kurs;Betrag;Gebühren;Steuern;Währung;Wechselkurs;Referenz"
 
@@ -38,12 +39,13 @@ runner = CliRunner()
 
 
 def _reconcile_example_from_guide() -> str:
-    """The first code block of the guide's "5. Reconcile" section: the file layout it tells you to use."""
+    """The file the guide's Reconcile step has you create: the body of the first heredoc in that step."""
     text = UAT_GUIDE.read_text(encoding="utf-8")
-    section = text.split("## 5. Reconcile", 1)[1]
-    match = re.search(r"```[a-z]*\n(.*?)```", section, flags=re.DOTALL)
-    assert match is not None, "step 5 of the UAT guide has no code block"
-    return match.group(1)
+    sections = re.split(r"^#{2,3} \d+\. Reconcile\b.*$", text, maxsplit=1, flags=re.MULTILINE)
+    assert len(sections) == 2, "the UAT guide has no Reconcile step"
+    match = re.search(r"<<'EOF'\n(.*?)\nEOF\n", sections[1], flags=re.DOTALL)
+    assert match is not None, "the Reconcile step of the UAT guide does not create a file"
+    return match.group(1) + "\n"
 
 
 def test_uat_guide_confirmed_holdings_layout_is_accepted() -> None:

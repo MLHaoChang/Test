@@ -106,7 +106,7 @@ Each criterion is checked by a named test or by a step of the end-to-end scenari
 | AC12 | The API returns the same holdings, lots and value as the CLI; money is serialised as decimal strings; there is no endpoint that could place an order | `tests/api/test_contract.py`, e2e step 28 |
 | AC13 | The import page shows the red badge "NO REAL ORDERS · portfolio read-only", uploads files, shows the diff, accepts, then shows holdings and a value chart | Playwright `web/e2e/import.spec.ts`, e2e step 30 |
 | AC14 | No real export, personal data, API key, generated database or data file is committed; data directories are ignored by git; the words "live trading" appear nowhere user-facing, and the word "live" appears in no CLI help, setting or message | `tests/test_repo_hygiene.py`, e2e step 32 |
-| AC15 | The macOS UAT guide exists and its commands, including the ones that fetch real prices and rates, run as written on your Mac; the timing check shows the value within one minute of starting an import (spec section 1) | `docs/uat/P0-macos.md`, UAT sign-off |
+| AC15 | The macOS UAT guide exists and its commands, including the ones that fetch real prices and rates, run as written on your Mac; the timing check shows the value within one minute of starting an import (spec section 1) | `docs/uat/P0-uat.md`, UAT sign-off |
 | AC16 | `pg status` and `GET /portfolio` show a reminder when the last import is more than 30 days old, and not before (spec 3.10) | `tests/importer/test_reminder.py` and `tests/api/test_contract.py` with a fixed clock, e2e step 31 |
 
 ### 1.4 Design review conditions and where they are met
@@ -174,7 +174,7 @@ src/playground/
   cli/         main.py imports.py review.py instruments.py marketdata.py portfolio.py serve.py
 tests/                          mirrors src; plus golden/ and fixtures/
 web/                            the minimal import page (Vite, React, TypeScript)
-docs/uat/P0-macos.md            UAT guide
+docs/uat/P0-uat.md              UAT guide
 ```
 
 The package name is `playground`; the CLI entry point is `pg`, as in spec section 3.5 (`pg run`, `pg sweep` come in later phases).
@@ -828,7 +828,7 @@ Each work package's done-when (section 9) names the subset of these steps that m
 
 ## 8. UAT outline (your Mac)
 
-The full guide is `docs/uat/P0-macos.md`, written in WP12. It assumes macOS on Apple silicon or Intel, the Terminal, Homebrew, and your Trade Republic exports downloaded from the app or the web interface. Outline:
+The full guide is `docs/uat/P0-uat.md`, written in WP12 and reworked after QA. It assumes macOS on Apple silicon or Intel, the Terminal, Homebrew, and your Trade Republic exports downloaded from the app or the web interface. The finished guide has more steps than the outline below: it adds a run of the sample portfolio, how to export your files from Trade Republic, a look at your value next to the benchmarks, the sign-off checklist and how to report a problem, so its step numbers differ from these. Outline:
 
 1. **Set up.** `brew install uv node`; clone or pull the branch; `uv sync --locked` (uv downloads Python 3.13 if needed); `./scripts/check.sh`. Expect all tests to pass.
 2. **Keep your files private.** `mkdir -p ~/pg-private/exports ~/pg-private/data`; put the exports in `~/pg-private/exports`; `export PG_DATA_DIR=~/pg-private/data`. Nothing in `~/pg-private` is inside the repository.
@@ -955,7 +955,7 @@ Order is strict: each package depends only on earlier ones. Packages whose depen
 ### WP12. Import page, end-to-end integration and UAT guide
 
 - **Goal.** The minimal page, the full end-to-end scenario across CLI, API and page, the Playwright test, and the macOS UAT guide.
-- **Files.** `web/package.json`, `web/package-lock.json`, `web/vite.config.ts`, `web/tsconfig.json`, `web/index.html`, `web/src/{main.tsx,App.tsx,api.ts,format.ts}`, `web/src/components/{Badge,ImportPanel,DiffView,ConfirmedUpload,HoldingsTable,ValueChart}.tsx`, `web/src/**/*.test.tsx` (Vitest), `web/playwright.config.ts`, `web/e2e/import.spec.ts`, `scripts/e2e_web_server.sh`, `scripts/e2e.sh`, static serving in `api/app.py`, `docs/uat/P0-macos.md`, `README.md` (how to run P0).
+- **Files.** `web/package.json`, `web/package-lock.json`, `web/vite.config.ts`, `web/tsconfig.json`, `web/index.html`, `web/src/{main.tsx,App.tsx,api.ts,format.ts}`, `web/src/components/{Badge,ImportPanel,DiffView,ConfirmedUpload,HoldingsTable,ValueChart}.tsx`, `web/src/**/*.test.tsx` (Vitest), `web/playwright.config.ts`, `web/e2e/import.spec.ts`, `scripts/e2e_web_server.sh`, `scripts/e2e.sh`, static serving in `api/app.py`, `docs/uat/P0-uat.md`, `README.md` (how to run P0).
 - **Tests first.** Vitest: the badge text is exact and always rendered; the diff view renders the golden `import1.json`; money is shown from strings without float parsing. Playwright: open the page, see the badge, upload the golden files, see "14 new transactions" and "2 need your review", upload confirmed holdings and see "5 of 5 match", accept, see 5 holdings with SAP at quantity 3 and the chart from 2024-01-02 to 2024-12-31, reload and see the same, upload again and see "0 new transactions", and find no "live trading" text on the page.
 - **Depends on.** WP11.
 - **Complexity.** Medium. About 3.5 hours.

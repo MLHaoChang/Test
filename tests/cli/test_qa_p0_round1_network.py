@@ -1,6 +1,6 @@
 """QA phase P0, round 1, D3: a network failure in a fetch command ends in a Python traceback.
 
-The UAT guide (docs/uat/P0-macos.md, step 8) runs `pg prices fetch`, `pg fx fetch` and
+The UAT guide (docs/uat/P0-uat.md, step 14) runs `pg prices fetch`, `pg fx fetch` and
 `pg benchmarks fetch` against the real network on your Mac. When the connection fails (no
 network, a DNS error, a proxy that refuses, a timeout after the retries), `NetworkHttpClient`
 lets the httpx exception escape and every one of these commands prints a traceback instead of a
