@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { acceptBatch, ApiError, discardBatch, type ImportDiff } from "../api";
+import { acceptBatch, ApiError, type ConfirmedComparison, discardBatch, type HeldBackTransaction, type ImportDiff } from "../api";
 import { DiffView } from "./DiffView";
 
 vi.mock("../api", async (importOriginal) => {
@@ -21,6 +21,14 @@ const mockDiscard = vi.mocked(discardBatch);
 const IMPORT1: ImportDiff = JSON.parse(
   readFileSync(path.resolve(__dirname, "../../../tests/fixtures/golden/expected/import1.json"), "utf-8"),
 ) as ImportDiff;
+
+// The golden confirmed-holdings comparison (plan 7.6 step 7): every row matches, the same fixture
+// the API's own contract test checks (tests/api/test_contract.py::test_confirmed_holdings_accepts_a_csv_upload_and_a_json_body).
+const RECONCILE_CONFIRMED: ConfirmedComparison = (
+  JSON.parse(
+    readFileSync(path.resolve(__dirname, "../../../tests/fixtures/golden/expected/reconcile.json"), "utf-8"),
+  ) as { confirmed: ConfirmedComparison }
+).confirmed;
 
 describe("DiffView", () => {
   beforeEach(() => {
@@ -52,9 +60,104 @@ describe("DiffView", () => {
   });
 
   it("shows the confirmed-holdings match message once the diff carries one", () => {
-    const withConfirmed: ImportDiff = { ...IMPORT1, confirmed: { rows: [], counts: {}, all_match: true, message: "5 of 5 match" } };
+    const withConfirmed: ImportDiff = { ...IMPORT1, confirmed: RECONCILE_CONFIRMED };
     render(<DiffView diff={withConfirmed} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
     expect(screen.getByTestId("confirmed-message")).toHaveTextContent("5 of 5 match");
+    // Every row matches, but the match table (plan 5.10) is still shown, not just the count.
+    const table = screen.getByTestId("diff-confirmed-rows");
+    expect(table).toHaveTextContent("DE0007164600");
+    expect(table).toHaveTextContent("SAP SE");
+    expect(table).toHaveTextContent("match");
+  });
+
+  it("renders the confirmed-holdings comparison as a table of per-ISIN rows, mismatches included", () => {
+    // The same scenario the backend's own reconciliation test checks (plan 5.3.6): one mismatch,
+    // one match, one row your list names that the import does not have, and one the import has
+    // that your list does not name. A user with a real mismatch needs to see all four here, on
+    // the page, not just the aggregate "1 of 4 match" sentence.
+    const confirmed: ConfirmedComparison = {
+      rows: [
+        {
+          isin: "DE0007164600",
+          name: "SAP SE",
+          as_of: "2024-12-31",
+          computed: "3",
+          confirmed: "4",
+          difference: "-1",
+          status: "mismatch",
+        },
+        {
+          isin: "IE00B4L5Y983",
+          name: "iShsIII-Core MSCI World U.ETF",
+          as_of: "2024-12-31",
+          computed: "5",
+          confirmed: "5",
+          difference: "0",
+          status: "match",
+        },
+        {
+          isin: "US5949181045",
+          name: null,
+          as_of: "2024-12-31",
+          computed: "0",
+          confirmed: "1",
+          difference: "-1",
+          status: "missing_in_import",
+        },
+        {
+          isin: "US0378331005",
+          name: "Apple Inc.",
+          as_of: "2024-12-31",
+          computed: "5",
+          confirmed: "0",
+          difference: "5",
+          status: "missing_in_confirmed",
+        },
+      ],
+      counts: { match: 1, mismatch: 1, missing_in_import: 1, missing_in_confirmed: 1 },
+      all_match: false,
+      message: "1 of 4 match",
+    };
+    const withMismatch: ImportDiff = { ...IMPORT1, confirmed };
+    render(<DiffView diff={withMismatch} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const table = screen.getByTestId("diff-confirmed-rows");
+    const sapRow = within(table).getByText("SAP SE").closest("tr");
+    if (sapRow === null) {
+      throw new Error("expected a table row for SAP SE");
+    }
+    // The computed quantity (3), what was confirmed (4) and the difference (-1): exactly what a
+    // user needs to act on the mismatch, formatted with formatQuantity like every other table here.
+    expect(within(sapRow).getByText("2024-12-31")).toBeInTheDocument();
+    expect(sapRow).toHaveTextContent("3");
+    expect(sapRow).toHaveTextContent("4");
+    expect(sapRow).toHaveTextContent("-1");
+    expect(sapRow).toHaveTextContent("mismatch");
+    // An ISIN the import does not know falls back to showing the ISIN itself, like the holdings table.
+    expect(table).toHaveTextContent("US5949181045");
+
+    expect(screen.getByTestId("confirmed-message")).toHaveTextContent("1 of 4 match");
+    expect(screen.getByTestId("confirmed-message")).toHaveTextContent("Check the rows above before you accept.");
+  });
+
+  it("shows a plain-English reason for a held-back transaction, not the internal review-kind slug", () => {
+    const heldBack: HeldBackTransaction = {
+      id: 9001,
+      type: "buy",
+      isin: "DE0007164600",
+      name: "SAP SE",
+      date: "2024-01-15",
+      amount_eur: "-1401.00",
+      quantity: "3",
+      reasons: ["possible_duplicate", "missing_cost_basis"],
+    };
+    const withHeldBack: ImportDiff = { ...IMPORT1, held_back: [heldBack] };
+    render(<DiffView diff={withHeldBack} onDiffChanged={vi.fn()} onAccepted={vi.fn()} onDiscarded={vi.fn()} />);
+
+    const table = screen.getByTestId("diff-held-back-transactions");
+    expect(table).toHaveTextContent("possible duplicate, missing cost basis");
+    expect(table.textContent).not.toContain("possible_duplicate");
+    expect(table.textContent).not.toContain("missing_cost_basis");
   });
 
   it("accepts the batch and reports the result", async () => {

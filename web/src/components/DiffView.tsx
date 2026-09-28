@@ -113,7 +113,7 @@ export function DiffView({ diff, onDiffChanged, onAccepted, onDiscarded }: DiffV
                 <td>{txn.date}</td>
                 <td>{txn.name ?? txn.isin ?? "-"}</td>
                 <td>{formatQuantity(txn.quantity)}</td>
-                <td>{txn.reasons.join(" ")}</td>
+                <td>{txn.reasons.map((reason) => reason.replace(/_/g, " ")).join(", ")}</td>
               </tr>
             ))}
           </tbody>
@@ -159,10 +159,41 @@ export function DiffView({ diff, onDiffChanged, onAccepted, onDiscarded }: DiffV
 
       <ConfirmedUpload batchId={diff.batch.id} onUpdated={onDiffChanged} />
       {diff.confirmed && (
-        <p data-testid="confirmed-message">
-          Confirmed holdings: {diff.confirmed.message}.{" "}
-          {diff.confirmed.all_match ? "" : "Check the rows above before you accept."}
-        </p>
+        <>
+          {diff.confirmed.rows.length > 0 && (
+            <table data-testid="diff-confirmed-rows">
+              <caption>Your confirmed holdings against what this import computes</caption>
+              <thead>
+                <tr>
+                  <th>ISIN</th>
+                  <th>Name</th>
+                  <th>As of</th>
+                  <th>Computed</th>
+                  <th>Confirmed</th>
+                  <th>Difference</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {diff.confirmed.rows.map((row) => (
+                  <tr key={`${row.isin}-${row.as_of}`}>
+                    <td>{row.isin}</td>
+                    <td>{row.name ?? row.isin}</td>
+                    <td>{row.as_of}</td>
+                    <td>{formatQuantity(row.computed)}</td>
+                    <td>{formatQuantity(row.confirmed)}</td>
+                    <td>{formatQuantity(row.difference)}</td>
+                    <td>{row.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <p data-testid="confirmed-message">
+            Confirmed holdings: {diff.confirmed.message}.{" "}
+            {diff.confirmed.all_match ? "" : "Check the rows above before you accept."}
+          </p>
+        </>
       )}
 
       {error && (
