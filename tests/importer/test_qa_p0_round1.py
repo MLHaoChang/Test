@@ -1,8 +1,8 @@
 """QA phase P0, round 1: defects found in the CSV path of the import pipeline (AC4).
 
-Each test here fails today and is marked `xfail(strict=True)`, so the suite stays green while the
-defect is open. Once the defect is fixed the test passes, strict xfail turns that into a failure,
-and whoever fixed it removes the marker.
+QA wrote these tests as strict xfails while the defects were open. D1 and D2 are fixed, the
+markers are gone, and the tests now guard the fixes (see also `test_csv_amount_check.py` and
+`test_missing_amount.py`).
 
 AC4 says an amount that does not add up and a missing required field each create a review item,
 and plan 5.3.2 says every parser checks that its numbers add up (for a buy: quantity x price +
@@ -51,7 +51,6 @@ def test_a_csv_buy_whose_amounts_do_not_add_up_is_held_back(harness, docs) -> No
     assert harness.holdings() == {}
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 1, D2: a CSV buy with no amount raises no review item")
 def test_a_csv_buy_without_an_amount_is_held_back_with_a_review_item(harness, docs) -> None:
     harness.stage(docs.csv("no_amount.csv", [BUY_WITHOUT_AMOUNT]))
 
@@ -59,7 +58,6 @@ def test_a_csv_buy_without_an_amount_is_held_back_with_a_review_item(harness, do
     assert only(harness.items(status="open")).kind in {"missing_field", "unparsed_row"}
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 1, D2: a CSV dividend with no amount raises no review item")
 def test_a_csv_dividend_without_an_amount_raises_a_review_item(harness, docs) -> None:
     harness.stage(docs.csv("no_amount_dividend.csv", [DIVIDEND_WITHOUT_AMOUNT]))
 

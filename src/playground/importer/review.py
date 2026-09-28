@@ -9,7 +9,8 @@ Who raises what:
 - the parsers and the classifier: unknown and ambiguous layouts, unknown CSV headers, rows they
   could not read, missing fields, amounts that do not add up, corporate actions, invalid ISINs;
 - the pipeline, while matching and at every check: `missing_field` (a purchase, sale or
-  transfer without its quantity or ISIN, for example one known only from a statement line),
+  transfer without its quantity or ISIN, for example one known only from a statement line, and
+  any transaction that moves cash without its booking amount),
   `field_conflict`, `possible_duplicate` and `missing_cost_basis` (a transfer in without the cost
   you enter with `pg transfers set-cost`);
 - the ledger's lot book: `oversell` and `split_unclear`.
@@ -96,7 +97,7 @@ TYPE_LABELS = {
     TxnType.TRANSFER_IN: "transfer in",
     TxnType.TRANSFER_OUT: "transfer out",
 }
-FIELD_NAMES = {"quantity": "quantity", "isin": "ISIN"}
+FIELD_NAMES = {"quantity": "quantity", "isin": "ISIN", "amount": "booking amount"}
 REPORT_LABELS = {
     SourceKind.MANUAL_CSV: "a manual CSV file",
     SourceKind.PDF_DOCUMENT: "a PDF document",
@@ -397,6 +398,15 @@ def subject(txn: Txn) -> str:
 def _missing_message(txn: Txn, missing: list[str]) -> str:
     names = " and the ".join(FIELD_NAMES.get(name, name) for name in missing)
     what = subject(txn)
+    if "amount" in missing:
+        # The semantic key has no amount (plan 5.3.4), so no later file can merge into this one:
+        # a file that gives the amount adds the transaction afresh, and this one stays out.
+        lacking = " and no ".join(FIELD_NAMES.get(name, name) for name in missing)
+        return (
+            f"{what[0].upper()}{what[1:]} has no {lacking}, so nothing can be booked for it. It is held back "
+            "from your holdings. Import the document for it, or a manual CSV row with the amount: that adds "
+            "the transaction with its amount. Then dismiss this item."
+        )
     if txn.kinds == {SourceKind.PDF_STATEMENT}:
         return (
             f"{what[0].upper()}{what[1:]} is known only from an account statement line, which does not give "
@@ -654,8 +664,11 @@ def _check_allowed(ws: Workspace, item: Item, how: str) -> None:
     if item.kind is ReviewKind.POSSIBLE_DUPLICATE:
         raise ReviewError(f"Review item {item.id} is a possible duplicate. Use --merge or --keep-both.")
     if item.kind is ReviewKind.MISSING_FIELD and item.origin == "pipeline":
+        lacking = " and the ".join(
+            FIELD_NAMES.get(name, name) for name in str(item.fields.get("missing", "field")).split(",") if name
+        )
         raise ReviewError(
-            f"Review item {item.id}: the transaction still lacks the {item.fields.get('missing', 'field')}, "
+            f"Review item {item.id}: the transaction still lacks the {lacking}, "
             "so it cannot be used as parsed. Import a document or a manual CSV row that gives it."
         )
     if not item.may_hold or item.origin != "parser":

@@ -83,8 +83,12 @@ def holdings(
 
 
 def _holding_line(record: Mapping[str, Any]) -> str:
-    cost = f"{record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
-    line = f"{record['isin']} {record['name']}: {record['quantity']} shares, cost {cost}"
+    # A holding's cost is unknown only while a transfer in has no cost basis: the pipeline holds
+    # back a purchase without its amount (plan 5.3.4), so no purchase lot lacks its cost.
+    cost = (
+        f"cost {record['cost_eur']} EUR" if record["cost_eur"] is not None else "cost unknown (see pg transfers list)"
+    )
+    line = f"{record['isin']} {record['name']}: {record['quantity']} shares, {cost}"
     kinds = [flag["kind"] for flag in record["flags"]]
     if record["value_eur"] is None:
         reason = next((_NO_VALUE[kind] for kind in kinds if kind in _NO_VALUE), "no value")
@@ -142,6 +146,23 @@ def _disposal_record(row: Any, names: Mapping[str, str]) -> dict[str, Any]:
     }
 
 
+def lot_line(record: Mapping[str, Any]) -> str:
+    """One lot of `pg lots` in plain text. An unknown cost says how to enter it, where you can."""
+    if not record["cost_missing"]:
+        cost = f"cost {record['cost_eur_open']} EUR open of {record['cost_eur_initial']} EUR initial"
+    elif record["origin"] == "transfer_in":
+        cost = (
+            f"cost unknown (enter it with pg transfers set-cost --isin {record['isin']} "
+            "--acquired YYYY-MM-DD --cost-eur AMOUNT)"
+        )
+    else:
+        cost = "cost unknown"
+    return (
+        f"{record['isin']} {record['name']}: {record['origin']}, booked {record['booked_ts'][:10]}, "
+        f"{record['quantity_open']} of {record['quantity_initial']} open, {cost}"
+    )
+
+
 def lots(
     ctx: typer.Context,
     isin: str | None = typer.Option(None, "--isin", help="Only this ISIN."),
@@ -163,14 +184,7 @@ def lots(
     if not lot_records:
         typer.echo("  none")
     for record in lot_records:
-        if record["cost_missing"]:
-            cost = "cost unknown (see pg transfers list)"
-        else:
-            cost = f"cost {record['cost_eur_open']} EUR open of {record['cost_eur_initial']} EUR initial"
-        typer.echo(
-            f"  {record['isin']} {record['name']}: {record['origin']}, booked {record['booked_ts'][:10]}, "
-            f"{record['quantity_open']} of {record['quantity_initial']} open, {cost}"
-        )
+        typer.echo(f"  {lot_line(record)}")
     typer.echo("Disposals:")
     if not disposal_records:
         typer.echo("  none")

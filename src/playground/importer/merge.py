@@ -25,7 +25,7 @@ from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from playground.core.types import TxnType
-from playground.importer.keys import booking_day
+from playground.importer.keys import NO_CASH_TYPES, booking_day
 from playground.importer.model import ParsedTransaction, SourceKind
 from playground.importer.tr.layouts.common import berlin_source_time
 
@@ -53,6 +53,8 @@ KIND_LABELS = {
 
 NEEDS_ISIN = frozenset({TxnType.BUY, TxnType.SELL, TxnType.SPLIT, TxnType.TRANSFER_IN, TxnType.TRANSFER_OUT})
 NEEDS_QUANTITY = frozenset({TxnType.BUY, TxnType.SELL, TxnType.TRANSFER_IN, TxnType.TRANSFER_OUT})
+NEEDS_AMOUNT = frozenset(set(TxnType) - NO_CASH_TYPES)
+"""Every type that moves cash: nothing is booked without its amount (plan 5.3.4)."""
 
 
 @dataclass(frozen=True)
@@ -201,12 +203,16 @@ def conflicts(reports: Sequence[Report]) -> list[FieldConflict]:
 
 
 def missing_fields(txn: ParsedTransaction) -> list[str]:
-    """The fields the ledger needs that `txn` lacks: an ISIN, or a positive quantity of shares."""
+    """The fields `txn` cannot be booked without: an ISIN, a positive quantity of shares, or the
+    booking amount of a transaction that moves cash (a purchase without it would open a lot whose
+    cost nobody knows, a dividend without it would book nothing)."""
     missing = []
     if txn.type in NEEDS_ISIN and not txn.isin:
         missing.append("isin")
     if txn.type in NEEDS_QUANTITY and (txn.quantity is None or txn.quantity <= 0):
         missing.append("quantity")
+    if txn.type in NEEDS_AMOUNT and txn.amount_eur is None:
+        missing.append("amount")
     return missing
 
 

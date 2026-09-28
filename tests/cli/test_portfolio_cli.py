@@ -275,3 +275,39 @@ def test_help_never_says_live(command: list[str]) -> None:
     result = runner.invoke(app, command)
     assert result.exit_code == 0, result.output
     assert not re.search(r"\blive\b", result.stdout, re.IGNORECASE)
+
+
+# --- An unknown cost says where to enter it (QA P0 round 1, D2 and M5) ---------------------------
+
+
+def test_holdings_names_an_unknown_cost_once(imported: str) -> None:
+    result = pg(imported, "holdings")
+    assert result.exit_code == 0, result.output
+    assert "Allianz SE: 4 shares, cost unknown (see pg transfers list)" in result.stdout
+    assert "cost cost" not in result.stdout
+
+
+def test_lots_points_a_transfer_in_without_cost_at_set_cost(imported: str) -> None:
+    result = pg(imported, "lots")
+    assert result.exit_code == 0, result.output
+    alv = next(line for line in result.stdout.splitlines() if "Allianz SE" in line)
+    assert "cost unknown (enter it with pg transfers set-cost --isin DE0008404005" in alv
+
+
+def test_a_lot_of_a_purchase_with_an_unknown_cost_does_not_point_at_transfers() -> None:
+    from playground.cli.portfolio import lot_line
+
+    record = {
+        "isin": SAP,
+        "name": "SAP SE",
+        "origin": "buy",
+        "booked_ts": "2024-01-15T09:05:00Z",
+        "quantity_initial": "10",
+        "quantity_open": "10",
+        "cost_eur_initial": None,
+        "cost_eur_open": None,
+        "cost_missing": True,
+    }
+    line = lot_line(record)
+    assert "cost unknown" in line
+    assert "transfers" not in line
