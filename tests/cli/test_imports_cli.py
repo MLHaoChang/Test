@@ -11,6 +11,7 @@ mismatch.
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import pytest
@@ -50,6 +51,39 @@ def test_import_prints_the_diff_and_what_to_do_next(data_dir: str) -> None:
     assert "pg discard 1" in result.stdout
     assert re.search(r"\b11 new transactions\b", result.stdout)
     assert "tr_transactions_2024.csv" in result.stdout
+
+
+def test_import_takes_a_folder_and_reads_every_pdf_and_csv_file_in_it(data_dir: str, tmp_path: Path) -> None:
+    # QA P0 round 2, minor 9: the UAT guide's "exports/*.csv exports/*.pdf" fails in zsh, the
+    # default shell on macOS, when the folder has no CSV (or no PDF) file. A folder needs no pattern.
+    exports = tmp_path / "exports"
+    exports.mkdir()
+    shutil.copy(T2, exports / T2.name)
+    shutil.copy(CSV, exports / "Export.CSV")
+    (exports / ".DS_Store").write_bytes(b"\x00\x01")
+    (exports / "notes.txt").write_text("not an export", encoding="utf-8")
+    (exports / "older").mkdir()
+    shutil.copy(UNKNOWN, exports / "older" / UNKNOWN.name)
+
+    result = pg(data_dir, "import", str(exports), "--json")
+
+    assert result.exit_code == 0, result.output
+    diff = json.loads(result.stdout)
+    # Only the PDF and CSV files directly in the folder: not a hidden file, a text file or a subfolder.
+    assert sorted(entry["file_name"] for entry in diff["files"]) == [T2.name, "Export.CSV"]
+    assert diff["counts"]["merged"] == 1
+
+
+def test_import_refuses_a_folder_with_no_pdf_or_csv_file(data_dir: str, tmp_path: Path) -> None:
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    (empty / "notes.txt").write_text("not an export", encoding="utf-8")
+
+    result = pg(data_dir, "import", str(empty))
+
+    assert result.exit_code == 1
+    assert result.stderr.strip() == f"{empty} has no PDF or CSV file in it. Nothing was imported."
+    assert json.loads(pg(data_dir, "imports", "list", "--json").stdout)["batches"] == []
 
 
 def test_import_json_is_the_diff(data_dir: str) -> None:

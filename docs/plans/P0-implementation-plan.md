@@ -639,7 +639,7 @@ Global options: `--data-dir PATH` (env `PG_DATA_DIR`, default `./data`), `--http
 |---|---|
 | `pg init` | Creates the data directory, registry and default portfolio |
 | `pg status` | Portfolio summary, last import and reminder, open review items, latest value |
-| `pg import FILE...` | Stages one batch; prints the diff |
+| `pg import FILE...` | Stages one batch; prints the diff. A folder stands for every PDF and CSV file directly in it, so the UAT guide needs no shell pattern (zsh, the default shell on macOS, refuses one that matches nothing) |
 | `pg imports list`, `pg imports show BATCH` | Batches and their diffs (`latest` is accepted for BATCH) |
 | `pg reconcile BATCH [--confirmed FILE] [--as-of DATE] [--strict]` | The diff with the confirmed-holdings comparison |
 | `pg accept BATCH`, `pg discard BATCH` | Accept or discard a staged batch |
@@ -832,7 +832,7 @@ The full guide is `docs/uat/P0-macos.md`, written in WP12. It assumes macOS on A
 
 1. **Set up.** `brew install uv node`; clone or pull the branch; `uv sync --locked` (uv downloads Python 3.13 if needed); `./scripts/check.sh`. Expect all tests to pass.
 2. **Keep your files private.** `mkdir -p ~/pg-private/exports ~/pg-private/data`; put the exports in `~/pg-private/exports`; `export PG_DATA_DIR=~/pg-private/data`. Nothing in `~/pg-private` is inside the repository.
-3. **Import.** Keep one recent PDF document out of `~/pg-private/exports` for the timing check in step 14. Then `uv run pg init`; `uv run pg import ~/pg-private/exports/*.csv ~/pg-private/exports/*.pdf`. Read the diff. Held back means known only from an account statement line, or waiting for your decision in the review queue.
+3. **Import.** Keep one recent PDF document out of `~/pg-private/exports` for the timing check in step 14. Then `uv run pg init`; `uv run pg import ~/pg-private/exports` (the folder: every PDF and CSV file in it). Read the diff. Held back means known only from an account statement line, or waiting for your decision in the review queue.
 4. **Review queue.** `uv run pg review list`; `uv run pg review show <id>`. For each unknown layout: `uv run pg review export <id> --anonymise --out ~/pg-private/<id>.txt`, check that the text shows no name, address, IBAN or depot number, and share only that text. We turn it into a fixture and a parser update, and you import again.
 5. **Reconcile.** Type your current holdings from the Trade Republic app into `~/pg-private/confirmed.csv` (`isin;quantity;as_of`). `uv run pg reconcile latest --confirmed ~/pg-private/confirmed.csv --as-of <today>`. Every ISIN should say `match`.
 6. **Accept.** `uv run pg accept latest`; then `uv run pg transfers list` and `uv run pg transfers set-cost ...` for any position you transferred in from another broker.

@@ -70,8 +70,11 @@ timing check in step 14.
 
 ```bash
 uv run pg init
-uv run pg import ~/pg-private/exports/*.csv ~/pg-private/exports/*.pdf
+uv run pg import ~/pg-private/exports
 ```
+
+Given a folder, `pg import` reads every PDF and CSV file directly in it, and leaves out any other
+file and any subfolder. You can also name files one by one.
 
 Read the diff this prints. "Held back" means a transaction is known only from an account statement
 line, so it is stored but left out of your holdings and value until you settle the review item
@@ -203,7 +206,7 @@ not checked, so a very old, untouched holding can still miss a split silently.
 everything again:
 
 ```bash
-uv run pg import ~/pg-private/exports/*.csv ~/pg-private/exports/*.pdf
+uv run pg import ~/pg-private/exports
 ```
 
 The diff must say 0 new transactions.

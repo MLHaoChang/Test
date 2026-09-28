@@ -45,21 +45,49 @@ _JSON = typer.Option(False, "--json", help="Print JSON instead of text.")
 def import_files(
     ctx: typer.Context,
     files: list[Path] | None = typer.Argument(  # noqa: B008
-        None, help="Trade Republic PDF documents and CSV exports, or manual CSV files.", show_default=False
+        None,
+        help="Trade Republic PDF documents and CSV exports, or manual CSV files, or a folder of them.",
+        show_default=False,
     ),
     json_output: bool = _JSON,
 ) -> None:
-    """Stage one batch of files and print the diff. Nothing changes until you accept it."""
+    """Stage one batch of files and print the diff. Nothing changes until you accept it.
+
+    A folder stands for every PDF and CSV file directly in it.
+    """
     app_ctx: AppContext = ctx.obj
     if not files:
         fail("Name at least one Trade Republic PDF document or CSV file to import.")
+    paths = [found for path in files for found in _files_to_import(path)]
     with portfolio_transaction(app_ctx) as (conn, portfolio_id):
-        summary = stage_files(conn, portfolio_id, files, clock=app_ctx.clock, uploads_dir=app_ctx.uploads_dir)
+        summary = stage_files(conn, portfolio_id, paths, clock=app_ctx.clock, uploads_dir=app_ctx.uploads_dir)
         diff = build_diff(conn, summary.batch_id, clock=app_ctx.clock)
     if json_output:
         print_json(diff.to_dict())
     else:
         typer.echo(render_diff_text(diff))
+
+
+_IMPORTABLE = frozenset({".pdf", ".csv"})
+
+
+def _files_to_import(path: Path) -> list[Path]:
+    """`path` itself, or, for a folder, every PDF and CSV file directly in it, by name.
+
+    A folder needs no shell pattern such as exports/*.csv, which zsh, the default shell on macOS,
+    refuses when nothing matches (QA P0 round 2, minor 9). A hidden file (.DS_Store), any other
+    kind of file and a subfolder are left out.
+    """
+    if not path.is_dir():
+        return [path]
+    found = sorted(
+        child
+        for child in path.iterdir()
+        if child.is_file() and not child.name.startswith(".") and child.suffix.lower() in _IMPORTABLE
+    )
+    if not found:
+        fail(f"{path} has no PDF or CSV file in it. Nothing was imported.")
+    return found
 
 
 def list_command(ctx: typer.Context, json_output: bool = _JSON) -> None:
