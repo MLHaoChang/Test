@@ -36,6 +36,24 @@ uv run python tests/fixtures/tr/make_pdfs.py
 
 `pytest --update-goldens` rewrites the expected JSON files from the current output. Check every rewrite in the git diff before you commit it.
 
+## Delivery process
+
+Each phase of the spec's section 9 is delivered by the same loop, kept as a workflow script in
+`.claude/workflows/phase-loop.js` and run from Claude Code with `{phase: "P1"}` as its argument.
+The coordinator is the session model; planning, review and the hard packages use Opus, ordinary
+packages use Sonnet and mechanical ones use Haiku. The stages, each a loop until an independent
+reviewer approves or the round limit is hit:
+
+1. **Design review gate** (optional after P0): a reviewer checks the design and the spec; the run
+   stops on a reject.
+2. **Plan**: an implementation plan with work packages, reviewed by a separate agent.
+3. **Build**: one test-first implementer per package, then a review-and-fix loop.
+4. **QA**: end-to-end QA from a fresh clone, with a fix loop.
+5. **UX walkthrough**: a first-time-user review of the built screens and the wireframes, written to
+   `docs/ux/<phase>-ux-review.md`; its backlog goes into the next phase's plan.
+6. **Hand-off**: the UAT script in `docs/uat/` and the phase report in `docs/plans/`, then the user
+   runs the UAT on their own machine and decides.
+
 ## Running the app
 
 The app is a command line tool, `pg`, with a small import page in your browser. It reads the
