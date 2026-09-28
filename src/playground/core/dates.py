@@ -155,6 +155,16 @@ def berlin_day(ts_utc: str) -> date:
     return datetime.fromisoformat(ts_utc.replace("Z", "+00:00")).astimezone(BERLIN).date()
 
 
+def berlin_minute(ts_utc: str) -> str:
+    """The Europe/Berlin date and time of a stored UTC timestamp, to the minute, for display (3.3).
+
+    "2024-12-31T11:00:00Z" gives "2024-12-31 12:00" (winter time), "2024-07-01T10:00:00Z" gives
+    "2024-07-01 12:00" (summer time). A stored timestamp is UTC, which is not the time you saw.
+    """
+    local = datetime.fromisoformat(ts_utc.replace("Z", "+00:00")).astimezone(BERLIN)
+    return local.strftime("%Y-%m-%d %H:%M")
+
+
 @dataclass(frozen=True)
 class SourceTime:
     """A transaction's time, in both forms the registry stores (3.3)."""

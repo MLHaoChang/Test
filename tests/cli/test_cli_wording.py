@@ -214,6 +214,30 @@ def test_the_confirmed_holdings_comparison_says_its_status_in_words(data_dir: st
     assert "missing_in" not in result.stdout
 
 
+# --- pg status (QA P0 round 2, minor 6) -----------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("today", "shown"),
+    [("2024-12-31", "2024-12-31 12:00"), ("2024-07-01", "2024-07-01 12:00")],
+    ids=["winter", "summer"],
+)
+def test_status_shows_the_last_import_in_berlin_time(tmp_path: Path, today: str, shown: str) -> None:
+    # PG_TODAY fixes the clock at 12:00 Berlin time, which is 11:00 or 10:00 UTC.
+    env = {"PG_TODAY": today, "COLUMNS": "200"}
+    data_dir = str(tmp_path / "data")
+    export = tmp_path / "export.csv"
+    export.write_text(f"{CSV_HEADER}\n{ONE_SHARE_BUY}\n", encoding="utf-8")
+    for args in (["init"], ["import", str(export)], ["accept", "latest"]):
+        assert runner.invoke(app, ["--data-dir", data_dir, *args], env=env).exit_code == 0
+
+    result = runner.invoke(app, ["--data-dir", data_dir, "status"], env=env)
+
+    assert result.exit_code == 0, result.output
+    assert f"Last import: {shown} (Berlin time)" in result.stdout
+    assert ":00Z" not in result.stdout
+
+
 # --- An empty file --------------------------------------------------------------------------------
 
 

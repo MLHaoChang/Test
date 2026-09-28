@@ -4,7 +4,7 @@ from datetime import UTC, date, datetime
 
 import pytest
 
-from playground.core.dates import BERLIN, berlin_to_utc, format_ts_utc, parse_de_date
+from playground.core.dates import BERLIN, berlin_minute, berlin_to_utc, format_ts_utc, parse_de_date
 from playground.core.errors import DateFormatError, NonExistentLocalTimeError
 
 
@@ -104,3 +104,15 @@ class TestFormatTsUtc:
     def test_rejects_non_utc_timezone(self) -> None:
         with pytest.raises(ValueError, match="UTC"):
             format_ts_utc(datetime(2024, 6, 12, 9, 20, 0, tzinfo=BERLIN))
+
+
+@pytest.mark.parametrize(
+    ("ts_utc", "shown"),
+    [
+        ("2024-12-31T11:00:00Z", "2024-12-31 12:00"),  # winter time, UTC+1
+        ("2024-07-01T10:00:00Z", "2024-07-01 12:00"),  # summer time, UTC+2
+        ("2024-12-31T23:30:00Z", "2025-01-01 00:30"),  # already the next day in Berlin
+    ],
+)
+def test_berlin_minute_shows_a_stored_timestamp_in_berlin_time(ts_utc: str, shown: str) -> None:
+    assert berlin_minute(ts_utc) == shown

@@ -20,7 +20,7 @@ from playground.cli.context import (
     print_json,
     values_line,
 )
-from playground.core.dates import format_ts_utc
+from playground.core.dates import berlin_minute, format_ts_utc
 from playground.core.text import plural, shares
 from playground.core.types import TxnType
 from playground.importer.confirmed_csv import ConfirmedCsvError, parse_confirmed_csv
@@ -244,7 +244,9 @@ def status(ctx: typer.Context, json_output: bool = _JSON) -> None:
         f"Portfolio: {portfolio['name']} ({portfolio['base_currency']}). No real orders. Your portfolio is read-only."
     )
     last = summary["last_import_at"]
-    typer.echo(f"Last import: {last if last is not None else 'none yet'}")
+    # Stored in UTC; shown as the time you saw (QA P0 round 2, minor 6). --json keeps the stored value.
+    shown = f"{berlin_minute(last)} (Berlin time)" if last is not None else "none yet"
+    typer.echo(f"Last import: {shown}")
     reminder = summary["reminder"]
     typer.echo(("Reminder: " if reminder["due"] else "") + reminder["message"])
     if summary["staged_batch"] is not None:
