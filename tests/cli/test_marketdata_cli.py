@@ -177,6 +177,62 @@ def test_benchmarks_series_in_usd_needs_no_fx_fetch(data_dir: str) -> None:
     assert payload["points"][0]["value"] == "4700.00000000"
 
 
+def test_benchmarks_series_in_a_currency_it_cannot_be_shown_in_says_what_to_do(data_dir: str) -> None:
+    # QA P0 round 2, R2-D2: the message named the internal function benchmark_series.
+    pg(data_dir, "benchmarks", "fetch", "--from", "2024-01-01", "--to", "2024-12-31", http_replay=HTTP_FIXTURES)
+
+    msci = pg(
+        data_dir,
+        "benchmarks",
+        "series",
+        "msci_world_eur",
+        "--currency",
+        "USD",
+        "--from",
+        "2024-12-27",
+        "--to",
+        "2024-12-31",
+    )
+    sp500 = pg(
+        data_dir, "benchmarks", "series", "sp500", "--currency", "GBP", "--from", "2024-12-27", "--to", "2024-12-31"
+    )
+
+    assert msci.exit_code == 1
+    assert msci.stderr.strip() == (
+        "MSCI World in EUR (iShares Core MSCI World UCITS ETF on Xetra) can be shown in EUR only, not in USD. "
+        "Leave out --currency, or use --currency EUR."
+    )
+    assert sp500.exit_code == 1
+    assert sp500.stderr.strip() == (
+        "S&P 500 index can be shown in USD or EUR only, not in GBP. "
+        "Leave out --currency to see it in USD, or use --currency EUR."
+    )
+
+
+def test_benchmarks_series_reads_a_currency_in_small_letters(data_dir: str) -> None:
+    pg(data_dir, "benchmarks", "fetch", "--from", "2024-01-01", "--to", "2024-12-31", http_replay=HTTP_FIXTURES)
+    pg(data_dir, "fx", "fetch", http_replay=HTTP_FIXTURES)
+
+    result = pg(
+        data_dir,
+        "benchmarks",
+        "series",
+        "sp500",
+        "--currency",
+        "eur",
+        "--from",
+        "2024-12-30",
+        "--to",
+        "2024-12-31",
+        "--json",
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.stdout)
+    assert payload["currency"] == "EUR"
+    assert len(payload["points"]) == 2
+
+
 def test_benchmarks_series_unknown_id_is_a_plain_error(data_dir: str) -> None:
     result = pg(data_dir, "benchmarks", "series", "nasdaq", "--from", "2024-01-01", "--to", "2024-12-31")
     assert result.exit_code == 1

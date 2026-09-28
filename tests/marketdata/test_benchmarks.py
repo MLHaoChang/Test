@@ -16,11 +16,13 @@ import yaml
 from typer.testing import CliRunner
 
 from playground.cli.main import app
+from playground.core.errors import PlaygroundError
 from playground.core.money import to_eur
 from playground.http.replay import ReplayHttpClient
 from playground.marketdata.benchmarks import (
     Benchmark,
     BenchmarkConfigError,
+    BenchmarkCurrencyError,
     benchmark_series,
     fetch_benchmarks,
     find_benchmark,
@@ -199,10 +201,65 @@ def test_benchmark_series_rejects_a_currency_it_cannot_convert_to(tmp_path: Path
     benchmark = Benchmark(
         id="sp500", name="S&P 500", isin=None, data_source="stooq", data_symbol="^spx", currency="USD"
     )
-    with pytest.raises(ValueError, match="EUR"):
+    with pytest.raises(BenchmarkCurrencyError) as refused:
         benchmark_series(
             benchmark, store, FxStore(tmp_path), start=date(2024, 1, 1), end=date(2024, 12, 31), currency="GBP"
         )
+    # QA P0 round 2, R2-D2: said "benchmark_series can only convert USD to EUR, not to GBP."
+    assert str(refused.value) == "S&P 500 can be shown in USD or EUR only, not in GBP."
+    assert refused.value.allowed == ("USD", "EUR")
+    assert isinstance(refused.value, PlaygroundError)
+
+
+def test_a_benchmark_in_eur_can_be_shown_in_eur_only(tmp_path: Path) -> None:
+    benchmark = Benchmark(
+        id="msci_world_eur",
+        name="MSCI World in EUR",
+        isin=None,
+        data_source="stooq",
+        data_symbol="eunl.de",
+        currency="EUR",
+    )
+    with pytest.raises(BenchmarkCurrencyError) as refused:
+        benchmark_series(
+            benchmark,
+            PriceStore(tmp_path),
+            FxStore(tmp_path),
+            start=date(2024, 1, 1),
+            end=date(2024, 12, 31),
+            currency="USD",
+        )
+    assert str(refused.value) == "MSCI World in EUR can be shown in EUR only, not in USD."
+    assert refused.value.allowed == ("EUR",)
+
+
+def test_benchmark_series_reads_a_currency_in_small_letters(tmp_path: Path) -> None:
+    store = PriceStore(tmp_path)
+    store.upsert(
+        PriceSeries(
+            source="stooq",
+            symbol="^spx",
+            currency="USD",
+            adjustment="split_dividend",
+            points=(_point(date(2024, 1, 2), "4700.00"),),
+        ),
+        fetched_at=FETCHED_AT,
+    )
+    fx_store = FxStore(tmp_path)
+    fx_store.upsert(
+        FxTable(points=(FxPoint(date=date(2024, 1, 2), currency="USD", rate=Decimal("1.0900")),)), fetched_at=FETCHED_AT
+    )
+    benchmark = Benchmark(
+        id="sp500", name="S&P 500", isin=None, data_source="stooq", data_symbol="^spx", currency="USD"
+    )
+
+    points = benchmark_series(
+        benchmark, store, fx_store, start=date(2024, 1, 1), end=date(2024, 12, 31), currency=" eur "
+    )
+
+    assert [point.value for point in points] == [
+        to_eur(Decimal("4700.00"), "USD", Decimal("1.0900")).quantize(Decimal("0.00000001"))
+    ]
 
 
 def test_benchmark_series_filters_to_the_given_range(tmp_path: Path) -> None:

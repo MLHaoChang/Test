@@ -24,11 +24,13 @@ from playground.core.text import plural
 from playground.marketdata.benchmarks import (
     Benchmark,
     BenchmarkConfigError,
+    BenchmarkCurrencyError,
     SeriesPoint,
     benchmark_series,
     fetch_benchmark,
     find_benchmark,
     load_benchmarks,
+    wanted_currency,
 )
 from playground.marketdata.ecb import EcbClient, EcbSourceError, load_fx_file
 from playground.marketdata.instruments import list_instruments
@@ -344,15 +346,15 @@ def benchmarks_series_command(
     fx_store = FxStore(app_ctx.data_dir)
     try:
         points = benchmark_series(benchmark, store, fx_store, start=start, end=end, currency=currency)
-    except ValueError as exc:
-        fail(str(exc))
-    wanted_currency = currency or benchmark.currency
+    except BenchmarkCurrencyError as exc:
+        fail(f"{exc} {_currency_hint(exc)}")
+    shown_currency = wanted_currency(benchmark, currency)
 
     if json_output:
         print_json(
             {
                 "benchmark": benchmark.id,
-                "currency": wanted_currency,
+                "currency": shown_currency,
                 "from": start.isoformat(),
                 "to": end.isoformat(),
                 "points": [_series_point_record(point) for point in points],
@@ -360,9 +362,19 @@ def benchmarks_series_command(
         )
         return
     typer.echo(
-        f"{benchmark.name} ({wanted_currency}): {plural(len(points), 'point')} from {start.isoformat()} to "
+        f"{benchmark.name} ({shown_currency}): {plural(len(points), 'point')} from {start.isoformat()} to "
         f"{end.isoformat()}."
     )
+
+
+def _currency_hint(refused: BenchmarkCurrencyError) -> str:
+    """What to type instead: "Leave out --currency to see it in USD, or use --currency EUR."."""
+    own = refused.benchmark.currency
+    others = [currency for currency in refused.allowed if currency != own]
+    if not others:
+        return f"Leave out --currency, or use --currency {own}."
+    options = " or ".join(f"--currency {currency}" for currency in others)
+    return f"Leave out --currency to see it in {own}, or use {options}."
 
 
 def register(app: typer.Typer) -> None:

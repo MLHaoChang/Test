@@ -39,6 +39,26 @@ class Benchmark:
     also_in: tuple[str, ...] = ()
 
 
+class BenchmarkCurrencyError(PlaygroundError):
+    """A benchmark series was asked for in a currency it cannot be shown in (see `shown_in`)."""
+
+    def __init__(self, benchmark: Benchmark, wanted: str) -> None:
+        self.benchmark = benchmark
+        self.wanted = wanted
+        self.allowed = shown_in(benchmark)
+        super().__init__(f"{benchmark.name} can be shown in {' or '.join(self.allowed)} only, not in {wanted}.")
+
+
+def shown_in(benchmark: Benchmark) -> tuple[str, ...]:
+    """The currencies `benchmark_series` can show `benchmark` in: its own, and EUR through the ECB rate."""
+    return (benchmark.currency,) if benchmark.currency == "EUR" else (benchmark.currency, "EUR")
+
+
+def wanted_currency(benchmark: Benchmark, currency: str | None) -> str:
+    """The currency a series is asked for, in capitals ("eur" is EUR); the benchmark's own by default."""
+    return (currency or "").strip().upper() or benchmark.currency
+
+
 @dataclass(frozen=True)
 class SeriesPoint:
     """One day of a benchmark series, in whatever currency was asked for (plan 5.6)."""
@@ -131,9 +151,12 @@ def benchmark_series(
 
     Converts to EUR with the as-of ECB rate (3.3's `to_eur`) when `currency` is `"EUR"` and the
     benchmark's own currency is not; a day with no ECB rate on or before it is left out rather
-    than guessed. Raises `ValueError` for any other currency than the benchmark's own or EUR.
+    than guessed. `currency` may be in small letters. Raises `BenchmarkCurrencyError`, with a
+    plain message that names the benchmark, for any other currency than its own or EUR.
     """
-    wanted = currency or benchmark.currency
+    wanted = wanted_currency(benchmark, currency)
+    if wanted not in shown_in(benchmark):
+        raise BenchmarkCurrencyError(benchmark, wanted)
     points = [
         point
         for point in price_store.closes(benchmark.data_source, benchmark.data_symbol)
@@ -141,8 +164,6 @@ def benchmark_series(
     ]
     if wanted == benchmark.currency:
         return [SeriesPoint(date=point.date, value=q8(point.close)) for point in points]
-    if wanted != "EUR":
-        raise ValueError(f"benchmark_series can only convert {benchmark.currency} to EUR, not to {wanted}.")
 
     series: list[SeriesPoint] = []
     for point in points:

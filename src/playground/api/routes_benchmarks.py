@@ -14,7 +14,14 @@ from fastapi import APIRouter, Query, Request
 
 from playground.api import schemas
 from playground.api.app import BadRequestError, NotFoundError, get_state
-from playground.marketdata.benchmarks import BenchmarkConfigError, benchmark_series, find_benchmark, load_benchmarks
+from playground.marketdata.benchmarks import (
+    BenchmarkConfigError,
+    BenchmarkCurrencyError,
+    benchmark_series,
+    find_benchmark,
+    load_benchmarks,
+    wanted_currency,
+)
 from playground.marketdata.lake import FxStore, PriceStore
 
 router = APIRouter(tags=["benchmarks"])
@@ -57,11 +64,11 @@ def get_benchmark_series(
     fx_store = FxStore(state.settings.data_dir)
     try:
         points = benchmark_series(benchmark, store, fx_store, start=date_from, end=date_to, currency=currency)
-    except ValueError as exc:
+    except BenchmarkCurrencyError as exc:
         raise BadRequestError(str(exc)) from exc
     return {
         "benchmark": benchmark.id,
-        "currency": currency or benchmark.currency,
+        "currency": wanted_currency(benchmark, currency),
         "from": date_from.isoformat(),
         "to": date_to.isoformat(),
         "points": [{"date": point.date.isoformat(), "value": format(point.value, "f")} for point in points],

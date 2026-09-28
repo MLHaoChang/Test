@@ -150,6 +150,18 @@ def test_an_unknown_benchmark_is_404(client: TestClient) -> None:
     assert_error(response, 404, "not_found")
 
 
+def test_a_benchmark_series_in_a_currency_it_cannot_be_shown_in_is_a_plain_400(client: TestClient) -> None:
+    # QA P0 round 2, R2-D2: the message named the internal function benchmark_series.
+    response = client.get(
+        "/benchmarks/msci_world_eur/series", params={"from": "2024-12-27", "to": "2024-12-31", "currency": "USD"}
+    )
+
+    body = assert_error(response, 400, "invalid_request")
+    assert body["error"]["message"] == (
+        "MSCI World in EUR (iShares Core MSCI World UCITS ETF on Xetra) can be shown in EUR only, not in USD."
+    )
+
+
 def test_a_benchmark_series_without_from_and_to_is_422(client: TestClient) -> None:
     assert_error(client.get("/benchmarks/sp500/series"), 422, "invalid_request")
 

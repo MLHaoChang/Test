@@ -2,15 +2,16 @@
 
 QA wrote each test here as a strict xfail (`xfail(strict=True)`), so the suite stayed green while
 the defect was open. Once a defect is fixed its test passes, strict xfail turns that into a
-failure, and whoever fixes it removes the marker; the test then guards the fix. R2-D1 and R2-D3
-are fixed; R2-D2 is still open.
+failure, and whoever fixes it removes the marker; the test then guards the fix. All three are
+fixed now, and the markers are gone.
 
 - R2-D1 (fixed): the UAT guide (docs/uat/P0-macos.md, step 5) told you to start the
   confirmed-holdings file with the header `isin;quantity;as_of`, but the parser refused any file
   whose first line was not the `# decimal=,` or `# decimal=.` comment, so step 5 failed as written
   (AC15). That line is now optional (see `test_confirmed_csv.py`), and the guide shows it.
-- R2-D2: `pg benchmarks series` with a currency it cannot convert to prints the internal function
-  name `benchmark_series` (and the API answers with the same text).
+- R2-D2 (fixed): `pg benchmarks series` with a currency it cannot convert to printed the internal
+  function name `benchmark_series` (and the API answered with the same text). It now names the
+  benchmark and the currencies it can be shown in (see `test_benchmarks.py`).
 - R2-D3 (fixed): an `unparsed_row` review item from a CSV export stored the whole file as its
   text, so `pg review show` and `pg review export` printed every row of your export, not the row at
   fault. Such an item (and an `invalid_isin` one, in the export or a manual CSV) now holds the
@@ -54,7 +55,6 @@ def test_uat_guide_confirmed_holdings_layout_is_accepted() -> None:
     assert [(h.isin, str(h.quantity)) for h in holdings] == [("DE0007164600", "3")]
 
 
-@pytest.mark.xfail(strict=True, reason="QA P0 round 2, R2-D2: an unsupported currency shows an internal name")
 def test_benchmark_series_in_an_unsupported_currency_is_plain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("PG_TODAY", "2024-12-31")
     data_dir = str(tmp_path / "data")
