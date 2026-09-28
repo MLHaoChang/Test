@@ -76,9 +76,10 @@ uv run pg import ~/pg-private/exports
 Given a folder, `pg import` reads every PDF and CSV file directly in it, and leaves out any other
 file and any subfolder. You can also name files one by one.
 
-Read the diff this prints. "Held back" means a transaction is known only from an account statement
-line, so it is stored but left out of your holdings and value until you settle the review item
-about it. Anything in the review queue is also explained in plain words there.
+Read the diff this prints. "Held back" means a transaction is stored but left out of your holdings
+and value until you settle the review item about it. For example: a trade known only from an
+account statement line, which does not give the quantity; a CSV row whose amounts do not add up;
+or a transaction without a booking amount. Each review item says in plain words what it needs.
 
 ## 4. Review queue
 
