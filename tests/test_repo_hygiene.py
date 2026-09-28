@@ -116,6 +116,82 @@ def test_no_live_trading_wording() -> None:
     assert not matches, f"'live trading' found in {matches}"
 
 
+# --- The same wording checks, for web/src and docs/uat (7.5, WP12) --------------------------
+
+# web/src co-locates each component's Vitest test beside it (plan 5.10: "web/src/**/*.test.tsx"),
+# unlike src/ and tests/ on the Python side, so a test that asserts the app never shows this phrase
+# has to name the phrase to check for it. Excluding *.test.ts(x) here is the same reasoning
+# _python_files_containing's docstring gives for scanning src/ and never tests/.
+_WEB_SRC_SUFFIXES = (".ts", ".tsx")
+_TEST_FILE_SUFFIX_PATTERN = re.compile(r"\.test\.tsx?$")
+
+
+def _web_src_files_containing(root: Path, phrase: str) -> list[Path]:
+    """Return the non-test .ts/.tsx files under `root` (web/src) whose text contains `phrase`.
+
+    Takes `root` explicitly, like `_python_files_containing`, so a unit test can point it at a
+    throwaway directory instead of the real repository. Returns an empty list, rather than
+    raising, when `root` does not exist yet, the same accommodation `_python_files_containing`
+    makes for web/src before this package added it.
+    """
+    if not root.exists():
+        return []
+    matches = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path.suffix not in _WEB_SRC_SUFFIXES:
+            continue
+        if _TEST_FILE_SUFFIX_PATTERN.search(path.name):
+            continue
+        if _contains_phrase(path.read_text(encoding="utf-8"), phrase):
+            matches.append(path)
+    return matches
+
+
+def _docs_uat_files_containing(root: Path, phrase: str) -> list[Path]:
+    """Return the .md files under `root` (docs/uat) whose text contains `phrase`.
+
+    Takes `root` explicitly for the same reason as `_web_src_files_containing`; empty when `root`
+    does not exist yet.
+    """
+    if not root.exists():
+        return []
+    return [f for f in sorted(root.rglob("*.md")) if _contains_phrase(f.read_text(encoding="utf-8"), phrase)]
+
+
+def test_web_src_files_containing_excludes_test_files(tmp_path: Path) -> None:
+    """Unit test for the web/src scanner: a component and its co-located test are told apart."""
+    (tmp_path / "Badge.tsx").write_text("export const x = 'live trading';\n")
+    (tmp_path / "Badge.test.tsx").write_text("expect(x).not.toContain('live trading');\n")
+    (tmp_path / "notes.txt").write_text("live trading\n")  # wrong suffix: never scanned either way
+
+    assert _web_src_files_containing(tmp_path, "live trading") == [tmp_path / "Badge.tsx"]
+    assert _web_src_files_containing(tmp_path / "does-not-exist", "live trading") == []
+
+
+def test_no_live_trading_wording_in_web_src() -> None:
+    """Test that 'live trading' does not appear in web/src's own component and app code."""
+    matches = _web_src_files_containing(_repo_root() / "web" / "src", "live trading")
+    assert not matches, f"'live trading' found in {matches}"
+
+
+def test_no_bare_live_word_in_web_src() -> None:
+    """Test that the bare word 'live' does not appear in web/src's own component and app code."""
+    matches = _web_src_files_containing(_repo_root() / "web" / "src", "live")
+    assert not matches, f"'live' found in {matches}"
+
+
+def test_no_live_trading_wording_in_uat_guide() -> None:
+    """Test that 'live trading' does not appear in the macOS UAT guide."""
+    matches = _docs_uat_files_containing(_repo_root() / "docs" / "uat", "live trading")
+    assert not matches, f"'live trading' found in {matches}"
+
+
+def test_no_bare_live_word_in_uat_guide() -> None:
+    """Test that the bare word 'live' does not appear in the macOS UAT guide."""
+    matches = _docs_uat_files_containing(_repo_root() / "docs" / "uat", "live")
+    assert not matches, f"'live' found in {matches}"
+
+
 def _cli_help_text() -> str:
     """Return the `pg --help` output."""
     result = CliRunner().invoke(app, ["--help"])
