@@ -20,7 +20,7 @@ import typer
 from playground.cli.context import AppContext, fail, parse_day, portfolio_transaction, print_json
 from playground.core.errors import InvalidIsinError
 from playground.core.isin import normalise_isin
-from playground.core.text import plural
+from playground.core.text import isin_and_name, plural
 from playground.marketdata.benchmarks import (
     Benchmark,
     BenchmarkConfigError,
@@ -97,9 +97,13 @@ def prices_fetch(
     wanted = _normalised_isin(isin) if isin is not None else None
 
     with portfolio_transaction(app_ctx) as (conn, _):
-        candidates = [row for row in list_instruments(conn) if row["data_source"] == "stooq"]
+        instruments = list_instruments(conn)
+    candidates = [row for row in instruments if row["data_source"] == "stooq"]
+    # Every other instrument is named, so none is left out without a word (QA P0 round 2, minor 4).
+    skipped = [_skipped_record(row) for row in instruments if row["data_source"] != "stooq"]
     if wanted is not None:
         candidates = [row for row in candidates if row["isin"] == wanted]
+        skipped = []
         if not candidates:
             fail(f"{wanted} is not mapped to stooq. See pg instruments list.")
 
@@ -123,7 +127,14 @@ def prices_fetch(
         results.append({"isin": row["isin"], "symbol": row["data_symbol"], "points": len(series.points)})
 
     if json_output:
-        print_json({"from": start.isoformat(), "to": end.isoformat(), "fetched": results})
+        print_json(
+            {
+                "from": start.isoformat(),
+                "to": end.isoformat(),
+                "fetched": results,
+                "skipped": [{key: record[key] for key in ("isin", "symbol", "reason")} for record in skipped],
+            }
+        )
     else:
         if not results:
             typer.echo("No stooq-mapped instruments to fetch. See pg instruments map.")
@@ -132,11 +143,22 @@ def prices_fetch(
                 typer.echo(f"{result['isin']} ({result['symbol']}): {result['error']}")
             else:
                 typer.echo(f"{result['isin']} ({result['symbol']}): {plural(result['points'], 'daily close')} stored.")
+        for record in skipped:
+            typer.echo(record["line"])
     if failed:
         fail(
             f"{failed} of {plural(len(candidates), 'instrument')} could not be fetched. Run pg prices fetch again later, "
             "or load their closes from a file with pg prices import-file."
         )
+
+
+def _skipped_record(row: dict[str, Any]) -> dict[str, Any]:
+    """An instrument `prices fetch` does not fetch, and the line that says why."""
+    if row["data_source"] == "manual":
+        line = f"{row['isin']} ({row['data_symbol']}): priced from your own price file, not fetched (pg prices import-file)"
+        return {"isin": row["isin"], "symbol": row["data_symbol"], "reason": "manual_price_file", "line": line}
+    line = f"{isin_and_name(row['isin'], row['name'])}: no price source mapped yet, skipped (pg instruments map)"
+    return {"isin": row["isin"], "symbol": None, "reason": "unmapped", "line": line}
 
 
 def prices_import_file(

@@ -58,10 +58,38 @@ def test_prices_fetch_stores_every_stooq_mapped_instrument(data_dir: str) -> Non
     assert fetched[SAP]["points"] > 0
 
 
+MANUAL_HEADER = "date;time;type;isin;quantity;price;currency;amount_eur;fees_eur;tax_eur;note"
+UNMAPPED_BUY = "2024-09-02;10:00;buy;DE0005557508;10;20.00;EUR;-201.00;1.00;;x"
+
+
+def test_prices_fetch_says_which_instruments_it_skips_and_why(data_dir: str, tmp_path: Path) -> None:
+    # QA P0 round 2, minor 4: an instrument with no price source was left out without a word.
+    manual = tmp_path / "manual.csv"
+    manual.write_text(f"{MANUAL_HEADER}\n{UNMAPPED_BUY}\n", encoding="utf-8")
+    assert pg(data_dir, "import", str(manual)).exit_code == 0
+    assert pg(data_dir, "accept", "latest").exit_code == 0
+    fetch = ["prices", "fetch", "--from", "2024-01-01", "--to", "2024-12-31"]
+
+    text = pg(data_dir, *fetch, http_replay=HTTP_FIXTURES)
+    as_json = pg(data_dir, *fetch, "--json", http_replay=HTTP_FIXTURES)
+
+    assert text.exit_code == 0, text.output
+    assert "DE0005557508: no price source mapped yet, skipped (pg instruments map)" in text.stdout
+    assert f"{ALV} (ALV.DE): priced from your own price file, not fetched (pg prices import-file)" in text.stdout
+    assert len(text.stdout.splitlines()) == 6  # four fetched, two skipped
+    payload = json.loads(as_json.stdout)
+    assert payload["skipped"] == [  # in ISIN order, as pg instruments list shows them
+        {"isin": "DE0005557508", "symbol": None, "reason": "unmapped"},
+        {"isin": ALV, "symbol": "ALV.DE", "reason": "manual_price_file"},
+    ]
+    assert len(payload["fetched"]) == 4
+
+
 def test_prices_fetch_with_isin_fetches_only_that_one(data_dir: str) -> None:
     result = pg(data_dir, "prices", "fetch", "--from", "2024-01-01", "--isin", SAP, "--json", http_replay=HTTP_FIXTURES)
     payload = json.loads(result.stdout)
     assert [row["isin"] for row in payload["fetched"]] == [SAP]
+    assert payload["skipped"] == []  # the others were not asked for
 
 
 def test_prices_fetch_rejects_an_isin_not_mapped_to_stooq(data_dir: str) -> None:
