@@ -6,6 +6,8 @@ This document is the build contract: what the system is, how it is decomposed, w
 
 **What changed in 0.2 (portfolio-first reframe).** Version 0.1 described a research lab for strategy experiments; its Home page opened on a list of runs. After reviewing the wireframes you asked for something different at the front door: your real portfolio (imported from Trade Republic), its performance against a benchmark, live news filtered to what you hold, an explanation of why the portfolio performed as it did, what-if scenarios ("add this stock instead of that one") compared on one chart, agents that run those scenarios forward with fake money and draft real trade proposals for your approval, an ideas page that sweeps the market against your preferences, and an assistant that learns what you like. Nothing in the 0.1 simulation core is thrown away: a scenario is a run, an idea's test is a run, an agent's rule went through validation. The research screens now live behind an "Advanced" menu. Sections 0 (second table), 1, 2, 3.6, 3.7, 3.10 to 3.15, 4.4, 5, 9, 10, 12 and 13 changed; the simulation core (3.2 to 3.5) and the validation protocol are unchanged.
 
+**Decisions of 29 September 2026.** After the P0 hand-off the seven questions in the P0 report were answered; they are recorded as a third table in section 0 and folded into 3.10, 3.11 and 13. The runtime recommendation of 3.17 is confirmed.
+
 **What changed in 0.3.** Scenarios now open on an overview: the real portfolio as the base case and every scenario, running forward or replayed, as a small chart against it with a scoreboard. Behind it, a weekly scenario learning loop (3.16) compares all scenarios with the base case, decomposes each difference, writes lessons with evidence and a confidence label, and feeds them, only after your confirmation, into the ideas ranking, the preference profile and agent rules. A runtime and delivery section (3.17) answers "app or web page": an always-on backend service on a small server does the 24/7 monitoring, and the interface is a web app you can install on your phone and laptop; no native app. Sections 0, 3.6, 3.7, 3.16, 3.17, 4.4, 5, 9, 10 and 12 changed.
 
 ## 0. Decision record
@@ -44,7 +46,19 @@ Decisions taken in the interview on 26 September 2026. Each is a default the bui
 | Preferences | Risk tolerance and drawdown comfort, sectors and themes and exclusions, position and concentration limits, feedback on ideas and proposals | Preference profile (3.15) read by screens, scenarios, agents and the assistant; changes learned from feedback are proposed and confirmed, never applied silently |
 | Benchmarks | MSCI World in EUR plus S&P 500 | Benchmark series in the lake; both shown on Home, Portfolio and Compare |
 | Everyday navigation | Home, Portfolio, Scenarios, Market, Ideas, Agents, Assistant; research tools under "Advanced" | Screen table in 3.7; wireframes rows 1 to 3 versus row A |
-| Delivery and runtime (0.3 recommendation, to confirm) | One always-on backend service on a small Linux server does the 24/7 monitoring; the interface is a web app installable on phone and laptop (PWA); no native desktop or mobile app; the server is reached over a private network (Tailscale), not a public address | Section 3.17; hosting cost moves from P4 to P1 in section 10 |
+| Delivery and runtime (confirmed 29 September 2026) | One always-on backend service on a small Linux server does the 24/7 monitoring; the interface is a web app installable on phone and laptop (PWA); no native desktop or mobile app; the server is reached over a private network (Tailscale), not a public address | Section 3.17; hosting cost moves from P4 to P1 in section 10 |
+
+**P1 planning decisions (29 September 2026, after the P0 hand-off).** These answer the seven questions at the end of [plans/P0-report.md](plans/P0-report.md).
+
+| Topic | Decision | Consequence in the spec |
+|---|---|---|
+| Cash | The portfolio value is the whole account: securities plus cash, shown as two parts | Cash balance joins the ledger in P1; returns and the benchmark comparison run on the account (3.11) |
+| Benchmarks | The iShares Core MSCI World ETF and the iShares Core S&P 500 ETF, both as EUR series; the S&P 500 index level in USD stays only as a headline figure | Both benchmarks are total return with fund costs included; free sources (3.11) |
+| Sector, country, benchmark weights | Suggested from a free company-profile source, confirmed by you once, stored, editable and logged; benchmark sector weights from the iShares holdings file you download monthly | Same suggest-confirm-store pattern as the price mapping (3.10, 3.11) |
+| Server | Confirmed: a small EU server with Tailscale, started when the service part of P1 (P1b) begins | Section 3.17; cost from P1b, not P1a (section 10) |
+| News accounts | Created later, when P1b starts | P1a needs no external account |
+| Tactical sleeve | Everything is core in P1; the sleeve starts at 10% in P2 and is a preference you can raise after a rule passes validation and a six-month forward run | Sleeve default changes from 15% to 10% in P2 (3.14, 3.15) |
+| Export formats | To be established in the P0 UAT: PDF documents are certain, the in-app CSV export is to be checked; anonymised samples of unread layouts go into the fix round | P0 fix round; open item in section 13 stays until the UAT |
 
 ## 1. Scope
 
@@ -315,13 +329,13 @@ Telegram bot with a per-event switch (fill, daily summary, risk rejection, kill-
 
 **Reconciliation.** Holdings are rebuilt from transactions with FIFO lots (German tax rules). The result is shown against the holdings you confirm (typed in or from a statement) as a diff before it is accepted. The app reminds you when the last import is older than 30 days and after every approved proposal.
 
-**Instrument master.** ISIN is the key. Each instrument maps to a data source: a US ticker on the free US feeds, or a European listing on Stooq or Tiingo for German and other European names; the mapping is stored and editable. Sector and country come from the same source or are entered once.
+**Instrument master.** ISIN is the key. Each instrument maps to a data source: a US ticker on the free US feeds, or a European listing on Stooq or Tiingo for German and other European names; the mapping is stored and editable. Sector and country are suggested from a free company-profile source, confirmed by you once, then stored, editable and logged, like the price mapping (decision of 29 September 2026).
 
 **Privacy.** Export files never leave the machine. Outbound requests carry tickers and dates only.
 
 ### 3.11 Performance and attribution
 
-Daily EUR value series from holdings, close prices and ECB reference rates, with deposits and withdrawals removed by a time-weighted return, and a money-weighted return shown next to it. Benchmarks: MSCI World in EUR (via a tracking ETF series) and the S&P 500 (in USD and in EUR). Attribution is a Brinson-style decomposition against the benchmark's sector weights: allocation (your sector weights), selection (your stocks against their sectors), currency (EUR value of foreign holdings), fees and taxes, and an interaction term reported as "other". Each period's attribution is rendered as a waterfall, a by-holding and by-sector table, and a template narrative (deterministic, from the numbers) that the assistant may polish, with links to the news items dated inside the period. Periods: 1Y, 3Y, 5Y, since start, and any custom range.
+Daily EUR value series from holdings, close prices and ECB reference rates, with deposits and withdrawals removed by a time-weighted return, and a money-weighted return shown next to it. The portfolio value is the whole account, securities plus cash, shown as two parts; returns and the benchmark comparison run on the account (decision of 29 September 2026). Benchmarks: the iShares Core MSCI World ETF and the iShares Core S&P 500 ETF, both as EUR series, so both are total return with fund costs included; the S&P 500 index level in USD is shown only as a headline figure. Benchmark sector weights for attribution come from the iShares holdings file, downloaded monthly. Attribution is a Brinson-style decomposition against the benchmark's sector weights: allocation (your sector weights), selection (your stocks against their sectors), currency (EUR value of foreign holdings), fees and taxes, and an interaction term reported as "other". Each period's attribution is rendered as a waterfall, a by-holding and by-sector table, and a template narrative (deterministic, from the numbers) that the assistant may polish, with links to the news items dated inside the period. Periods: 1Y, 3Y, 5Y, since start, and any custom range.
 
 ### 3.12 News and market pulse
 
@@ -583,6 +597,6 @@ Total for P0 to P5: roughly 280 to 365 hours, or 10 to 13 months at 7 hours a we
 - Whether Plotly.js alone is enough or lightweight-charts is needed from phase 2 for replay.
 - Exact kill-criteria thresholds, to be derived from the first backtests' drawdown distributions.
 - Which Trade Republic export formats you actually have (CSV from the app, PDF statements, or both); the P0 parsers are written against samples you provide.
-- Benchmark series for MSCI World in EUR: a tracking ETF (iShares Core MSCI World, EUR) or the index from a free source with the FX conversion done in the app.
-- Whether the tactical sleeve is 15% or another size, and whether options ideas belong in it at all before P6.
+- Resolved 29 September 2026: both benchmarks are iShares ETF series in EUR (decision record, section 0).
+- Resolved 29 September 2026: everything is core in P1; the sleeve starts at 10% in P2. Whether options ideas belong in it before P6 stays open.
 - The exact free-tier limits of Alpaca news and Finnhub at build time, and whether RSS is enough for the German names.

@@ -547,6 +547,8 @@ basis is FIFO; the badge is on every page.
 
 ### Decisions we need from you before P1 is planned
 
+> Answered on 29 September 2026. The answers are recorded in the spec's decision record, [../playground-spec.md](../playground-spec.md) section 0, third table.
+
 1. **Cash.** Should the portfolio value include your cash balance? I recommend yes. The Trade
    Republic app shows the whole account, and every transaction that moves cash is already stored.
    The other choice is securities only, with purchases and sales as cash flows, which needs care
