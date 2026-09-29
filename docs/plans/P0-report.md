@@ -562,6 +562,38 @@ basis is FIFO; the badge is on every page.
    tag everything as core until you decide.
 7. **Your export formats.** Which Trade Republic exports you actually have. The UAT answers this.
 
+## UX walkthrough (added 29 September)
+
+After QA, a reviewer used the app as a first-time Trade Republic customer, at laptop and phone
+widths, and then rendered and judged all 19 wireframe boards. The full review, with 90 screenshots,
+is [../ux/P0-ux-review.md](../ux/P0-ux-review.md). It found 24 issues: 2 blocking, 13 major and
+9 minor.
+
+The five changes it asks for first:
+
+1. **Remove the dead end after Accept.** Until prices are mapped, every value shows "-" and the
+   chart sits at 0 EUR with no reason given. Say "Not valued yet" and add an "Add prices" step on
+   the page.
+2. **Make the import a guided sequence** with one decision per screen: a three-sentence summary, a
+   list of files with what each was read as, and the Continue button right under the summary.
+3. **Let the user act on the page**: a small form for a missing purchase cost, a quantity box per
+   holding instead of a hand-made CSV file, and a way to dismiss an unknown document.
+4. **Lead with the answer**: value, amount paid and gain in one sentence at the top, and a chart
+   that shows money invested next to value so a sale does not read as a loss.
+5. **Calm the screens**: red only for errors, a 12 px minimum text size, at most four modules per
+   screen by default, the rest one click away.
+
+One finding is a functional defect, not only a usability one, and joins the fix round:
+
+| Id | What | How to see it | Suggested fix |
+|---|---|---|---|
+| O5 | A ZIP file of ten documents, stored without compression, is read as a single trade confirmation. The other nine are ignored without a warning, so a user could accept an incomplete portfolio | Zip ten fixture PDFs with `zip -0`, upload the ZIP on the import page | Detect ZIP files by their signature before parsing: unpack them and import each member, or refuse the file with an "unzip it first" message. Show one result line per file |
+
+The review's backlog runs from UX1 to UX16. Items UX1 to UX5 (first run and the value dead end,
+the diff redesign, acting on the page, prices on the page, the visual baseline) are written so
+that the P1 plan can take them as work packages, and the planning stage now requires that. The
+UAT script's known limitations were updated for O5.
+
 ## Process notes
 
 - **Commit trailers.** The workflow text asked for `Claude Fable 5.1` on every commit. Each session

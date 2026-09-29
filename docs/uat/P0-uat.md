@@ -993,6 +993,10 @@ line each. Add any files you prepared as "Report a problem" explains.
 
 ## Known limitations
 
+- **Do not upload a ZIP file.** Unpack it first and upload the PDF and CSV files inside. A ZIP
+  file is currently read as one document and the other documents in it are ignored without a
+  warning (open defect O5, found by the UX review and planned for the fix round).
+
 - **Only files.** The app does not connect to Trade Republic and cannot download anything for you.
   To update it, export again and import again.
 - **The real layouts are unconfirmed.** We built the CSV layout and the PDF readers from
